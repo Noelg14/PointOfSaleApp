@@ -59,7 +59,7 @@ namespace Demo
             cnn.Open();
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection=cnn;
-            cmd.CommandText="SELECT * FROM PRODUCT WHERE PLU = "+PLU+" LIMIT 1";
+            cmd.CommandText="SELECT * FROM PRODUCT WHERE PLU = '"+PLU+"' LIMIT 1";
             try
             {
                 MySqlDataReader dr = cmd.ExecuteReader();

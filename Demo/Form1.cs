@@ -25,8 +25,17 @@ namespace Demo
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            Console.WriteLine("Button Pay Now Pressed");
-            MessageBox.Show("Payed €" + total);
+            if(total > 0)
+            {
+                Console.WriteLine("Button Pay Now Pressed");
+                MessageBox.Show("Payed €" + total,"Payed");
+                clear();
+            }
+            else
+            {
+                MessageBox.Show("Please add items before Paying", "No Items Added");
+            }
+
 
         }
 
@@ -78,9 +87,9 @@ namespace Demo
         private void clear()
         {
             total = 0;
-            label2.Text = "";
-            label1.Text = "";
-            label3.Text = "";
+            label2.Text = "PRICE";
+            label1.Text = "Price";
+            label3.Text = "Desc";
             label5.Text = "€" + total ;
 
         }
