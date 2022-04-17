@@ -13,10 +13,9 @@ namespace Demo
 {
     public partial class AddProd : Form
     {
-        Form1 f;
-        public AddProd(Form1 form1)
+        string connString = Utils.getConfig();
+        public AddProd()
         {
-            f = form1;
             InitializeComponent();
         }
 
@@ -27,26 +26,29 @@ namespace Demo
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MySqlConnection cnn;
-            cnn = new MySqlConnection(Utils.getConfig());
+
+            MySqlConnection cnn = new MySqlConnection();
+            cnn.ConnectionString= connString;
+            int allFra = 0;
             try
             {
                 cnn.Open();
                 MySqlCommand cmd = new MySqlCommand();
-                cmd.CommandText = ("INSERT INTO product values(@plu,@desc,@price,@allfra)");
-                cmd.Prepare();
-                cmd.Parameters.AddWithValue("@plu", PLU.Text);
-                cmd.Parameters.AddWithValue("@desc", Desc.Text);
-                cmd.Parameters.AddWithValue("@price", Price.Text);
+                //cmd.CommandText = "INSERT INTO product VALUES(" + PLU.Text + "," + Desc.Text + ","+ Price.Text + ","++")";
+                cmd.Connection = cnn;
+
+                //cmd.Prepare();
+                //cmd.Parameters.AddWithValue("@plu", PLU.Text);
+                //cmd.Parameters.AddWithValue("@desc", Desc.Text);
+                //cmd.Parameters.AddWithValue("@price", Price.Text);
                 if (checkBox1.Checked)
                 {
-                    cmd.Parameters.AddWithValue("@allfra", 1);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@allfra", 0);
+                     allFra = 1;
                 }
 
+                cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Price.Text + ","+allFra+")";
+                Console.WriteLine(cmd.CommandText);
+                
                 cmd.ExecuteNonQuery();
                 MessageBox.Show("Products Added");
                 clear();
@@ -78,7 +80,6 @@ namespace Demo
         }
         private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            f.textBox1.Enabled = true;
         }
     }
 }

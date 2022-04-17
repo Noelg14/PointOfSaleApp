@@ -50,7 +50,38 @@ namespace Demo
             }
             return conString = "server="+server+";database="+catalog+";uid="+user+";pwd="+pw+";";
         }
+    
+        public static Product search(string PLU)
+        {
+            Product product = null;
+            string connString = getConfig();
+            MySqlConnection cnn = new MySqlConnection(connString);
+            cnn.Open();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection=cnn;
+            cmd.CommandText="SELECT * FROM PRODUCT WHERE PLU = "+PLU+" LIMIT 1";
+            try
+            {
+                MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    dr.Read();
+                    Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3));
+                    return p;
+                }
+                else
+                {
+                    return product;
+                }
+            }
+            finally
+            {
+                cnn.Close();
+            }
+
+
+        }
+
+
     }
-
-
 }
