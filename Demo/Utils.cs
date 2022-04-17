@@ -14,7 +14,7 @@ namespace Demo
             string file = "C:\\test\\poscfg.dat";
             //Directory.GetCurrentDirectory() + "/Localdata/poscfg.dat";
             Console.WriteLine(file);
-            string conString, server = null , catalog = null, pw = null, user = null;
+            string conString, server = null, catalog = null, pw = null, user = null;
 
             if (file == null)
             {
@@ -44,13 +44,13 @@ namespace Demo
                     user = conf[i].Split('=')[1].Trim();
                 }
             }
-            if (server is null || catalog is null || user is null )
+            if (server is null || catalog is null || user is null)
             {
                 throw new Exception("Error getting configs");
             }
-            return conString = "server="+server+";database="+catalog+";uid="+user+";pwd="+pw+";";
+            return conString = "server=" + server + ";database=" + catalog + ";uid=" + user + ";pwd=" + pw + ";";
         }
-    
+
         public static Product search(string PLU)
         {
             Product product = null;
@@ -58,8 +58,8 @@ namespace Demo
             MySqlConnection cnn = new MySqlConnection(connString);
             cnn.Open();
             MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection=cnn;
-            cmd.CommandText="SELECT * FROM PRODUCT WHERE PLU = '"+PLU+"' LIMIT 1";
+            cmd.Connection = cnn;
+            cmd.CommandText = "SELECT * FROM PRODUCT WHERE PLU = '" + PLU + "' LIMIT 1";
             try
             {
                 MySqlDataReader dr = cmd.ExecuteReader();
@@ -82,6 +82,57 @@ namespace Demo
 
         }
 
+        public static void recSale(Cart c, double total)
+        {
+            MySqlConnection cnn = new MySqlConnection();
+            cnn.ConnectionString = getConfig();
+            try
+            {
+                cnn.Open();
+                MySqlCommand cmd = new MySqlCommand();
 
+                cmd.Connection = cnn;
+                cmd.CommandText = "INSERT INTO sales VALUES(" + c.id + "," + total + ")";
+                Console.WriteLine(cmd.CommandText);
+
+                cmd.ExecuteNonQuery();
+                recLine(c, cnn);
+
+            }
+            finally
+            {
+                cnn.Close();
+            }
+        }
+        private static void recLine(Cart c,MySqlConnection cnn)
+        {
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = cnn;
+            foreach (Product p in c.products)
+            {
+                cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+")";
+                cmd.ExecuteNonQuery();
+            }
+            return;
+        }
+
+        public static void recPayment(string type,double amount,Cart c)
+        {
+            MySqlConnection cnn = new MySqlConnection();
+            cnn.ConnectionString = getConfig();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = cnn;
+            cnn.Open();
+            try
+            {
+                cmd.CommandText = "INSERT INTO tender VALUES('"+type+"'," + amount + ","+c.id+")";
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                cnn.Close();
+            }
+
+        }
     }
 }

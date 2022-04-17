@@ -46,7 +46,9 @@ namespace Demo
                      allFra = 1;
                 }
 
-                cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Price.Text + ","+allFra+")";
+
+
+                cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Double.Parse(Price.Text) + ","+allFra+")";
                 Console.WriteLine(cmd.CommandText);
                 
                 cmd.ExecuteNonQuery();

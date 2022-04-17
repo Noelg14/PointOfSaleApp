@@ -5,16 +5,22 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        float total=0;
+        double total=0;
+        Cart c = new Cart();
+        bool paid;
         public Form1()
         {
             InitializeComponent();
             Rectangle r = Screen.FromControl(this).Bounds;
             button1.Left = (r.Width - (r.Width)/4);
             button1.Top= (r.Height - (r.Height)/4);
+            button2.Left = (r.Width - (r.Width) / 4);
+            button2.Top = (r.Height - (r.Height) / 4) -100;
+
             panel1.Height= (r.Height - 200);
             textBox1.Width=panel1.Width;
             label5.Text = "€ " + total;
+            
         }
 
         private void toolStripLabel1_Click(object sender, EventArgs e)
@@ -25,18 +31,31 @@ namespace Demo
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            if(total > 0)
+            if(c.products.Count!=0)
             {
+                bool paid = false;
+                Utils.recSale(c, total);
                 Console.WriteLine("Button Pay Now Pressed");
-                MessageBox.Show("Payed €" + total,"Payed");
-                clear();
+                Payment p = new Payment(total, c);
+                p.Show();
+                //MessageBox.Show("Paid €" + total,"Paid");
+                if (p.IsDisposed)
+                {
+                    clear();
+                    return;
+                }
             }
-            else
+            if(total ==0 && c.products.Count ==0)
             {
                 MessageBox.Show("Please add items before Paying", "No Items Added");
+                return;
             }
 
 
+        }
+        public void isPaid(bool p)
+        {
+            this.paid = p;
         }
 
 
@@ -54,6 +73,7 @@ namespace Demo
                 Product p = Utils.search(textBox1.Text.ToString());
                 if (p != null)
                 {
+                    c.AddProd(p);
                     label1.Text += "\n " + p.PLU;
                     label3.Text += "\n " + p.desc;
                     label2.Text += "\n €" + p.price;
@@ -87,11 +107,16 @@ namespace Demo
         private void clear()
         {
             total = 0;
-            label2.Text = "PRICE";
+            label2.Text = "PLU";
             label1.Text = "Price";
             label3.Text = "Desc";
             label5.Text = "€" + total ;
+            c.Clear();
+        }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            clear();
         }
     }
 
