@@ -1,4 +1,5 @@
 using MySql.Data.MySqlClient;
+using System.Timers;
 
 
 namespace Demo
@@ -31,21 +32,20 @@ namespace Demo
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            if(c.products.Count!=0)
+            if (c.products.Count != 0)
             {
                 bool paid = false;
                 Utils.recSale(c, total);
                 Console.WriteLine("Button Pay Now Pressed");
+
                 Payment p = new Payment(total, c);
                 p.Show();
                 //MessageBox.Show("Paid €" + total,"Paid");
-                if (p.IsDisposed)
-                {
-                    clear();
-                    return;
-                }
+                clear();
+                return;
+
             }
-            if(total ==0 && c.products.Count ==0)
+            if (total == 0 && c.products.Count == 0)
             {
                 MessageBox.Show("Please add items before Paying", "No Items Added");
                 return;
@@ -53,11 +53,6 @@ namespace Demo
 
 
         }
-        public void isPaid(bool p)
-        {
-            this.paid = p;
-        }
-
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
@@ -77,7 +72,7 @@ namespace Demo
                     label1.Text += "\n " + p.PLU;
                     label3.Text += "\n " + p.desc;
                     label2.Text += "\n €" + p.price;
-                    total += p.price;
+                    total=Math.Round(total += p.price,2);
                     label5.Text = "€ " + total;
 
                     textBox1.Focus();

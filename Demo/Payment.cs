@@ -14,6 +14,7 @@ namespace Demo
     {
         double toPay;
         Cart cart;
+        bool paid = false;
 
         public Payment(double toPay,Cart c)
         {
@@ -28,6 +29,7 @@ namespace Demo
         {
             Utils.recPayment(button1.Text, toPay, cart);
             MessageBox.Show("Paid €" + toPay,"Paid");
+            this.paid = true;
             this.Dispose();
         }
 
@@ -35,6 +37,7 @@ namespace Demo
         {
             Utils.recPayment(button1.Text, toPay, cart);
             MessageBox.Show("Paid €" + toPay, "Paid");
+            this.paid = true;
             this.Dispose();
         }
 
@@ -42,7 +45,12 @@ namespace Demo
         {
             Utils.recPayment(button1.Text, toPay, cart);
             MessageBox.Show("Paid €" + toPay, "Paid");
+            this.paid = true;
             this.Dispose();
+        }
+        public bool isPaid()
+        {
+            return paid;
         }
     }
 }
