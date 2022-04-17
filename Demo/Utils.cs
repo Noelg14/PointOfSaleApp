@@ -50,7 +50,6 @@ namespace Demo
             }
             return conString = "server=" + server + ";database=" + catalog + ";uid=" + user + ";pwd=" + pw + ";";
         }
-
         public static Product search(string PLU)
         {
             Product product = null;
@@ -60,6 +59,7 @@ namespace Demo
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = cnn;
             cmd.CommandText = "SELECT * FROM PRODUCT WHERE PLU = '" + PLU + "' LIMIT 1";
+            log("Searching for PLU"+PLU);
             try
             {
                 MySqlDataReader dr = cmd.ExecuteReader();
@@ -81,7 +81,6 @@ namespace Demo
 
 
         }
-
         public static void recSale(Cart c, double total)
         {
             MySqlConnection cnn = new MySqlConnection();
@@ -94,7 +93,7 @@ namespace Demo
                 cmd.Connection = cnn;
                 cmd.CommandText = "INSERT INTO sales VALUES(" + c.id + "," + total + ")";
                 Console.WriteLine(cmd.CommandText);
-
+                log("Writing to sales");
                 cmd.ExecuteNonQuery();
                 recLine(c, cnn);
 
@@ -111,11 +110,12 @@ namespace Demo
             foreach (Product p in c.products)
             {
                 cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+")";
+
                 cmd.ExecuteNonQuery();
+                log("Writing to salelines");
             }
             return;
         }
-
         public static void recPayment(string type,double amount,Cart c)
         {
             MySqlConnection cnn = new MySqlConnection();
@@ -127,12 +127,42 @@ namespace Demo
             {
                 cmd.CommandText = "INSERT INTO tender VALUES('"+type+"'," + amount + ","+c.id+")";
                 cmd.ExecuteNonQuery();
+                log("Writing to tender");
             }
             finally
             {
                 cnn.Close();
             }
 
+        }
+        public static void log(string msg)
+        {
+            MySqlCommand cmd = initCmd();
+            MySqlConnection cnn = initConn();
+            cmd.Connection = cnn;
+            cnn.Open();
+            try
+            {
+                cmd.CommandText = "INSERT INTO log VALUES(NULL,'"+msg+"','"+DateTime.UtcNow.ToString()+"');";
+                cmd.ExecuteNonQuery();
+            }
+            finally
+            {
+                cnn.Close();
+            }
+        }
+
+        private static MySqlConnection initConn()
+        {
+            MySqlConnection cnn = new MySqlConnection();
+            cnn.ConnectionString = getConfig();
+            return cnn;
+        }
+        private static MySqlCommand initCmd()
+        {
+
+            MySqlCommand cmd = new MySqlCommand();
+            return cmd;
         }
     }
 }

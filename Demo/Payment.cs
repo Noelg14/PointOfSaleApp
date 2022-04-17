@@ -35,7 +35,7 @@ namespace Demo
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Utils.recPayment(button1.Text, toPay, cart);
+            Utils.recPayment(button3.Text, toPay, cart);
             MessageBox.Show("Paid €" + toPay, "Paid");
             this.paid = true;
             this.Dispose();
@@ -43,7 +43,7 @@ namespace Demo
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Utils.recPayment(button1.Text, toPay, cart);
+            Utils.recPayment(button2.Text, toPay, cart);
             MessageBox.Show("Paid €" + toPay, "Paid");
             this.paid = true;
             this.Dispose();

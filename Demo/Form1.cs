@@ -21,7 +21,8 @@ namespace Demo
             panel1.Height= (r.Height - 200);
             textBox1.Width=panel1.Width;
             label5.Text = "€ " + total;
-            
+            Utils.log("Init Form1");
+
         }
 
         private void toolStripLabel1_Click(object sender, EventArgs e)
@@ -102,8 +103,8 @@ namespace Demo
         private void clear()
         {
             total = 0;
-            label2.Text = "PLU";
-            label1.Text = "Price";
+            label2.Text = "Price";
+            label1.Text = "PLU";
             label3.Text = "Desc";
             label5.Text = "€" + total ;
             c.Clear();

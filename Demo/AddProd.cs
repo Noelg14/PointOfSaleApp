@@ -17,6 +17,7 @@ namespace Demo
         public AddProd()
         {
             InitializeComponent();
+            Utils.log("Admin menu accessed");
         }
 
         private void label2_Click(object sender, EventArgs e)
