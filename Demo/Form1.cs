@@ -53,12 +53,10 @@ namespace Demo
 
         //}
 
-
         private void toolStripLabel1_Click(object sender, EventArgs e)
         {
 
         }
-
 
         private void button1_Click_1(object sender, EventArgs e)
         {
@@ -92,9 +90,7 @@ namespace Demo
         }
         /*
          * Need to refactor the below as currenlty does not allow voids. 
-         * 
          */
-
         private void textBox1_KeyUp(object sender, KeyEventArgs e) 
         {
             
@@ -103,8 +99,10 @@ namespace Demo
                 
                 if (textBox1.Text == "ADMIN")
                 {
-                    AddProd a = new AddProd();
-                    a.Show();
+
+                    new AddProd().Show();
+                    //AddProd a = new AddProd();
+                    //a.Show();
                     //textBox1.Enabled = false;
                     return;
                 }
@@ -145,7 +143,6 @@ namespace Demo
 
         }
 
-
         private void clear()
         {
             total = 0;
@@ -159,6 +156,7 @@ namespace Demo
         private void button2_Click(object sender, EventArgs e)
         {
             clear();
+            textBox1.Focus();
         }
 
         public static void notify()
@@ -179,7 +177,6 @@ namespace Demo
             Utils.log("Back - enabling textbox");
         }
     }
-
 
     public class Product {
         public string PLU { get; }

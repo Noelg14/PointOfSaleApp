@@ -12,9 +12,9 @@ namespace Demo
 {
     public partial class Payment : Form
     {
-        double toPay;
-        Cart cart;
-        bool paid = false;
+        double toPay { get; set; }
+        Cart cart { get; set; }
+        bool paid { get; set; } = false;
 
         public Payment(double toPay,Cart c)
         {
