@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using MySql.Data.MySqlClient;
 
 namespace Demo
@@ -11,8 +12,14 @@ namespace Demo
     {
         public static string getConfig()
         {
-            string file = "C:\\test\\poscfg.dat";
-            //Directory.GetCurrentDirectory() + "/Localdata/poscfg.dat";
+
+            if (Debugger.IsAttached)
+            {
+                //log("Debugger Attached, using debug credentials.");
+                return "server=127.0.0.1;database=demo;uid=noel;pwd=noel;";
+            }
+            string file = //"C:\\test\\config.dat";
+            Directory.GetCurrentDirectory() + "/Localdata/config.dat";
             Console.WriteLine(file);
             string conString, server = null, catalog = null, pw = null, user = null;
 
@@ -31,7 +38,7 @@ namespace Demo
                 {
                     server = conf[i].Split('=')[1].Trim();
                 }
-                if (conf[i].StartsWith("CATALOG"))
+                if (conf[i].StartsWith("DB"))
                 {
                     catalog = conf[i].Split('=')[1].Trim();
                 }
@@ -103,7 +110,7 @@ namespace Demo
                 cnn.Close();
             }
         }
-        private static void recLine(Cart c,MySqlConnection cnn)
+        private static void recLine(Cart c,MySqlConnection cnn) //does connection close here? 
         {
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = cnn;
@@ -137,6 +144,8 @@ namespace Demo
         }
         public static void log(string msg)
         {
+
+
             MySqlCommand cmd = initCmd();
             MySqlConnection cnn = initConn();
             cmd.Connection = cnn;

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -37,11 +38,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.Product = new System.Windows.Forms.ToolStripLabel();
+            this.productBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.productBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -136,6 +139,10 @@
             this.Product.Text = "Product";
             this.Product.Click += new System.EventHandler(this.toolStripLabel1_Click);
             // 
+            // productBindingSource
+            // 
+            this.productBindingSource.DataSource = typeof(Demo.Product);
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -192,6 +199,7 @@
             this.panel1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.productBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -210,5 +218,7 @@
         private Label label4;
         private Label label5;
         private Button button2;
+        private BindingSource productBindingSource;
+        private Panel panel2;
     }
 }

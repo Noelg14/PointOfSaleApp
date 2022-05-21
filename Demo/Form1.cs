@@ -9,8 +9,10 @@ namespace Demo
         double total=0;
         Cart c = new Cart();
         bool paid;
+        static Form1 thisForm; // probably terrible :(
+
         public Form1()
-        {
+        { 
             InitializeComponent();
             Rectangle r = Screen.FromControl(this).Bounds;
             button1.Left = (r.Width - (r.Width)/4);
@@ -22,8 +24,35 @@ namespace Demo
             textBox1.Width=panel1.Width;
             label5.Text = "€ " + total;
             Utils.log("Init Form1");
+            thisForm = this;
 
         }
+        //public Form1(Cart c)
+        //{
+        //    InitializeComponent();
+        //    Rectangle r = Screen.FromControl(this).Bounds;
+        //    button1.Left = (r.Width - (r.Width) / 4);
+        //    button1.Top = (r.Height - (r.Height) / 4);
+        //    button2.Left = (r.Width - (r.Width) / 4);
+        //    button2.Top = (r.Height - (r.Height) / 4) - 100;
+
+        //    panel1.Height = (r.Height - 200);
+        //    textBox1.Width = panel1.Width;
+        //    label5.Text = "€ " + total;
+        //    Utils.log("Init Form1 w/ Products");
+
+        //    foreach(Product p in c.products)
+        //    {
+
+        //        label1.Text += "\n " + p.PLU;
+        //        label3.Text += "\n " + p.desc;
+        //        label2.Text += "\n €" + p.price;
+        //        total = Math.Round(total += p.price, 2);
+        //        label5.Text = "€ " + total;
+        //    }
+
+        //}
+
 
         private void toolStripLabel1_Click(object sender, EventArgs e)
         {
@@ -35,18 +64,25 @@ namespace Demo
         {
             if (c.products.Count != 0)
             {
-                bool paid = false;
+               
                 Utils.recSale(c, total);
                 Console.WriteLine("Button Pay Now Pressed");
 
-                Payment p = new Payment(total, c);
-                p.Show();
+                bool paid = Payment.newPayment(total, c);
+                //this.Hide();
+                //if (paid)
+                //{
+                //    clear();
+                //}
+                this.textBox1.Enabled = false;
+                //this.Show();
                 //MessageBox.Show("Paid €" + total,"Paid");
-                clear();
-                return;
+                //clear();
+                //this.Hide();
+                //return;
 
             }
-            if (total == 0 && c.products.Count == 0)
+            if (c.products.Count == 0)
             {
                 MessageBox.Show("Please add items before Paying", "No Items Added");
                 return;
@@ -57,9 +93,11 @@ namespace Demo
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            
+            if (e.KeyCode == Keys.Enter)
             {
-                if(textBox1.Text == "ADMIN")
+                
+                if (textBox1.Text == "ADMIN")
                 {
                     AddProd a = new AddProd();
                     a.Show();
@@ -70,6 +108,11 @@ namespace Demo
                 if (p != null)
                 {
                     c.AddProd(p);
+                    //dataGridView1.DataSource = c.products;
+                    //dataGridView1.Refresh();
+
+
+
                     label1.Text += "\n " + p.PLU;
                     label3.Text += "\n " + p.desc;
                     label2.Text += "\n €" + p.price;
@@ -113,6 +156,24 @@ namespace Demo
         private void button2_Click(object sender, EventArgs e)
         {
             clear();
+        }
+
+        public static void notify()
+        {            
+
+            Form1 f = Form1.thisForm;
+            f.clear();
+            f.textBox1.Enabled = true;
+            f = null;
+            Utils.log("Clear form");
+        }
+        public static void notifyBack()
+        {
+
+            Form1 f = Form1.thisForm;
+            f.textBox1.Enabled = true;
+            f = null;
+            Utils.log("Back - enabling textbox");
         }
     }
 

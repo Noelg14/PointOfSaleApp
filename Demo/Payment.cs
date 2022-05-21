@@ -30,6 +30,7 @@ namespace Demo
             Utils.recPayment(button1.Text, toPay, cart);
             MessageBox.Show("Paid €" + toPay,"Paid");
             this.paid = true;
+            sendNotif();
             this.Dispose();
         }
 
@@ -38,6 +39,7 @@ namespace Demo
             Utils.recPayment(button3.Text, toPay, cart);
             MessageBox.Show("Paid €" + toPay, "Paid");
             this.paid = true;
+            sendNotif();
             this.Dispose();
         }
 
@@ -46,11 +48,31 @@ namespace Demo
             Utils.recPayment(button2.Text, toPay, cart);
             MessageBox.Show("Paid €" + toPay, "Paid");
             this.paid = true;
+            sendNotif();
             this.Dispose();
         }
         public bool isPaid()
         {
             return paid;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Form1.notifyBack();
+            //Form1.notify();
+            this.Dispose();
+        }
+
+        public static bool newPayment(Double toPay,Cart c)
+        {
+            Payment p = new Payment(toPay, c);
+            p.Show();
+            return p.paid;
+        }
+
+        private static void sendNotif()
+        {
+            Form1.notify();
         }
     }
 }
