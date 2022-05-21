@@ -51,7 +51,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(126, 45);
             this.button1.TabIndex = 0;
-            this.button1.Text = "Add";
+            this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -100,6 +100,7 @@
             this.PLU.Size = new System.Drawing.Size(181, 23);
             this.PLU.TabIndex = 5;
             this.PLU.TextChanged += new System.EventHandler(this.PLU_TextChanged);
+            this.PLU.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.PLU_KeyPress);
             // 
             // Desc
             // 

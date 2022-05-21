@@ -14,6 +14,7 @@ namespace Demo
     public partial class AddProd : Form
     {
         string connString = Utils.getConfig();
+        bool changed = false;
         public AddProd()
         {
             InitializeComponent();
@@ -27,46 +28,86 @@ namespace Demo
 
         private void button1_Click(object sender, EventArgs e)
         {
-
-            MySqlConnection cnn = new MySqlConnection();
-            cnn.ConnectionString= connString;
-            int allFra = 0;
-            try
+            if (changed)
             {
-                cnn.Open();
+                MySqlConnection cnn = new MySqlConnection();
+                cnn.ConnectionString = connString;
                 MySqlCommand cmd = new MySqlCommand();
-                //cmd.CommandText = "INSERT INTO product VALUES(" + PLU.Text + "," + Desc.Text + ","+ Price.Text + ","++")";
                 cmd.Connection = cnn;
-
-                //cmd.Prepare();
-                //cmd.Parameters.AddWithValue("@plu", PLU.Text);
-                //cmd.Parameters.AddWithValue("@desc", Desc.Text);
-                //cmd.Parameters.AddWithValue("@price", Price.Text);
-                if (checkBox1.Checked)
+                try
                 {
-                     allFra = 1;
+                    /*
+                     * Desc seems to be ambiguous so needs to be product.
+                     * 
+                     */
+                    cmd.CommandText = "Update product SET product.DESC='" + Desc.Text + "',price=" + Double.Parse(Price.Text) + ",allfra=" + checkBox1.Checked + "" +
+                    " where PLU='" + PLU.Text + "';";
+                    //Utils.log(cmd.CommandText); /* Breaks this due to ' */ 
+                    cnn.Open();
+                    cmd.ExecuteNonQuery();
+                    clear();
+                    MessageBox.Show("Updated Product");
+                    Utils.log("updated product " + PLU.Text);
+                    changed = false;
                 }
-
-
-
-                cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Double.Parse(Price.Text) + ","+allFra+")";
-                Console.WriteLine(cmd.CommandText);
-                
-                cmd.ExecuteNonQuery();
-                MessageBox.Show("Products Added");
-                clear();
-
-
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An Error occurred \n " + ex.Message, "Oops");
+                }
+                finally
+                {
+                    cnn.Close();
+                }
+                return;
             }
-            catch (Exception ex)
+            Product p=Utils.search(PLU.Text);
+            if (p == null)
             {
-                MessageBox.Show(ex.ToString());
-            }
-            finally
-            {
-                cnn.Close();
-            }
+                MySqlConnection cnn = new MySqlConnection();
+                cnn.ConnectionString = connString;
+                int allFra = 0;
+                try
+                {
+                    cnn.Open();
+                    MySqlCommand cmd = new MySqlCommand();
+                    //cmd.CommandText = "INSERT INTO product VALUES(" + PLU.Text + "," + Desc.Text + ","+ Price.Text + ","++")";
+                    cmd.Connection = cnn;
 
+                    //cmd.Prepare();
+                    //cmd.Parameters.AddWithValue("@plu", PLU.Text);
+                    //cmd.Parameters.AddWithValue("@desc", Desc.Text);
+                    //cmd.Parameters.AddWithValue("@price", Price.Text);
+                    if (checkBox1.Checked)
+                    {
+                        allFra = 1;
+                    }
+                    cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Double.Parse(Price.Text) + "," + allFra + ")";
+                    //Utils.log(cmd.CommandText);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Products Added");
+                    Utils.log("Product added : " + PLU.Text);
+                    clear();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+                finally
+                {
+                    cnn.Close();
+                }
+            }
+            else
+            {
+                //MessageBox.Show("Product exists, recalling");
+                Utils.log("Product exists, recalling");
+                PLU.Text = p.PLU;
+                Desc.Text = p.desc;
+                Price.Text = p.price.ToString();
+                checkBox1.Checked= p.allowFra ? true : false;
+                changed = true;
+                PLU.Enabled = false;
+            }
         }
 
         private void PLU_TextChanged(object sender, EventArgs e)
@@ -80,9 +121,18 @@ namespace Demo
             Desc.Text = "";
             Price.Text = "";
             checkBox1.Checked = false;
+            PLU.Enabled = true;
         }
         private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+        }
+
+        private void PLU_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(e.KeyChar == (char)13)
+            {
+                button1.PerformClick();
+            }
         }
     }
 }

@@ -160,7 +160,9 @@ namespace Demo
                 cnn.Close();
             }
         }
-
+        /*
+         * SQL stuff
+         */
         private static MySqlConnection initConn()
         {
             MySqlConnection cnn = new MySqlConnection();

@@ -66,7 +66,7 @@ namespace Demo
             {
                
                 Utils.recSale(c, total);
-                Console.WriteLine("Button Pay Now Pressed");
+                Utils.log("Button Pay Now Pressed");
 
                 bool paid = Payment.newPayment(total, c);
                 //this.Hide();
@@ -90,8 +90,12 @@ namespace Demo
 
 
         }
+        /*
+         * Need to refactor the below as currenlty does not allow voids. 
+         * 
+         */
 
-        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        private void textBox1_KeyUp(object sender, KeyEventArgs e) 
         {
             
             if (e.KeyCode == Keys.Enter)
@@ -108,10 +112,9 @@ namespace Demo
                 if (p != null)
                 {
                     c.AddProd(p);
+
                     //dataGridView1.DataSource = c.products;
                     //dataGridView1.Refresh();
-
-
 
                     label1.Text += "\n " + p.PLU;
                     label3.Text += "\n " + p.desc;
