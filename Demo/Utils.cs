@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using MySql.Data.MySqlClient;
+using MySql.Data.Types;
+using System.IO;
 
 namespace Demo
 {
@@ -90,6 +92,8 @@ namespace Demo
         }
         public static void recSale(Cart c, double total)
         {
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
+            //Console.WriteLine(date);
             MySqlConnection cnn = new MySqlConnection();
             cnn.ConnectionString = getConfig();
             try
@@ -98,7 +102,7 @@ namespace Demo
                 MySqlCommand cmd = new MySqlCommand();
 
                 cmd.Connection = cnn;
-                cmd.CommandText = "INSERT INTO sales VALUES(" + c.id + "," + total + ")";
+                cmd.CommandText = "INSERT INTO sales VALUES(" + c.id + "," + total + ",'"+ date+ "')";
                 Console.WriteLine(cmd.CommandText);
                 log("Writing to sales");
                 cmd.ExecuteNonQuery();
@@ -125,6 +129,7 @@ namespace Demo
         }
         public static void recPayment(string type,double amount,Cart c)
         {
+            string date = DateTime.Now.ToString("yyyy-MM-dd");
             MySqlConnection cnn = new MySqlConnection();
             cnn.ConnectionString = getConfig();
             MySqlCommand cmd = new MySqlCommand();
@@ -132,7 +137,7 @@ namespace Demo
             cnn.Open();
             try
             {
-                cmd.CommandText = "INSERT INTO tender VALUES('"+type+"'," + amount + ","+c.id+")";
+                cmd.CommandText = "INSERT INTO tender VALUES('"+type+"'," + amount + ","+c.id+ ",'" +date+ "')";
                 cmd.ExecuteNonQuery();
                 log("Writing to tender");
             }
@@ -160,6 +165,89 @@ namespace Demo
                 cnn.Close();
             }
         }
+       
+        public static List<string[]> getSales()
+        {
+            List<string[]> sales = new List<string[]>();
+            MySqlConnection cnn = new MySqlConnection();
+            cnn.ConnectionString = getConfig();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = cnn;
+            cnn.Open();
+            try
+            {
+               
+                cmd.CommandText = "Select * from sales";
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    string[] s= new string[100];
+                    for (int i= 0; i <= dr.FieldCount -1 ;i++)
+                    {
+                        s[i] = dr.GetValue(i).ToString();
+                    }
+                    sales.Add(s);
+                }
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return sales;
+        }
+        public static List<double> getSalesDouble()
+        {
+            List<double> sales = new List<double>();
+            MySqlConnection cnn = new MySqlConnection();
+            cnn.ConnectionString = getConfig();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = cnn;
+            cnn.Open();
+            try
+            {
+
+                cmd.CommandText = "Select * from sales order by Date desc  limit 5";
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    double s;
+                    s = (double)dr.GetFloat(1);
+                    sales.Add(s);
+                }
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return sales;
+        }
+        public static List<string> getSalesDates()
+        {
+            List<string> dates = new List<string>();
+            MySqlConnection cnn = new MySqlConnection();
+            cnn.ConnectionString = getConfig();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = cnn;
+            cnn.Open();
+            try
+            {
+
+                cmd.CommandText = "Select * from sales order by Date desc limit 5";
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    string s;
+                    s = dr.GetString(2);
+                    dates.Add(s);
+                }
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return dates;
+        }
+
         /*
          * SQL stuff
          */

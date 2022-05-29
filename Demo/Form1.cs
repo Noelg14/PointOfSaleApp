@@ -176,6 +176,11 @@ namespace Demo
             f = null;
             Utils.log("Back - enabling textbox");
         }
+
+        private void toolStripLabel1_Click_1(object sender, EventArgs e)
+        {
+            new frmManage().Show();
+        }
     }
 
     public class Product {
