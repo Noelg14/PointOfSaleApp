@@ -19,35 +19,15 @@ namespace Demo
         public frmManage()
         {
             InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
             initChart(getData(), getDates());
            
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
-            //StreamWriter f = File.AppendText("report.txt");
-           // List<double> salesData = Utils.getSalesDouble();
-            //List<string> salesDates = Utils.getSalesDates();
-            
-            /*
-           // foreach(string[] sales in salesData)
-           // {
-           //     foreach(string s in sales)
-           //     {
-           //         f.Write(s +",");
-           //     }
-           //     f.Write("\n");
-                
-           // }
-
-           // saveFileDialog1.AddExtension = true;
-           //// saveFileDialog1.Filter = "txt";
-           // saveFileDialog1.FileName = "report.txt";
-           // saveFileDialog1.ShowDialog();
-           // f.Close();*/
-            //initChart(salesData,salesDates);
-
+            clearChart();
+            initChart(getData(), getDates());
         }
         private void initChart(List<double> sales,List<string> dates)
         {
@@ -114,6 +94,14 @@ namespace Demo
         private List<double> getData()
         {
             return Utils.getSalesDouble();
+        }
+
+        private void clearChart()
+        {
+            this.cartesianChart1.Series.Clear();
+            this.cartesianChart1.AxisX.Clear();
+            this.cartesianChart1.AxisY.Clear();
+            
         }
     }
 }

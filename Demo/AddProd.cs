@@ -42,7 +42,7 @@ namespace Demo
                      */
                     cmd.CommandText = "Update product SET product.DESC='" + Desc.Text + "',price=" + Double.Parse(Price.Text) + ",allfra=" + checkBox1.Checked + "" +
                     " where PLU='" + PLU.Text + "';";
-                    //Utils.log(cmd.CommandText); /* Breaks this due to ' */ 
+
                     cnn.Open();
                     cmd.ExecuteNonQuery();
                     clear();
@@ -63,6 +63,11 @@ namespace Demo
             Product p=Utils.search(PLU.Text);
             if (p == null)
             {
+                if (!textChanged())
+                {
+                    this.PLU.Enabled = false;
+                    return;
+                }
                 MySqlConnection cnn = new MySqlConnection();
                 cnn.ConnectionString = connString;
                 int allFra = 0;
@@ -82,7 +87,6 @@ namespace Demo
                         allFra = 1;
                     }
                     cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Double.Parse(Price.Text) + "," + allFra + ")";
-                    //Utils.log(cmd.CommandText);
                     cmd.ExecuteNonQuery();
                     MessageBox.Show("Products Added");
                     Utils.log("Product added : " + PLU.Text);
@@ -99,7 +103,6 @@ namespace Demo
             }
             else
             {
-                //MessageBox.Show("Product exists, recalling");
                 Utils.log("Product exists, recalling");
                 PLU.Text = p.PLU;
                 Desc.Text = p.desc;
@@ -133,6 +136,14 @@ namespace Demo
             {
                 button1.PerformClick();
             }
+        }
+        private bool textChanged()
+        {
+            if(this.Price.Text == "" || this.Desc.Text == "")
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

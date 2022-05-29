@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS 'product' (
 CREATE TABLE IF NOT EXISTS 'salelines' (
   'PLU' varchar(50) NOT NULL,
   'Value' double DEFAULT NULL,
-  'CartID' bigint DEFAULT NULL
+  'CartID' bigint DEFAULT NULL,
+  'Date' date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
@@ -49,7 +50,8 @@ CREATE TABLE IF NOT EXISTS 'salelines' (
 -- Dumping structure for table demo.sales
 CREATE TABLE IF NOT EXISTS 'sales' (
   'CartID' bigint NOT NULL,
-  'value' double NOT NULL
+  'value' double NOT NULL,
+  'Date' date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
@@ -58,7 +60,8 @@ CREATE TABLE IF NOT EXISTS 'sales' (
 CREATE TABLE IF NOT EXISTS 'tender' (
   'Type' varchar(50) DEFAULT NULL,
   'Value' double DEFAULT NULL,
-  'CartId' bigint DEFAULT NULL
+  'CartId' bigint DEFAULT NULL,
+    'Date' date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
