@@ -55,7 +55,7 @@ namespace Demo
 
         private void toolStripLabel1_Click(object sender, EventArgs e)
         {
-
+            new AddProd().Show();
         }
 
         private void button1_Click_1(object sender, EventArgs e)

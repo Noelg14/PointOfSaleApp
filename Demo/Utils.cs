@@ -247,6 +247,30 @@ namespace Demo
             return dates;
         }
 
+         public static List<Product> getProductData()
+        {
+            List<Product> dates = new List<Product>();
+            MySqlConnection cnn = new MySqlConnection();
+            cnn.ConnectionString = getConfig();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = cnn;
+
+            try
+            {
+                cnn.Open();
+                cmd.CommandText = "Select Date from sales group by Date order by Date desc limit 5";
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+
+                }
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return dates;
+        }
         /*
          * SQL stuff
          */

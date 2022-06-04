@@ -28,6 +28,10 @@ namespace Demo
         // below is messy, may look at tidying up but does for now
         private void button1_Click(object sender, EventArgs e)
         {
+            if (PLU.Text == "")
+            {
+                return;
+            }
             if (changed)
             {
                 MySqlConnection cnn = new MySqlConnection();
@@ -115,7 +119,7 @@ namespace Demo
 
         private void PLU_TextChanged(object sender, EventArgs e)
         {
-
+            button2.Text = "Clear";
         }
 
         private void clear()
@@ -144,6 +148,18 @@ namespace Demo
                 return false;
             }
             return true;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        { 
+            if (!textChanged() && PLU.Text=="")
+            {
+                this.Dispose();
+                return;
+            }
+            clear();
+            button2.Text = "Back";
+
         }
     }
 }

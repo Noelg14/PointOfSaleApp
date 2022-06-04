@@ -103,5 +103,11 @@ namespace Demo
             this.cartesianChart1.AxisY.Clear();
             
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            clearChart();
+
+        }
     }
 }
