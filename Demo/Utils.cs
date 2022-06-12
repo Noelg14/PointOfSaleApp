@@ -31,10 +31,10 @@ namespace Demo
             }
             if (!File.Exists(file))
             {
-                throw new Exception("File does not exist, please ensure file poscfg exists");
+                throw new Exception("File does not exist, please ensure file config exists");
             }
             string[] conf = File.ReadAllLines(file);
-            for (int i = 0; i < conf.Length; i++)
+            for (int i = 0; i < conf.Length; i++) // could be a switch, will look at
             {
                 if (conf[i].StartsWith("SERVER"))
                 {
@@ -68,7 +68,7 @@ namespace Demo
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = cnn;
             cmd.CommandText = "SELECT * FROM PRODUCT WHERE PLU = '" + PLU + "' LIMIT 1";
-            log("Searching for PLU"+PLU);
+            log("Searching for PLU "+PLU);
             try
             {
                 MySqlDataReader dr = cmd.ExecuteReader();
@@ -80,7 +80,7 @@ namespace Demo
                 }
                 else
                 {
-                    return product;
+                    return product; 
                 }
             }
             finally
@@ -165,7 +165,6 @@ namespace Demo
                 cnn.Close();
             }
         }
-       
         public static List<string[]> getSales()
         {
             List<string[]> sales = new List<string[]>();
@@ -206,12 +205,12 @@ namespace Demo
             try
             {
 
-                cmd.CommandText = "Select * from sales order by Date desc  limit 5";
+                cmd.CommandText = "SELECT SUM(VALUE) AS 'Sales' FROM sales GROUP BY DATE ORDER BY DATE desc";
                 MySqlDataReader dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
                     double s;
-                    s = (double)dr.GetFloat(1);
+                    s = (double)dr.GetFloat("Sales");
                     sales.Add(s);
                 }
             }
@@ -232,12 +231,12 @@ namespace Demo
             try
             {
 
-                cmd.CommandText = "Select * from sales order by Date desc limit 5";
+                cmd.CommandText = "Select Date from sales group by Date order by Date desc limit 5";
                 MySqlDataReader dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
                     string s;
-                    s = dr.GetString(2);
+                    s = dr.GetString("Date");
                     dates.Add(s);
                 }
             }
@@ -247,6 +246,91 @@ namespace Demo
             }
             return dates;
         }
+
+         public static List<Product> getProductData()
+        {
+            List<Product> dates = new List<Product>();
+            MySqlConnection cnn = new MySqlConnection();
+            cnn.ConnectionString = getConfig();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = cnn;
+
+            try
+            {
+                cnn.Open();
+                cmd.CommandText = "Select Date from sales group by Date order by Date desc limit 5";
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+
+                }
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return dates;
+        }
+
+            //Settings
+        public static Dictionary<string,string> getSettings()
+        {
+            Dictionary<string, string> kv = new Dictionary<string, string>();
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+            cmd.Connection = cnn;
+            cmd.CommandText = "Select * from settings";
+            cnn.Open();
+            try
+            {
+             
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    kv.Add(dr.GetString("setting"), dr.GetString("data"));
+                }
+                return kv;
+            }
+            catch(Exception ex)
+            {
+                log(ex.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return null;
+        }
+        public static void updateSettings(string name,string data)
+        {
+         
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+            cmd.Connection= cnn;
+            cnn.Open();
+            cmd.Prepare();
+            cmd.CommandText = "update settings set data=@data where setting=@name";
+            cmd.Parameters.AddWithValue("@data", data.ToString());
+            cmd.Parameters.AddWithValue("@name", name.ToString());
+
+            try
+            {
+               
+                cmd.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                log(ex.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+        }
+
+
 
         /*
          * SQL stuff
@@ -262,7 +346,6 @@ namespace Demo
 
             MySqlCommand cmd = new MySqlCommand();
             return cmd;
-        }
-    
+        }         
     }
 }

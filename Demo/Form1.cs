@@ -1,6 +1,8 @@
 using MySql.Data.MySqlClient;
 using System.Timers;
-
+using System.Windows.Forms.Integration; //Not so Given.
+using System; //Given 
+using System.Windows.Forms; //Given
 
 namespace Demo
 {
@@ -55,7 +57,7 @@ namespace Demo
 
         private void toolStripLabel1_Click(object sender, EventArgs e)
         {
-
+            new AddProd().Show();
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -180,6 +182,21 @@ namespace Demo
         private void toolStripLabel1_Click_1(object sender, EventArgs e)
         {
             new frmManage().Show();
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            //panel1.Height = panel1.ClientSize.Height - 100;
+        }
+
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void toolStripLabel2_Click(object sender, EventArgs e)
+        {
+            new Demo.settings().Show();
         }
     }
 

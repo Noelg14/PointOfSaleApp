@@ -38,11 +38,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.Product = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.Settings = new System.Windows.Forms.ToolStripLabel();
             this.productBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.productBindingSource)).BeginInit();
@@ -127,12 +128,14 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Product,
-            this.toolStripLabel1});
+            this.toolStripLabel1,
+            this.Settings});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(716, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
+            this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
             // 
             // Product
             // 
@@ -140,6 +143,20 @@
             this.Product.Size = new System.Drawing.Size(49, 22);
             this.Product.Text = "Product";
             this.Product.Click += new System.EventHandler(this.toolStripLabel1_Click);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(47, 22);
+            this.toolStripLabel1.Text = "Reports";
+            this.toolStripLabel1.Click += new System.EventHandler(this.toolStripLabel1_Click_1);
+            // 
+            // Settings
+            // 
+            this.Settings.Name = "Settings";
+            this.Settings.Size = new System.Drawing.Size(49, 22);
+            this.Settings.Text = "Settings";
+            this.Settings.Click += new System.EventHandler(this.toolStripLabel2_Click);
             // 
             // productBindingSource
             // 
@@ -181,13 +198,6 @@
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(47, 22);
-            this.toolStripLabel1.Text = "Reports";
-            this.toolStripLabel1.Click += new System.EventHandler(this.toolStripLabel1_Click_1);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -204,6 +214,7 @@
             this.Name = "Form1";
             this.Text = "Register";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
@@ -230,5 +241,6 @@
         private BindingSource productBindingSource;
         private Panel panel2;
         private ToolStripLabel toolStripLabel1;
+        private ToolStripLabel Settings;
     }
 }
