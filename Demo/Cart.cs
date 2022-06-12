@@ -13,11 +13,11 @@ namespace Demo
         public Cart(List<Product> prods)
         {
             this.products = prods;
-            this.id = DateTime.UnixEpoch.Ticks;
+            this.id = DateTime.Now.Ticks;
         }
         public Cart()
         {
-            this.id = DateTime.UnixEpoch.Ticks;
+            this.id = DateTime.Now.Ticks;
         }
 
         public void AddProd(Product p)

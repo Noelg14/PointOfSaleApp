@@ -271,6 +271,67 @@ namespace Demo
             }
             return dates;
         }
+
+            //Settings
+        public static Dictionary<string,string> getSettings()
+        {
+            Dictionary<string, string> kv = new Dictionary<string, string>();
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+            cmd.Connection = cnn;
+            cmd.CommandText = "Select * from settings";
+            cnn.Open();
+            try
+            {
+             
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    kv.Add(dr.GetString("setting"), dr.GetString("data"));
+                }
+                return kv;
+            }
+            catch(Exception ex)
+            {
+                log(ex.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return null;
+        }
+        public static void updateSettings(string name,string data)
+        {
+         
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+            cmd.Connection= cnn;
+            cnn.Open();
+            cmd.Prepare();
+            cmd.CommandText = "update settings set data=@data where setting=@name";
+            cmd.Parameters.AddWithValue("@data", data.ToString());
+            cmd.Parameters.AddWithValue("@name", name.ToString());
+
+            try
+            {
+               
+                cmd.ExecuteNonQuery();
+
+            }
+            catch (Exception ex)
+            {
+                log(ex.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+        }
+
+
+
         /*
          * SQL stuff
          */
@@ -285,7 +346,6 @@ namespace Demo
 
             MySqlCommand cmd = new MySqlCommand();
             return cmd;
-        }
-    
+        }         
     }
 }
