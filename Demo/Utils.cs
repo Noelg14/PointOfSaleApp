@@ -7,6 +7,7 @@ using System.Diagnostics;
 using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using System.IO;
+using QRCoder;
 
 namespace Demo
 {
@@ -247,7 +248,7 @@ namespace Demo
             return dates;
         }
 
-         public static List<Product> getProductData()
+        public static List<Product> getProductData()
         {
             List<Product> dates = new List<Product>();
             MySqlConnection cnn = new MySqlConnection();
@@ -272,7 +273,7 @@ namespace Demo
             return dates;
         }
 
-            //Settings
+        //Settings
         public static Dictionary<string,string> getSettings()
         {
             Dictionary<string, string> kv = new Dictionary<string, string>();
@@ -330,7 +331,15 @@ namespace Demo
             }
         }
 
+        public static Bitmap genQR(string data)
+        {
 
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+            Bitmap qrCodeAsBitmap = qrCode.GetGraphic(5);
+            return qrCodeAsBitmap;
+        }
 
         /*
          * SQL stuff
