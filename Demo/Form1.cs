@@ -8,7 +8,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.3.0";
+        public readonly string version = "0.4.0";
         double total=0;
         Cart c = new Cart();
         bool paid;
@@ -16,6 +16,7 @@ namespace Demo
 
         public Form1()
         { 
+
             InitializeComponent();
             Rectangle r = Screen.FromControl(this).Bounds;
             button1.Left = (r.Width - (r.Width)/4);
@@ -27,7 +28,7 @@ namespace Demo
             textBox1.Width=panel1.Width;
             label5.Text = "€ " + total;
             Utils.log("Init Form1");
-            this.Name += " Version : " + version;
+            this.Text += " Version : " + version;
             thisForm = this;
 
         }

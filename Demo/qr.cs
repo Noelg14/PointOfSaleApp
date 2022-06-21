@@ -40,7 +40,7 @@ namespace Demo
                     Stream fs = (System.IO.FileStream)saveFileDialog.OpenFile();
                     this.pictureBox1.Image.Save(fs,System.Drawing.Imaging.ImageFormat.Jpeg);
                     fs.Close();
-                    MessageBox.Show("Saved");
+                    MessageBox.Show("Saved Image to : "+saveFileDialog.FileName, "SAVED");
                 }
                 this.Dispose();
 
