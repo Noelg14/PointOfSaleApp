@@ -36,9 +36,12 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(195, 97);
+            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.Location = new System.Drawing.Point(289, 86);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(317, 254);
+            this.pictureBox1.Size = new System.Drawing.Size(151, 86);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -46,7 +49,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(289, 34);
+            this.label1.Location = new System.Drawing.Point(289, 29);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(118, 30);
             this.label1.TabIndex = 1;
@@ -58,7 +61,7 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.button1.ForeColor = System.Drawing.Color.SteelBlue;
-            this.button1.Location = new System.Drawing.Point(289, 373);
+            this.button1.Location = new System.Drawing.Point(289, 367);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(169, 55);
             this.button1.TabIndex = 2;

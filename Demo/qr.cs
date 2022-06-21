@@ -15,6 +15,7 @@ namespace Demo
         public qr(Bitmap qr)
         {
             InitializeComponent();
+            pictureBox1.Size = qr.Size;
             pictureBox1.Image = qr;
         }
 
