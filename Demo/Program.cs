@@ -15,12 +15,22 @@ namespace Demo
                 ApplicationConfiguration.Initialize();
                 if (args.Length != 0)
                 {
-                    if (args[0].Equals("test"))
-                    {
-                        Utils.log("Running test param");
-                        Application.Run(new frmManage());
-
+                    switch (args[0]) {
+                        case ("test"):
+                            Utils.log("Running test param");
+                            Application.Run(new frmManage());
+                            break;
+                        case ("qr"):
+                            Utils.log("Running param"+args[0]);
+                            Application.Run(new qr(Utils.genQR("https://noelgriffin.ie")));
+                            break;
+                        default:
+                            Utils.log("Running param "+args[0]);
+                            Application.Run(new Form1());
+                            break;
                     }
+
+
                 }
                 else
                 {

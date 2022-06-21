@@ -32,6 +32,7 @@ namespace Demo
             this.paid = true;
             sendNotif();
             this.Dispose();
+            showQR(cart);
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -55,12 +56,12 @@ namespace Demo
         {
             return paid;
         }
-
         private void button4_Click(object sender, EventArgs e)
         {
             Form1.notifyBack();
             //Form1.notify();
             this.Dispose();
+         
         }
 
         public static bool newPayment(Double toPay,Cart c)
@@ -73,6 +74,15 @@ namespace Demo
         private static void sendNotif()
         {
             Form1.notify();
+        }
+
+        private void Payment_FormClosed(object sender, FormClosedEventArgs e)
+        {
+        }
+
+        private void showQR(Cart c)
+        {
+            new qr(Utils.genQR(c.id.ToString())).Show();
         }
     }
 }

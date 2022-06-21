@@ -117,6 +117,7 @@
             this.Controls.Add(this.button1);
             this.Name = "Payment";
             this.Text = "Payment";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Payment_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

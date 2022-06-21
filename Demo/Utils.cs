@@ -7,6 +7,7 @@ using System.Diagnostics;
 using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using System.IO;
+using QRCoder;
 
 namespace Demo
 {
@@ -247,7 +248,7 @@ namespace Demo
             return dates;
         }
 
-         public static List<Product> getProductData()
+        public static List<Product> getProductData()
         {
             List<Product> dates = new List<Product>();
             MySqlConnection cnn = new MySqlConnection();
@@ -272,7 +273,7 @@ namespace Demo
             return dates;
         }
 
-            //Settings
+        //Settings
         public static Dictionary<string,string> getSettings()
         {
             Dictionary<string, string> kv = new Dictionary<string, string>();
@@ -330,7 +331,43 @@ namespace Demo
             }
         }
 
+        public static string getIndiviudalSetting(string key)
+        {
 
+            MySqlCommand cmd = initCmd();
+            MySqlConnection cnn = cmd.Connection;
+            string data;
+            try
+            {
+                cnn.Open();
+                cmd.Prepare();
+                cmd.CommandText = "select * from settings where setting = @key";
+                cmd.Parameters.AddWithValue("@key", key.ToString());
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    data = dr.GetString("data");
+                    return data;
+                }
+                return null;
+
+            }
+            finally
+            {
+                cnn.Close();
+            }
+
+        }
+        public static Bitmap genQR(string data)
+        {
+            string qrData = getIndiviudalSetting("url") +"?data="+ data;
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrData, QRCodeGenerator.ECCLevel.Q);
+            QRCode qrCode = new QRCode(qrCodeData);
+            Bitmap qrCodeAsBitmap = qrCode.GetGraphic(5);
+            return qrCodeAsBitmap;
+        }
 
         /*
          * SQL stuff
@@ -345,6 +382,7 @@ namespace Demo
         {
 
             MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection=initConn();
             return cmd;
         }         
     }

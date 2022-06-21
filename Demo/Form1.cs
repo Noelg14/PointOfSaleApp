@@ -8,6 +8,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
+        public readonly string version = "0.3.0";
         double total=0;
         Cart c = new Cart();
         bool paid;
@@ -26,6 +27,7 @@ namespace Demo
             textBox1.Width=panel1.Width;
             label5.Text = "€ " + total;
             Utils.log("Init Form1");
+            this.Name += " Version : " + version;
             thisForm = this;
 
         }
