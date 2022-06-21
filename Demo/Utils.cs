@@ -309,15 +309,14 @@ namespace Demo
             MySqlConnection cnn = initConn();
             MySqlCommand cmd = initCmd();
             cmd.Connection= cnn;
-            cnn.Open();
-            cmd.Prepare();
-            cmd.CommandText = "update settings set data=@data where setting=@name";
-            cmd.Parameters.AddWithValue("@data", data.ToString());
-            cmd.Parameters.AddWithValue("@name", name.ToString());
-
             try
             {
-               
+                cnn.Open();
+                cmd.Prepare();
+                cmd.CommandText = "update settings set data=@data where setting=@name";
+                cmd.Parameters.AddWithValue("@data", data.ToString());
+                cmd.Parameters.AddWithValue("@name", name.ToString());
+
                 cmd.ExecuteNonQuery();
 
             }
@@ -359,11 +358,13 @@ namespace Demo
             }
 
         }
+        
+        // QR Code Stuff
         public static Bitmap genQR(string data)
         {
             string qrData = getIndiviudalSetting("url") +"?data="+ data;
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrData, QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrData, QRCodeGenerator.ECCLevel.H );
             QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeAsBitmap = qrCode.GetGraphic(5);
             return qrCodeAsBitmap;
