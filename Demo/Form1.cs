@@ -8,7 +8,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.3.0";
+        public readonly string version = "0.4.0";
         double total=0;
         Cart c = new Cart();
         bool paid;
@@ -16,6 +16,7 @@ namespace Demo
 
         public Form1()
         { 
+
             InitializeComponent();
             Rectangle r = Screen.FromControl(this).Bounds;
             button1.Left = (r.Width - (r.Width)/4);
@@ -27,8 +28,16 @@ namespace Demo
             textBox1.Width=panel1.Width;
             label5.Text = "€ " + total;
             Utils.log("Init Form1");
-            this.Name += " Version : " + version;
+            this.Text += " Version : " + version;
             thisForm = this;
+
+
+            //Utils.ClosedXMLTest();
+
+            //dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Navy;
+            //dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            //dataGridView1.ColumnHeadersDefaultCellStyle.Font =
+            //     new Font(dataGridView1.Font, FontStyle.Bold);
 
         }
         //public Form1(Cart c)
@@ -100,14 +109,9 @@ namespace Demo
             
             if (e.KeyCode == Keys.Enter)
             {
-                
-                if (textBox1.Text == "ADMIN")
-                {
 
-                    new AddProd().Show();
-                    //AddProd a = new AddProd();
-                    //a.Show();
-                    //textBox1.Enabled = false;
+                if(textBox1.Text == "")
+                {
                     return;
                 }
                 Product p = Utils.search(textBox1.Text.ToString());
@@ -118,6 +122,10 @@ namespace Demo
                     //dataGridView1.DataSource = c.products;
                     //dataGridView1.Refresh();
 
+                    //string[] row = { p.PLU, p.desc, p.price.ToString(), "" };
+
+                    //dataGridView1.Rows.Add(row);
+
                     label1.Text += "\n " + p.PLU;
                     label3.Text += "\n " + p.desc;
                     label2.Text += "\n €" + p.price;
@@ -125,7 +133,7 @@ namespace Demo
                     label5.Text = "€ " + total;
 
                     textBox1.Focus();
-                    textBox1.SelectAll();
+                    textBox1.Text="";
 
                 }
                 if (p is null)
@@ -199,6 +207,11 @@ namespace Demo
         private void toolStripLabel2_Click(object sender, EventArgs e)
         {
             new Demo.settings().Show();
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 

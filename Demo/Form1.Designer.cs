@@ -44,6 +44,9 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
+            this.PLU = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Price = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.productBindingSource)).BeginInit();
@@ -198,6 +201,24 @@
             this.button2.UseVisualStyleBackColor = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // PLU
+            // 
+            this.PLU.HeaderText = "PLU";
+            this.PLU.Name = "PLU";
+            this.PLU.ReadOnly = true;
+            // 
+            // Description
+            // 
+            this.Description.HeaderText = "Description";
+            this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
+            // 
+            // Price
+            // 
+            this.Price.HeaderText = "Price";
+            this.Price.Name = "Price";
+            this.Price.ReadOnly = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -242,5 +263,8 @@
         private Panel panel2;
         private ToolStripLabel toolStripLabel1;
         private ToolStripLabel Settings;
+        private DataGridViewTextBoxColumn PLU;
+        private DataGridViewTextBoxColumn Description;
+        private DataGridViewTextBoxColumn Price;
     }
 }

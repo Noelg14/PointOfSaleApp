@@ -8,6 +8,8 @@ namespace Demo
         [STAThread]
         static void Main(string[] args)
         {
+            //Application.EnableVisualStyles();
+      
             try
             {
                 // To customize application configuration such as set high DPI settings or default font,
@@ -23,6 +25,10 @@ namespace Demo
                         case ("qr"):
                             Utils.log("Running param"+args[0]);
                             Application.Run(new qr(Utils.genQR("https://noelgriffin.ie")));
+                            break;
+                        case ("manage"):
+                            Utils.log("Running param" + args[0]);
+                            Application.Run(new frmManage());
                             break;
                         default:
                             Utils.log("Running param "+args[0]);

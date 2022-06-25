@@ -38,6 +38,11 @@ namespace Demo
                 cnn.ConnectionString = connString;
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = cnn;
+
+                if (Desc.Text.Equals("") || Price.Text.Equals(""))
+                {
+                    return;
+                }
                 try
                 {
                     /*
@@ -129,6 +134,7 @@ namespace Demo
             Price.Text = "";
             checkBox1.Checked = false;
             PLU.Enabled = true;
+            this.changed = false;
         }
         private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
