@@ -234,7 +234,7 @@ namespace Demo
             try
             {
 
-                cmd.CommandText = "Select Date from sales group by Date order by Date desc limit 5";
+                cmd.CommandText = "Select Date from sales group by Date order by Date desc";
                 MySqlDataReader dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
@@ -402,27 +402,118 @@ namespace Demo
         //    book.SaveAs(fileName + ".xlsx");
 
         //}
-        public static void ExcelExport<T>(List<T> sales)
+        public static void ExcelExport<T>(List<T> data,string optionalType="Sales")
         {
             string fileName = "Report1";
             if (File.Exists(fileName + ".xlsx"))
             {
-                File.Delete(fileName + ".xlsx");
+                try
+                {
+                    File.Delete(fileName + ".xlsx");
+                }
+                catch (Exception e)
+                {
+                    log("Error ocurred when deleting file");
+                    MessageBox.Show(e.Message, "File in use, Please close and Try Again");
+                    return;
+                }
+
             }
 
 
             XLWorkbook book = new XLWorkbook();
             var ws = book.Worksheets.Add("Sheet1");
-            ws.Cell("A1").Value = "SALES";
-            int i = 1;
-            foreach (T value in sales)
+            ws.Row(1).Style.Fill.SetBackgroundColor(XLColor.SteelBlue);
+            ws.Cell("A1").RichText.SetFontColor(XLColor.White);
+
+            ws.Cell("A1").Value =optionalType;
+            int i = 2;
+            foreach (T value in data)
             {
                 ws.Cell(i, 1).Value=value;
                 i++;
             }
 
-            // Header
-            book.SaveAs(fileName + ".xlsx");
+            SaveFileDialog s = new SaveFileDialog();
+            s.FileName = fileName + ".xlsx";
+            s.InitialDirectory = Directory.GetCurrentDirectory();
+            s.Filter = "Excel Files (*.xlsx,*.xls)|*.xls;*.xlsx";
+
+            if (s.ShowDialog() == DialogResult.OK)
+            {
+                string file = s.FileName;
+                if(!file.Contains(".xls"))
+                {
+                    file += ".xlsx";
+                }
+                book.SaveAs(file);
+            }
+
+           // book.SaveAs(fileName + ".xlsx");
+
+        }
+
+        public static void ExcelExport<T,E>(List<T> maindata,List<E> otherData,string optionalMain ="Date",string optionalOther ="Sale Value")
+        {
+            string fileName = "Report1";
+
+            if (File.Exists(fileName + ".xlsx"))
+            {
+                try
+                {
+                    File.Delete(fileName + ".xlsx");
+                }catch(Exception e)
+                {
+                    log("Error ocurred when deleting file");
+                    MessageBox.Show(e.Message, "File in use, Please close and Try Again");
+                    return;
+                }
+
+            }
+
+
+            XLWorkbook book = new XLWorkbook();
+            var ws = book.Worksheets.Add("Sheet1");
+
+            var header = ws.Range("A1:B1");
+
+
+            header.Style.Fill.SetBackgroundColor(XLColor.SteelBlue);
+
+            ws.Cell("A1").Value = optionalMain;
+            ws.Cell("B1").Value = optionalOther;
+
+            ws.Cell("A1").RichText.SetFontColor(XLColor.White);
+            ws.Cell("B1").RichText.SetFontColor(XLColor.White);
+
+            ws.Column(1).Width = 10;
+            ws.Column(2).Style.NumberFormat.Format= "€ #,##0.00";
+            ws.Column(2).Width=10;
+
+            int i = 2;
+            foreach (T value in maindata)
+            {
+                ws.Cell(i, 1).Value = value;
+                ws.Cell(i, 2).Value = otherData[maindata.IndexOf(value)];
+                i++;
+            }
+
+            SaveFileDialog s = new SaveFileDialog();
+            s.FileName = fileName + ".xlsx";
+            s.InitialDirectory = Directory.GetCurrentDirectory();
+            s.Filter = "Excel Files (*.xlsx,*.xls)|*.xls;*.xlsx";
+
+            if (s.ShowDialog() == DialogResult.OK)
+            {
+                string file = s.FileName;
+                if (!file.Contains(".xls"))
+                {
+                    file += ".xlsx";
+                }
+                book.SaveAs(file);
+            }
+
+            // book.SaveAs(fileName + ".xlsx");
 
         }
 

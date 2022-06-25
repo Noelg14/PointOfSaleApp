@@ -22,14 +22,17 @@ namespace Demo
                             Utils.log("Running test param");
                             Application.Run(new frmManage());
                             break;
+
                         case ("qr"):
                             Utils.log("Running param"+args[0]);
                             Application.Run(new qr(Utils.genQR("https://noelgriffin.ie")));
                             break;
+
                         case ("manage"):
                             Utils.log("Running param" + args[0]);
                             Application.Run(new frmManage());
                             break;
+
                         default:
                             Utils.log("Running param "+args[0]);
                             Application.Run(new Form1());
