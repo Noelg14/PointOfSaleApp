@@ -8,6 +8,8 @@ using MySql.Data.MySqlClient;
 using MySql.Data.Types;
 using System.IO;
 using QRCoder;
+//using C1.C1Excel;
+using ClosedXML.Excel;
 
 namespace Demo
 {
@@ -368,6 +370,60 @@ namespace Demo
             QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeAsBitmap = qrCode.GetGraphic(5);
             return qrCodeAsBitmap;
+        }
+
+        //public static void ExcelTest()
+        //{
+        //    C1XLBook book = new C1XLBook();
+        //    book.Author = "Noel Griffin";
+        //    XLSheet sheet = book.Sheets[0];
+        //    int i;
+        //    for (i = 0; i <= 9; i++)
+        //    {
+        //        sheet[i, 0].Value = (i + 1) * 10;
+        //        sheet[i, 1].Value = (i + 1) * 100;
+        //        sheet[i, 2].Value = (i + 1) * 1000;
+        //    }
+        //    book.Save("MyBook.xlsx");
+        //}
+        
+        //public static void ClosedXMLTest()
+        //{
+        //    string fileName = "Report1";
+        //    if (File.Exists(fileName+".xlsx"))
+        //    {
+        //        File.Delete(fileName + ".xlsx");
+        //    }
+
+        //    XLWorkbook book = new XLWorkbook();
+        //    var ws = book.Worksheets.Add("Sheet1");
+        //    ws.Cell("A1").Value = "TEST";
+        //    ws.Cell("A2").Value = "Value";
+        //    book.SaveAs(fileName + ".xlsx");
+
+        //}
+        public static void ExcelExport<T>(List<T> sales)
+        {
+            string fileName = "Report1";
+            if (File.Exists(fileName + ".xlsx"))
+            {
+                File.Delete(fileName + ".xlsx");
+            }
+
+
+            XLWorkbook book = new XLWorkbook();
+            var ws = book.Worksheets.Add("Sheet1");
+            ws.Cell("A1").Value = "SALES";
+            int i = 1;
+            foreach (T value in sales)
+            {
+                ws.Cell(i, 1).Value=value;
+                i++;
+            }
+
+            // Header
+            book.SaveAs(fileName + ".xlsx");
+
         }
 
         /*

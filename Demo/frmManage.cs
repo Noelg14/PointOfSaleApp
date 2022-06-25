@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using LiveCharts;
 using LiveCharts.Wpf;
+using ClosedXML.Excel;
 
 
 namespace Demo
@@ -108,6 +109,28 @@ namespace Demo
         {
             clearChart();
 
+        }
+
+        private void Export_Click(object sender, EventArgs e)
+        {
+            Utils.ExcelExport(getData());
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var filePath = string.Empty;
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.Filter = "Excel Files (*.xlsx,*.xls)|*.xls;*.xlsx";
+            openFile.Title = "Open File";
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                //Get the path of specified file
+                filePath = openFile.FileName;
+                XLWorkbook xl = new XLWorkbook(filePath);
+                var Data = xl.Worksheet(1).Column(1).Cell(1).Value;
+                MessageBox.Show(Data.ToString());
+            }
+            
         }
     }
 }
