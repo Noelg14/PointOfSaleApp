@@ -8,7 +8,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.4.0";
+        public readonly string version = "0.5.0";
         double total=0;
         Cart c = new Cart();
         bool paid;

@@ -446,7 +446,9 @@ namespace Demo
                 {
                     file += ".xlsx";
                 }
+
                 book.SaveAs(file);
+                MessageBox.Show("Exported as " + file, "Export Sucessful");
             }
 
            // book.SaveAs(fileName + ".xlsx");
@@ -511,6 +513,7 @@ namespace Demo
                     file += ".xlsx";
                 }
                 book.SaveAs(file);
+                MessageBox.Show("Exported as " + file, "Export Sucessful");
             }
 
             // book.SaveAs(fileName + ".xlsx");

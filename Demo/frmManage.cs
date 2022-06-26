@@ -114,7 +114,7 @@ namespace Demo
         private void Export_Click(object sender, EventArgs e)
         {
             //Utils.ExcelExport(getData());
-            Utils.ExcelExport( getDates(), getData()) ;
+            Utils.ExcelExport( getDates(), getData());
 
 
 
