@@ -8,7 +8,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.5.0";
+        public readonly string version = "0.5.2";
         double total=0;
         Cart c = new Cart();
         bool paid;
@@ -30,6 +30,7 @@ namespace Demo
             Utils.log("Init Form1");
             this.Text += " Version : " + version;
             thisForm = this;
+            //dataGridView1.DataSource = c.products;
 
 
             //Utils.ClosedXMLTest();
@@ -118,10 +119,6 @@ namespace Demo
                 if (p != null)
                 {
                     c.AddProd(p);
-
-                    //dataGridView1.DataSource = c.products;
-                    //dataGridView1.Refresh();
-
                     //string[] row = { p.PLU, p.desc, p.price.ToString(), "" };
 
                     //dataGridView1.Rows.Add(row);
@@ -213,6 +210,7 @@ namespace Demo
         {
 
         }
+
     }
 
     public class Product {

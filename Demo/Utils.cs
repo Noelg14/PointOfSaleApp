@@ -62,6 +62,29 @@ namespace Demo
             }
             return conString = "server=" + server + ";database=" + catalog + ";uid=" + user + ";pwd=" + pw + ";";
         }
+        public static string getConfig(string config)
+        {
+            string file = //"C:\\test\\config.dat";
+            Directory.GetCurrentDirectory() + "/Localdata/config.dat";
+           
+            if (file == null)
+            {
+                throw new Exception("An error ocurred");
+            }
+            if (!File.Exists(file))
+            {
+                throw new Exception("File does not exist, please ensure file config exists");
+            }
+            string[] conf = File.ReadAllLines(file);
+            for (int i = 0; i < conf.Length; i++) // could be a switch, will look at
+            {
+                if (conf[i].StartsWith(config))
+                {
+                   return conf[i].Split('=')[1].Trim();
+                }
+            }
+            return null;
+        }
         public static Product search(string PLU)
         {
             Product product = null;
@@ -454,7 +477,8 @@ namespace Demo
            // book.SaveAs(fileName + ".xlsx");
 
         }
-
+        //generic sa can be used for double,double / string/string  
+        //wouldnt be ideal for like Cart.Products,double but can look at
         public static void ExcelExport<T,E>(List<T> maindata,List<E> otherData,string optionalMain ="Date",string optionalOther ="Sale Value")
         {
             string fileName = "Report1";
@@ -468,7 +492,8 @@ namespace Demo
                 {
                     log("Error ocurred when deleting file");
                     MessageBox.Show(e.Message, "File in use, Please close and Try Again");
-                    return;
+
+                    return ;
                 }
 
             }
@@ -492,12 +517,13 @@ namespace Demo
             ws.Column(2).Style.NumberFormat.Format= "€ #,##0.00";
             ws.Column(2).Width=10;
 
-            int i = 2;
+            int row = 2; 
+            //start at second row, Might be cleaner to do a .Skip(), will look at.
             foreach (T value in maindata)
             {
-                ws.Cell(i, 1).Value = value;
-                ws.Cell(i, 2).Value = otherData[maindata.IndexOf(value)];
-                i++;
+                ws.Cell(row, 1).Value = value;
+                ws.Cell(row, 2).Value = otherData[maindata.IndexOf(value)];
+                row++;
             }
 
             SaveFileDialog s = new SaveFileDialog();
@@ -507,13 +533,14 @@ namespace Demo
 
             if (s.ShowDialog() == DialogResult.OK)
             {
-                string file = s.FileName;
-                if (!file.Contains(".xls"))
+                fileName = s.FileName;
+                if (!fileName.Contains(".xls"))
                 {
-                    file += ".xlsx";
+                    fileName += ".xlsx";
                 }
-                book.SaveAs(file);
-                MessageBox.Show("Exported as " + file, "Export Sucessful");
+                book.SaveAs(fileName);
+                MessageBox.Show("Exported as " + fileName, "Export Sucessful");
+                
             }
 
             // book.SaveAs(fileName + ".xlsx");
