@@ -3,6 +3,7 @@ using System.Timers;
 using System.Windows.Forms.Integration; //Not so Given.
 using System; //Given 
 using System.Windows.Forms; //Given
+using System.Diagnostics;
 
 namespace Demo
 {
@@ -30,42 +31,13 @@ namespace Demo
             Utils.log("Init Form1");
             this.Text += " Version : " + version;
             thisForm = this;
-            //dataGridView1.DataSource = c.products;
 
-
-            //Utils.ClosedXMLTest();
-
-            //dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Navy;
-            //dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            //dataGridView1.ColumnHeadersDefaultCellStyle.Font =
-            //     new Font(dataGridView1.Font, FontStyle.Bold);
+            if (Debugger.IsAttached)
+            {
+                this.Text += " Debug Mode";
+            }
 
         }
-        //public Form1(Cart c)
-        //{
-        //    InitializeComponent();
-        //    Rectangle r = Screen.FromControl(this).Bounds;
-        //    button1.Left = (r.Width - (r.Width) / 4);
-        //    button1.Top = (r.Height - (r.Height) / 4);
-        //    button2.Left = (r.Width - (r.Width) / 4);
-        //    button2.Top = (r.Height - (r.Height) / 4) - 100;
-
-        //    panel1.Height = (r.Height - 200);
-        //    textBox1.Width = panel1.Width;
-        //    label5.Text = "€ " + total;
-        //    Utils.log("Init Form1 w/ Products");
-
-        //    foreach(Product p in c.products)
-        //    {
-
-        //        label1.Text += "\n " + p.PLU;
-        //        label3.Text += "\n " + p.desc;
-        //        label2.Text += "\n €" + p.price;
-        //        total = Math.Round(total += p.price, 2);
-        //        label5.Text = "€ " + total;
-        //    }
-
-        //}
 
         private void toolStripLabel1_Click(object sender, EventArgs e)
         {
@@ -81,17 +53,8 @@ namespace Demo
                 Utils.log("Button Pay Now Pressed");
 
                 bool paid = Payment.newPayment(total, c);
-                //this.Hide();
-                //if (paid)
-                //{
-                //    clear();
-                //}
+
                 this.textBox1.Enabled = false;
-                //this.Show();
-                //MessageBox.Show("Paid €" + total,"Paid");
-                //clear();
-                //this.Hide();
-                //return;
 
             }
             if (c.products.Count == 0)
@@ -193,7 +156,7 @@ namespace Demo
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            //panel1.Height = panel1.ClientSize.Height - 100;
+            
         }
 
         private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)

@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using MySql.Data.MySqlClient;
+using System.Data;
 using MySql.Data.Types;
 using System.IO;
 using QRCoder;
-//using C1.C1Excel;
 using ClosedXML.Excel;
+using System.Data.SqlClient;
 
 namespace Demo
 {
@@ -191,35 +188,6 @@ namespace Demo
                 cnn.Close();
             }
         }
-        public static List<string[]> getSales()
-        {
-            List<string[]> sales = new List<string[]>();
-            MySqlConnection cnn = new MySqlConnection();
-            cnn.ConnectionString = getConfig();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = cnn;
-            cnn.Open();
-            try
-            {
-               
-                cmd.CommandText = "Select * from sales";
-                MySqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
-                {
-                    string[] s= new string[100];
-                    for (int i= 0; i <= dr.FieldCount -1 ;i++)
-                    {
-                        s[i] = dr.GetValue(i).ToString();
-                    }
-                    sales.Add(s);
-                }
-            }
-            finally
-            {
-                cnn.Close();
-            }
-            return sales;
-        }
         public static List<double> getSalesDouble()
         {
             List<double> sales = new List<double>();
@@ -272,7 +240,6 @@ namespace Demo
             }
             return dates;
         }
-
         public static List<Product> getProductData()
         {
             List<Product> dates = new List<Product>();
@@ -297,7 +264,7 @@ namespace Demo
             }
             return dates;
         }
-
+        #region Settings
         //Settings
         public static Dictionary<string,string> getSettings()
         {
@@ -383,7 +350,8 @@ namespace Demo
             }
 
         }
-        
+
+        #endregion
         // QR Code Stuff
         public static Bitmap genQR(string data)
         {
@@ -394,7 +362,7 @@ namespace Demo
             Bitmap qrCodeAsBitmap = qrCode.GetGraphic(5);
             return qrCodeAsBitmap;
         }
-
+        #region Excel
         //public static void ExcelTest()
         //{
         //    C1XLBook book = new C1XLBook();
@@ -409,7 +377,7 @@ namespace Demo
         //    }
         //    book.Save("MyBook.xlsx");
         //}
-        
+
         //public static void ClosedXMLTest()
         //{
         //    string fileName = "Report1";
@@ -477,7 +445,7 @@ namespace Demo
            // book.SaveAs(fileName + ".xlsx");
 
         }
-        //generic sa can be used for double,double / string/string  
+        //generic as can be used for double,double / string/string  
         //wouldnt be ideal for like Cart.Products,double but can look at
         public static void ExcelExport<T,E>(List<T> maindata,List<E> otherData,string optionalMain ="Date",string optionalOther ="Sale Value")
         {
@@ -529,6 +497,7 @@ namespace Demo
             SaveFileDialog s = new SaveFileDialog();
             s.FileName = fileName + ".xlsx";
             s.InitialDirectory = Directory.GetCurrentDirectory();
+            s.DefaultExt = ".xlsx";
             s.Filter = "Excel Files (*.xlsx,*.xls)|*.xls;*.xlsx";
 
             if (s.ShowDialog() == DialogResult.OK)
@@ -540,16 +509,23 @@ namespace Demo
                 }
                 book.SaveAs(fileName);
                 MessageBox.Show("Exported as " + fileName, "Export Sucessful");
-                
+                string fileToOpen = fileName.Split(Directory.GetCurrentDirectory())[1].Substring(1);
+                //MessageBox.Show(fileName.Split(Directory.GetCurrentDirectory())[1].Substring(1));
+                //Process.Start(@fileName);
+                //Process.Start(fileToOpen);
+
+                //Process p = new Process();
+                //p.StartInfo.FileName = "excel";
+                //p.StartInfo.Arguments = fileToOpen;
+
             }
 
             // book.SaveAs(fileName + ".xlsx");
 
         }
+        #endregion
 
-        /*
-         * SQL stuff
-         */
+        #region SQL stuff
         private static MySqlConnection initConn()
         {
             MySqlConnection cnn = new MySqlConnection();
@@ -562,6 +538,9 @@ namespace Demo
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection=initConn();
             return cmd;
-        }         
+        }
+
+        #endregion
+
     }
 }
