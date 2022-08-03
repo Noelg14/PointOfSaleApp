@@ -15,6 +15,7 @@ namespace Demo
         double toPay { get; set; }
         Cart cart { get; set; }
         bool paid { get; set; } = false;
+        bool useQR = false;
 
         public Payment(double toPay,Cart c)
         {
@@ -22,34 +23,40 @@ namespace Demo
             label1.Text += " € " + toPay;
             this.toPay= toPay;
             this.cart = c;
+            string qr = Utils.getConfig("USEQR");
+            if (qr.Equals("Y"))
+            {
+                useQR = true;
+            }
 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Utils.recPayment(button1.Text, toPay, cart);
-            MessageBox.Show("Paid €" + toPay,"Paid");
-            this.paid = true;
-            sendNotif();
-            this.Dispose();
-            showQR(cart);
+            pay(button1.Text);
+
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Utils.recPayment(button3.Text, toPay, cart);
-            MessageBox.Show("Paid €" + toPay, "Paid");
-            this.paid = true;
-            sendNotif();
-            this.Dispose();
+            pay(button3.Text);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Utils.recPayment(button2.Text, toPay, cart);
+            pay(button2.Text);
+        }
+
+        private void pay(string text)
+        {
+            Utils.recPayment(text, toPay, cart);
             MessageBox.Show("Paid €" + toPay, "Paid");
             this.paid = true;
             sendNotif();
+            if (useQR)
+            {
+                showQR(cart);
+            }
             this.Dispose();
         }
         public bool isPaid()
@@ -78,6 +85,7 @@ namespace Demo
 
         private void Payment_FormClosed(object sender, FormClosedEventArgs e)
         {
+            Form1.notifyBack();
         }
 
         private void showQR(Cart c)

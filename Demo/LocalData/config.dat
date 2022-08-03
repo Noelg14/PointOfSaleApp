@@ -2,3 +2,5 @@
 DB=demo
 USER=noel
 PW=noel
+
+USEQR=Y

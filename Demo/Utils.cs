@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using MySql.Data.MySqlClient;
+using System.Data;
 using MySql.Data.Types;
 using System.IO;
 using QRCoder;
-//using C1.C1Excel;
 using ClosedXML.Excel;
+using System.Data.SqlClient;
 
 namespace Demo
 {
@@ -61,6 +58,29 @@ namespace Demo
                 throw new Exception("Error getting configs");
             }
             return conString = "server=" + server + ";database=" + catalog + ";uid=" + user + ";pwd=" + pw + ";";
+        }
+        public static string getConfig(string config)
+        {
+            string file = //"C:\\test\\config.dat";
+            Directory.GetCurrentDirectory() + "/Localdata/config.dat";
+           
+            if (file == null)
+            {
+                throw new Exception("An error ocurred");
+            }
+            if (!File.Exists(file))
+            {
+                throw new Exception("File does not exist, please ensure file config exists");
+            }
+            string[] conf = File.ReadAllLines(file);
+            for (int i = 0; i < conf.Length; i++) // could be a switch, will look at
+            {
+                if (conf[i].StartsWith(config))
+                {
+                   return conf[i].Split('=')[1].Trim();
+                }
+            }
+            return null;
         }
         public static Product search(string PLU)
         {
@@ -168,35 +188,6 @@ namespace Demo
                 cnn.Close();
             }
         }
-        public static List<string[]> getSales()
-        {
-            List<string[]> sales = new List<string[]>();
-            MySqlConnection cnn = new MySqlConnection();
-            cnn.ConnectionString = getConfig();
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = cnn;
-            cnn.Open();
-            try
-            {
-               
-                cmd.CommandText = "Select * from sales";
-                MySqlDataReader dr = cmd.ExecuteReader();
-                while (dr.Read())
-                {
-                    string[] s= new string[100];
-                    for (int i= 0; i <= dr.FieldCount -1 ;i++)
-                    {
-                        s[i] = dr.GetValue(i).ToString();
-                    }
-                    sales.Add(s);
-                }
-            }
-            finally
-            {
-                cnn.Close();
-            }
-            return sales;
-        }
         public static List<double> getSalesDouble()
         {
             List<double> sales = new List<double>();
@@ -234,7 +225,7 @@ namespace Demo
             try
             {
 
-                cmd.CommandText = "Select Date from sales group by Date order by Date desc limit 5";
+                cmd.CommandText = "Select Date from sales group by Date order by Date desc";
                 MySqlDataReader dr = cmd.ExecuteReader();
                 while (dr.Read())
                 {
@@ -249,7 +240,6 @@ namespace Demo
             }
             return dates;
         }
-
         public static List<Product> getProductData()
         {
             List<Product> dates = new List<Product>();
@@ -274,7 +264,7 @@ namespace Demo
             }
             return dates;
         }
-
+        #region Settings
         //Settings
         public static Dictionary<string,string> getSettings()
         {
@@ -360,7 +350,8 @@ namespace Demo
             }
 
         }
-        
+
+        #endregion
         // QR Code Stuff
         public static Bitmap genQR(string data)
         {
@@ -371,7 +362,7 @@ namespace Demo
             Bitmap qrCodeAsBitmap = qrCode.GetGraphic(5);
             return qrCodeAsBitmap;
         }
-
+        #region Excel
         //public static void ExcelTest()
         //{
         //    C1XLBook book = new C1XLBook();
@@ -386,7 +377,7 @@ namespace Demo
         //    }
         //    book.Save("MyBook.xlsx");
         //}
-        
+
         //public static void ClosedXMLTest()
         //{
         //    string fileName = "Report1";
@@ -402,33 +393,139 @@ namespace Demo
         //    book.SaveAs(fileName + ".xlsx");
 
         //}
-        public static void ExcelExport<T>(List<T> sales)
+        public static void ExcelExport<T>(List<T> data,string optionalType="Sales")
         {
             string fileName = "Report1";
             if (File.Exists(fileName + ".xlsx"))
             {
-                File.Delete(fileName + ".xlsx");
+                try
+                {
+                    File.Delete(fileName + ".xlsx");
+                }
+                catch (Exception e)
+                {
+                    log("Error ocurred when deleting file");
+                    MessageBox.Show(e.Message, "File in use, Please close and Try Again");
+                    return;
+                }
+
             }
 
 
             XLWorkbook book = new XLWorkbook();
             var ws = book.Worksheets.Add("Sheet1");
-            ws.Cell("A1").Value = "SALES";
-            int i = 1;
-            foreach (T value in sales)
+            ws.Row(1).Style.Fill.SetBackgroundColor(XLColor.SteelBlue);
+            ws.Cell("A1").RichText.SetFontColor(XLColor.White);
+
+            ws.Cell("A1").Value =optionalType;
+            int i = 2;
+            foreach (T value in data)
             {
                 ws.Cell(i, 1).Value=value;
                 i++;
             }
 
-            // Header
-            book.SaveAs(fileName + ".xlsx");
+            SaveFileDialog s = new SaveFileDialog();
+            s.FileName = fileName + ".xlsx";
+            s.InitialDirectory = Directory.GetCurrentDirectory();
+            s.Filter = "Excel Files (*.xlsx,*.xls)|*.xls;*.xlsx";
+
+            if (s.ShowDialog() == DialogResult.OK)
+            {
+                string file = s.FileName;
+                if(!file.Contains(".xls"))
+                {
+                    file += ".xlsx";
+                }
+
+                book.SaveAs(file);
+                MessageBox.Show("Exported as " + file, "Export Sucessful");
+            }
+
+           // book.SaveAs(fileName + ".xlsx");
 
         }
+        //generic as can be used for double,double / string/string  
+        //wouldnt be ideal for like Cart.Products,double but can look at
+        public static void ExcelExport<T,E>(List<T> maindata,List<E> otherData,string optionalMain ="Date",string optionalOther ="Sale Value")
+        {
+            string fileName = "Report1";
 
-        /*
-         * SQL stuff
-         */
+            if (File.Exists(fileName + ".xlsx"))
+            {
+                try
+                {
+                    File.Delete(fileName + ".xlsx");
+                }catch(Exception e)
+                {
+                    log("Error ocurred when deleting file");
+                    MessageBox.Show(e.Message, "File in use, Please close and Try Again");
+
+                    return ;
+                }
+
+            }
+
+
+            XLWorkbook book = new XLWorkbook();
+            var ws = book.Worksheets.Add("Sheet1");
+
+            var header = ws.Range("A1:B1");
+
+
+            header.Style.Fill.SetBackgroundColor(XLColor.SteelBlue);
+
+            ws.Cell("A1").Value = optionalMain;
+            ws.Cell("B1").Value = optionalOther;
+
+            ws.Cell("A1").RichText.SetFontColor(XLColor.White);
+            ws.Cell("B1").RichText.SetFontColor(XLColor.White);
+
+            ws.Column(1).Width = 10;
+            ws.Column(2).Style.NumberFormat.Format= "€ #,##0.00";
+            ws.Column(2).Width=10;
+
+            int row = 2; 
+            //start at second row, Might be cleaner to do a .Skip(), will look at.
+            foreach (T value in maindata)
+            {
+                ws.Cell(row, 1).Value = value;
+                ws.Cell(row, 2).Value = otherData[maindata.IndexOf(value)];
+                row++;
+            }
+
+            SaveFileDialog s = new SaveFileDialog();
+            s.FileName = fileName + ".xlsx";
+            s.InitialDirectory = Directory.GetCurrentDirectory();
+            s.DefaultExt = ".xlsx";
+            s.Filter = "Excel Files (*.xlsx,*.xls)|*.xls;*.xlsx";
+
+            if (s.ShowDialog() == DialogResult.OK)
+            {
+                fileName = s.FileName;
+                if (!fileName.Contains(".xls"))
+                {
+                    fileName += ".xlsx";
+                }
+                book.SaveAs(fileName);
+                MessageBox.Show("Exported as " + fileName, "Export Sucessful");
+                string fileToOpen = fileName.Split(Directory.GetCurrentDirectory())[1].Substring(1);
+                //MessageBox.Show(fileName.Split(Directory.GetCurrentDirectory())[1].Substring(1));
+                //Process.Start(@fileName);
+                //Process.Start(fileToOpen);
+
+                //Process p = new Process();
+                //p.StartInfo.FileName = "excel";
+                //p.StartInfo.Arguments = fileToOpen;
+
+            }
+
+            // book.SaveAs(fileName + ".xlsx");
+
+        }
+        #endregion
+
+        #region SQL stuff
         private static MySqlConnection initConn()
         {
             MySqlConnection cnn = new MySqlConnection();
@@ -441,6 +538,9 @@ namespace Demo
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection=initConn();
             return cmd;
-        }         
+        }
+
+        #endregion
+
     }
 }

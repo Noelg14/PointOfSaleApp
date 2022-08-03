@@ -11,7 +11,7 @@ using System.IO;
 using LiveCharts;
 using LiveCharts.Wpf;
 using ClosedXML.Excel;
-
+using System.Diagnostics;
 
 namespace Demo
 {
@@ -24,7 +24,6 @@ namespace Demo
             initChart(getData(), getDates());
            
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             clearChart();
@@ -51,9 +50,7 @@ namespace Demo
                 Title = "Sold",
                 LabelFormatter = value => value.ToString("N")
             });
-        }
-    
-    
+        } 
         private void demoChart()
         {
             cartesianChart1.Series = new SeriesCollection
@@ -96,7 +93,6 @@ namespace Demo
         {
             return Utils.getSalesDouble();
         }
-
         private void clearChart()
         {
             this.cartesianChart1.Series.Clear();
@@ -104,18 +100,19 @@ namespace Demo
             this.cartesianChart1.AxisY.Clear();
             
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             clearChart();
 
         }
-
         private void Export_Click(object sender, EventArgs e)
         {
-            Utils.ExcelExport(getData());
-        }
+            //Utils.ExcelExport(getData());
 
+            Utils.ExcelExport(getDates(), getData());
+
+
+        }
         private void button3_Click(object sender, EventArgs e)
         {
             var filePath = string.Empty;
@@ -127,8 +124,13 @@ namespace Demo
                 //Get the path of specified file
                 filePath = openFile.FileName;
                 XLWorkbook xl = new XLWorkbook(filePath);
-                var Data = xl.Worksheet(1).Column(1).Cell(1).Value;
-                MessageBox.Show(Data.ToString());
+                var Data = xl.Worksheet(1).Row(2).Cells("A2:B2");
+                string data = "";
+                foreach(var cell in Data)
+                {
+                    data+=cell.Value+",";
+                }
+                MessageBox.Show(data.ToString(),"First Row" );
             }
             
         }
