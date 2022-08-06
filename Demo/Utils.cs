@@ -145,7 +145,7 @@ namespace Demo
                     dr.DisposeAsync();
                     cmd.CommandText = $"insert into stocklvl(PLU,QTY) values('{PLU}',0);";
                     cmd.ExecuteNonQuery();
-                    MessageBox.Show("Added Product with QTY 0");
+                   // MessageBox.Show("Added Product with QTY 0");
                     return 0;
                 }
             }
@@ -181,7 +181,7 @@ namespace Demo
                     dr.DisposeAsync();
                     cmd.CommandText = $"insert into stocklvl(PLU,QTY) values('{PLU}', {newQTY} );";
                     cmd.ExecuteNonQuery();
-                    MessageBox.Show($"Added Product with QTY {newQTY}");
+                    //MessageBox.Show($"Added Product with QTY {newQTY}");
                     //return 0;
                 }
             }
@@ -345,6 +345,8 @@ namespace Demo
             }
             return dates;
         }
+
+
         #region Settings
         //Settings
         public static Dictionary<string,string> getSettings()
@@ -431,6 +433,8 @@ namespace Demo
             }
 
         }
+
+
 
         #endregion
         // QR Code Stuff
@@ -600,11 +604,58 @@ namespace Demo
                 //p.StartInfo.Arguments = fileToOpen;
 
             }
+            else
+            {
+               
+            }
 
             // book.SaveAs(fileName + ".xlsx");
 
         }
         #endregion
+
+        // export based on DB saved query. This is a catch all for any excel export.
+
+        public static void GeneralExport(string type)
+        {
+
+            MySqlCommand cmd = initCmd();
+            MySqlConnection cnn = cmd.Connection;
+            string data;
+            try
+            {
+                cnn.Open();
+                cmd.Prepare();
+                cmd.CommandText = "select * from settings where setting = @key and Type='export'";
+                cmd.Parameters.AddWithValue("@key", type.ToString());
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                dr.Read();
+                if (!dr.HasRows)
+                {
+                    MessageBox.Show("No Such export exists, please try again");
+                    return;
+                }
+                data = dr.GetString("data"); // get query
+
+                dr.Dispose();
+                cmd.CommandText = data;
+
+
+                dr = cmd.ExecuteReader();
+                excelFunctions.createExcel(dr);
+
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+
+        }
 
         #region SQL stuff
         private static MySqlConnection initConn()
