@@ -166,7 +166,7 @@ namespace Demo
         private void button4_Click(object sender, EventArgs e)
         {
             Utils.GeneralExport(textBox1.Text);
-            textBox1.Focus();
+            textBox1.SelectAll();
         }
     }
 }

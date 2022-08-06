@@ -43,7 +43,7 @@ namespace Demo
 
             SaveFileDialog s = new SaveFileDialog();
             s.FileName = fileName + ".xlsx";
-            s.InitialDirectory = Directory.GetCurrentDirectory();
+            s.InitialDirectory = checkFolder(Directory.GetCurrentDirectory() + "\\Reports"); // if not exists, creates
             s.DefaultExt = ".xlsx";
             s.Filter = "Excel Files (*.xlsx,*.xls)|*.xls;*.xlsx";
 
@@ -81,5 +81,15 @@ namespace Demo
             }
 
         }
+    
+        private static string checkFolder(string folder)
+        {
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            return folder;
+        }
+    
     }
 }
