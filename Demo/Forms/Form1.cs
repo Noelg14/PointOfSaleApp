@@ -9,15 +9,16 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.5.2";
+        public readonly string version = "0.5.3";
+        
         double total=0;
         Cart c = new Cart();
         bool paid;
         static Form1 thisForm; // probably terrible :(
 
         public Form1()
-        { 
-
+        {
+         
             InitializeComponent();
             Rectangle r = Screen.FromControl(this).Bounds;
             button1.Left = (r.Width - (r.Width)/4);
@@ -73,7 +74,6 @@ namespace Demo
             
             if (e.KeyCode == Keys.Enter)
             {
-
                 if(textBox1.Text == "")
                 {
                     return;
@@ -174,6 +174,10 @@ namespace Demo
 
         }
 
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            new Forms.frmStock().Show();
+        }
     }
 
     public class Product {

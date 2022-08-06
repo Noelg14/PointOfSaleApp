@@ -16,6 +16,7 @@ namespace Demo
         Cart cart { get; set; }
         bool paid { get; set; } = false;
         bool useQR = false;
+        List<PayItem> payments = new List<PayItem>();
 
         public Payment(double toPay,Cart c)
         {
@@ -49,6 +50,7 @@ namespace Demo
 
         private void pay(string text)
         {
+            payments.Add(new PayItem(text, toPay));
             Utils.recPayment(text, toPay, cart);
             MessageBox.Show("Paid €" + toPay, "Paid");
             this.paid = true;

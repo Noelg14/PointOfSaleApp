@@ -61,16 +61,25 @@ namespace Demo
         }
         public static string getConfig(string config)
         {
-            string file = //"C:\\test\\config.dat";
-            Directory.GetCurrentDirectory() + "/Localdata/config.dat";
-           
+            string file;
+            if (Debugger.IsAttached)
+            {
+                 file = "C:\\test\\config.dat";
+            }
+            else
+            {
+               file= Directory.GetCurrentDirectory() + "/Localdata/config.dat";
+
+            }
+
             if (file == null)
             {
                 throw new Exception("An error ocurred");
             }
             if (!File.Exists(file))
             {
-                throw new Exception("File does not exist, please ensure file config exists");
+                log("File does not exist, please ensure file config exists");
+                return "N";
             }
             string[] conf = File.ReadAllLines(file);
             for (int i = 0; i < conf.Length; i++) // could be a switch, will look at
@@ -113,6 +122,77 @@ namespace Demo
 
 
         }
+        public static double getProductQty(string PLU)
+        {
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+
+            cmd.Connection = cnn;
+            try
+            {
+                cnn.Open();
+                cmd.Prepare();
+                cmd.CommandText = "select * from stocklvl where PLU = @plu";
+                cmd.Parameters.AddWithValue("@plu", PLU);
+                MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    dr.Read();
+                    return dr.GetDouble("QTY");
+                }
+                else
+                {
+                    dr.DisposeAsync();
+                    cmd.CommandText = $"insert into stocklvl(PLU,QTY) values('{PLU}',0);";
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Added Product with QTY 0");
+                    return 0;
+                }
+            }
+            catch(MySqlException SQLe)
+            {
+                MessageBox.Show(SQLe.Message);
+            }
+            return 0;
+        }
+        public static void updateProductQty(string PLU,double newQTY)
+        {
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+
+            cmd.Connection = cnn;
+            try
+            {
+                cnn.Open();
+                cmd.Prepare();
+                cmd.CommandText = "select * from stocklvl where PLU = @plu";
+                cmd.Parameters.AddWithValue("@plu", PLU);
+                MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    dr.Dispose();
+                    cmd.Prepare();
+                    cmd.CommandText = "update stocklvl set QTY = @qty where PLU = @plu";
+                    cmd.Parameters.AddWithValue("@QTY", newQTY);
+                    cmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    dr.DisposeAsync();
+                    cmd.CommandText = $"insert into stocklvl(PLU,QTY) values('{PLU}', {newQTY} );";
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show($"Added Product with QTY {newQTY}");
+                    //return 0;
+                }
+            }
+            catch (MySqlException SQLe)
+            {
+                MessageBox.Show(SQLe.Message);
+            }
+            //return 0;
+        }
+
+
         public static void recSale(Cart c, double total)
         {
             string date = DateTime.Now.ToString("yyyy-MM-dd");
@@ -144,6 +224,7 @@ namespace Demo
             foreach (Product p in c.products)
             {
                 cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+")";
+                updateProductQty(p.PLU, getProductQty(p.PLU) - 1);
 
                 cmd.ExecuteNonQuery();
                 log("Writing to salelines");
