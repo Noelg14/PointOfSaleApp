@@ -10,7 +10,9 @@ namespace Demo
     public partial class Form1 : Form
     {
         public readonly string version = "0.5.5";
-        
+        private int buttonX = 1000;
+        private int buttonY = 60;
+
         double total=0;
         Cart c = new Cart();
         bool paid;
@@ -36,6 +38,35 @@ namespace Demo
             if (Debugger.IsAttached)
             {
                 this.Text += " Debug Mode";
+            }
+
+            List<Product> buttons = Utils.getButtons();
+
+            foreach(Product p in buttons)
+            {
+                Button myNewButton = new()
+                {
+                    Location = new Point(buttonX, buttonY),
+                    Size = new Size(150, 50),
+                    Text = p.desc,
+                    Tag = p,
+                    FlatStyle = FlatStyle.Flat,
+                    ForeColor = Color.SlateBlue,
+                    BackColor = SystemColors.Control
+            };
+                myNewButton.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+                myNewButton.FlatAppearance.BorderSize = 2;
+                myNewButton.Click += dynButtton_Click;
+                this.Controls.Add(myNewButton);
+
+
+                buttonX += 175;
+                if(buttonX >= 1875 )
+                {
+                    buttonY +=  100;
+                    buttonX = 1000;
+                }
+
             }
 
         }
@@ -131,6 +162,14 @@ namespace Demo
             textBox1.Focus();
         }
 
+        private void dynButtton_Click(object sender, EventArgs e)
+        {
+            Button s = (Button)sender;
+            addToCart((Product)s.Tag);
+            //MessageBox.Show(sender.GetType().ToString());
+           // addToCart(Utils.search());
+        }
+
         public static void notify()
         {            
 
@@ -178,6 +217,28 @@ namespace Demo
         {
             new Forms.frmStock().Show();
         }
+
+        private void addToCart(Product p)
+        {
+            //Product p = Utils.search(textBox1.Text.ToString());
+            if (p != null)
+            {
+                c.AddProd(p);
+                //string[] row = { p.PLU, p.desc, p.price.ToString(), "" };
+
+                //dataGridView1.Rows.Add(row);
+
+                label1.Text += "\n " + p.PLU;
+                label3.Text += "\n " + p.desc;
+                label2.Text += "\n €" + p.price;
+                total = Math.Round(total += p.price, 2);
+                label5.Text = "€ " + total;
+
+                textBox1.Focus();
+                textBox1.Text = "";
+            }
+        }
+
     }
 
     public class Product {

@@ -89,9 +89,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(25, 284);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(83, 15);
+            this.label4.Size = new System.Drawing.Size(75, 15);
             this.label4.TabIndex = 4;
-            this.label4.Text = "Allow Fraction";
+            this.label4.Text = "Show Button";
             // 
             // PLU
             // 

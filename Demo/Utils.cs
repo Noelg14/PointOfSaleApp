@@ -99,7 +99,7 @@ namespace Demo
             cnn.Open();
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = cnn;
-            cmd.CommandText = "SELECT * FROM PRODUCT WHERE PLU = '" + PLU + "' LIMIT 1";
+            cmd.CommandText = "SELECT * FROM PRODUCT WHERE PLU = '" + PLU + "' or `desc` = '" + PLU + "' LIMIT 1";
             log("Searching for PLU "+PLU);
             try
             {
@@ -155,7 +155,7 @@ namespace Demo
             }
             return 0;
         }
-        public static void updateProductQty(string PLU,double newQTY)
+        public static void updateProductQty(string PLU, double newQTY)
         {
             MySqlConnection cnn = initConn();
             MySqlCommand cmd = initCmd();
@@ -192,7 +192,43 @@ namespace Demo
             //return 0;
         }
 
+        public static List<Product> getButtons()
+        {
+            List<Product> list = new List<Product>();
+          
+            string connString = getConfig();
+            MySqlConnection cnn = new MySqlConnection(connString);
+            cnn.Open();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = cnn;
+            cmd.CommandText = "SELECT * FROM PRODUCT WHERE AllFRA = '1' group by PLU";
+            log("Searching for Buttons");
+            try
+            {
+                MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3));
+                        list.Add(p);
+                    }
 
+                }
+                else
+                {
+                    return list;
+                }
+                return list;
+            }
+            finally
+            {
+                cnn.Close();
+               
+            }
+
+
+        }
         public static void recSale(Cart c, double total)
         {
             string date = DateTime.Now.ToString("yyyy-MM-dd");
