@@ -9,7 +9,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.5.7";
+        public readonly string version = "0.5.9";
         private int buttonX = 1000;
         private int buttonY = 60;
 
