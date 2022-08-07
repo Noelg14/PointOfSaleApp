@@ -470,6 +470,36 @@ namespace Demo
 
         }
 
+        public static List<string> getExports()
+        {
+
+            MySqlCommand cmd = initCmd();
+            MySqlConnection cnn = cmd.Connection;
+            //string data;
+            List<string> names = new List<string>();
+
+            try
+            {
+                cnn.Open();
+                //cmd.Prepare();
+                cmd.CommandText = "select * from settings where Type = 'export'";
+                //cmd.Parameters.AddWithValue("@key", key.ToString());
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    names.Add(dr.GetString("setting"));
+                    
+                }
+                return names;
+
+            }
+            finally
+            {
+                cnn.Close();
+            }
+
+        }
 
 
         #endregion

@@ -37,10 +37,11 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.Product = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.Settings = new System.Windows.Forms.ToolStripLabel();
+            this.Product = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripButton();
+            this.Settings = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.productBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -134,7 +135,8 @@
             this.Product,
             this.toolStripLabel1,
             this.Settings,
-            this.toolStripButton1});
+            this.toolStripButton1,
+            this.toolStripButton2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(716, 25);
@@ -144,22 +146,31 @@
             // 
             // Product
             // 
+            this.Product.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.Product.Image = ((System.Drawing.Image)(resources.GetObject("Product.Image")));
+            this.Product.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Product.Name = "Product";
-            this.Product.Size = new System.Drawing.Size(49, 22);
+            this.Product.Size = new System.Drawing.Size(53, 22);
             this.Product.Text = "Product";
             this.Product.Click += new System.EventHandler(this.toolStripLabel1_Click);
             // 
             // toolStripLabel1
             // 
+            this.toolStripLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripLabel1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripLabel1.Image")));
+            this.toolStripLabel1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(47, 22);
+            this.toolStripLabel1.Size = new System.Drawing.Size(51, 22);
             this.toolStripLabel1.Text = "Reports";
             this.toolStripLabel1.Click += new System.EventHandler(this.toolStripLabel1_Click_1);
             // 
             // Settings
             // 
+            this.Settings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.Settings.Image = ((System.Drawing.Image)(resources.GetObject("Settings.Image")));
+            this.Settings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Settings.Name = "Settings";
-            this.Settings.Size = new System.Drawing.Size(49, 22);
+            this.Settings.Size = new System.Drawing.Size(53, 22);
             this.Settings.Text = "Settings";
             this.Settings.Click += new System.EventHandler(this.toolStripLabel2_Click);
             // 
@@ -172,6 +183,18 @@
             this.toolStripButton1.Size = new System.Drawing.Size(65, 22);
             this.toolStripButton1.Text = "Add Stock";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripButton2
+            // 
+            this.toolStripButton2.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
+            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton2.Name = "toolStripButton2";
+            this.toolStripButton2.Size = new System.Drawing.Size(71, 22);
+            this.toolStripButton2.Text = "Exit System";
+            this.toolStripButton2.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // productBindingSource
             // 
@@ -263,7 +286,6 @@
         private Button button1;
         private Panel panel1;
         private ToolStrip toolStrip1;
-        private ToolStripLabel Product;
         private Label label1;
         public TextBox textBox1; //public to able enabling from other window
         private Label label3;
@@ -273,11 +295,13 @@
         private Button button2;
         private BindingSource productBindingSource;
         private Panel panel2;
-        private ToolStripLabel toolStripLabel1;
-        private ToolStripLabel Settings;
         private DataGridViewTextBoxColumn PLU;
         private DataGridViewTextBoxColumn Description;
         private DataGridViewTextBoxColumn Price;
         private ToolStripButton toolStripButton1;
+        private ToolStripButton Product;
+        private ToolStripButton toolStripLabel1;
+        private ToolStripButton Settings;
+        private ToolStripButton toolStripButton2;
     }
 }

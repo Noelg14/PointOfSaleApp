@@ -22,6 +22,8 @@ namespace Demo
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             initChart(getData(), getDates());
+            dropdown.Items.AddRange(Utils.getExports().ToArray());
+            dropdown.SelectedIndex = 0;
            
         }
         private void button1_Click(object sender, EventArgs e)
@@ -165,8 +167,16 @@ namespace Demo
 
         private void button4_Click(object sender, EventArgs e)
         {
-            Utils.GeneralExport(textBox1.Text);
-            textBox1.SelectAll();
+            string selected = dropdown.Text;
+            if (selected.Equals(""))
+            {
+                MessageBox.Show("Please select a report below");
+            }
+            else {
+                Utils.GeneralExport(selected);
+                
+            }
+
         }
     }
 }

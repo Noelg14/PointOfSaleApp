@@ -36,7 +36,7 @@
             this.Export = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.dropdown = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // printDialog1
@@ -105,19 +105,22 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // textBox1
+            // dropdown
             // 
-            this.textBox1.Location = new System.Drawing.Point(3, 344);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(190, 23);
-            this.textBox1.TabIndex = 6;
+            this.dropdown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.dropdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.dropdown.FormattingEnabled = true;
+            this.dropdown.Location = new System.Drawing.Point(3, 344);
+            this.dropdown.Name = "dropdown";
+            this.dropdown.Size = new System.Drawing.Size(190, 23);
+            this.dropdown.TabIndex = 7;
             // 
             // frmManage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.dropdown);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.Export);
@@ -127,7 +130,6 @@
             this.Name = "frmManage";
             this.Text = "frmManage";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -141,6 +143,6 @@
         private Button Export;
         private Button button3;
         private Button button4;
-        private TextBox textBox1;
+        private ComboBox dropdown;
     }
 }

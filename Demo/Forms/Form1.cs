@@ -22,6 +22,17 @@ namespace Demo
         {
          
             InitializeComponent();
+
+            // Make fullscreen
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            //this.TopMost = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+
+
+
+            //
             Rectangle r = Screen.FromControl(this).Bounds;
             button1.Left = (r.Width - (r.Width)/4);
             button1.Top= (r.Height - (r.Height)/4);
@@ -239,6 +250,18 @@ namespace Demo
             }
         }
 
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            DialogResult res = MessageBox.Show($"Are you sure you want to Exit?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            if (res == DialogResult.OK)
+            {
+                Application.Exit();
+            }
+            if (res == DialogResult.Cancel)
+            {
+            }
+            
+        }
     }
 
     public class Product {
