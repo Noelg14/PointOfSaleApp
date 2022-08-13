@@ -32,6 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.listView1 = new System.Windows.Forms.ListView();
+            this.listPLU = new System.Windows.Forms.ColumnHeader();
+            this.listDesc = new System.Windows.Forms.ColumnHeader();
+            this.listPrice = new System.Windows.Forms.ColumnHeader();
+            this.listQTY = new System.Windows.Forms.ColumnHeader();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -49,6 +54,8 @@
             this.PLU = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Price = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.productBindingSource)).BeginInit();
@@ -75,6 +82,7 @@
             // 
             this.panel1.AutoScroll = true;
             this.panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.panel1.Controls.Add(this.listView1);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.textBox1);
@@ -84,6 +92,38 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(716, 642);
             this.panel1.TabIndex = 1;
+            // 
+            // listView1
+            // 
+            this.listView1.BackColor = System.Drawing.SystemColors.Control;
+            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.listPLU,
+            this.listDesc,
+            this.listPrice,
+            this.listQTY});
+            this.listView1.Location = new System.Drawing.Point(0, 56);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(707, 571);
+            this.listView1.TabIndex = 6;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            // 
+            // listPLU
+            // 
+            this.listPLU.Text = "PLU";
+            this.listPLU.Width = 150;
+            // 
+            // listDesc
+            // 
+            this.listDesc.Text = "Desc";
+            this.listDesc.Width = 300;
+            // 
+            // listPrice
+            // 
+            this.listPrice.Text = "Price";
+            // 
+            // listQTY
+            // 
+            this.listQTY.Text = "QTY";
             // 
             // label2
             // 
@@ -254,12 +294,48 @@
             this.Price.Name = "Price";
             this.Price.ReadOnly = true;
             // 
+            // button3
+            // 
+            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button3.BackColor = System.Drawing.SystemColors.Control;
+            this.button3.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.button3.FlatAppearance.BorderSize = 2;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button3.ForeColor = System.Drawing.Color.SlateBlue;
+            this.button3.Location = new System.Drawing.Point(747, 563);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(124, 91);
+            this.button3.TabIndex = 5;
+            this.button3.Text = "Refund";
+            this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button4.BackColor = System.Drawing.SystemColors.Control;
+            this.button4.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.button4.FlatAppearance.BorderSize = 2;
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button4.ForeColor = System.Drawing.Color.SlateBlue;
+            this.button4.Location = new System.Drawing.Point(747, 453);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(124, 91);
+            this.button4.TabIndex = 6;
+            this.button4.Text = "Void";
+            this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -303,5 +379,12 @@
         private ToolStripButton toolStripLabel1;
         private ToolStripButton Settings;
         private ToolStripButton toolStripButton2;
+        private Button button3;
+        private ListView listView1;
+        private ColumnHeader listPLU;
+        private ColumnHeader listDesc;
+        private ColumnHeader listPrice;
+        private ColumnHeader listQTY;
+        private Button button4;
     }
 }

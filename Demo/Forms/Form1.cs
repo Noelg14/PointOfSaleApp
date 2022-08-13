@@ -4,6 +4,7 @@ using System.Windows.Forms.Integration; //Not so Given.
 using System; //Given 
 using System.Windows.Forms; //Given
 using System.Diagnostics;
+using static System.Windows.Forms.ListViewItem;
 
 namespace Demo
 {
@@ -12,6 +13,7 @@ namespace Demo
         public readonly string version = "0.5.9";
         private int buttonX = 1000;
         private int buttonY = 60;
+        public bool isRefund;
 
         double total=0;
         Cart c = new Cart();
@@ -38,6 +40,12 @@ namespace Demo
             button1.Top= (r.Height - (r.Height)/4);
             button2.Left = (r.Width - (r.Width) / 4);
             button2.Top = (r.Height - (r.Height) / 4) -100;
+
+            button3.Left = (r.Width - (r.Width) / 4) - 200;
+            button3.Top = (r.Height - (r.Height) / 4);            
+            button4.Left = (r.Width - (r.Width) / 4) - 200;
+            button4.Top = (r.Height - (r.Height) / 4) - 100;
+
 
             panel1.Height= (r.Height - 200);
             textBox1.Width=panel1.Width;
@@ -79,6 +87,9 @@ namespace Demo
                 }
 
             }
+            listView1.View = View.Details;
+            listView1.GridLines = true;
+            listView1.FullRowSelect = true;
 
         }
 
@@ -91,6 +102,11 @@ namespace Demo
         {
             if (c.products.Count != 0)
             {
+                if (isRefund)
+                {
+                    //total *= -1;
+                    Utils.log("Refund issued");
+                }
                
                 Utils.recSale(c, total);
                 Utils.log("Button Pay Now Pressed");
@@ -123,20 +139,8 @@ namespace Demo
                 Product p = Utils.search(textBox1.Text.ToString());
                 if (p != null)
                 {
-                    c.AddProd(p);
-                    //string[] row = { p.PLU, p.desc, p.price.ToString(), "" };
 
-                    //dataGridView1.Rows.Add(row);
-
-                    label1.Text += "\n " + p.PLU;
-                    label3.Text += "\n " + p.desc;
-                    label2.Text += "\n €" + p.price;
-                    total=Math.Round(total += p.price,2);
-                    label5.Text = "€ " + total;
-
-                    textBox1.Focus();
-                    textBox1.Text="";
-
+                    addToCart(p);
                 }
                 if (p is null)
                 {
@@ -165,6 +169,8 @@ namespace Demo
             label3.Text = "Desc";
             label5.Text = "€" + total ;
             c.Clear();
+
+            listView1.Items.Clear();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -235,14 +241,19 @@ namespace Demo
             if (p != null)
             {
                 c.AddProd(p);
-                //string[] row = { p.PLU, p.desc, p.price.ToString(), "" };
+                string[] row = { p.PLU, p.desc, p.price.ToString(), "1" };
+                listView1.Items.Add(new ListViewItem(row));
 
-                //dataGridView1.Rows.Add(row);
 
-                label1.Text += "\n " + p.PLU;
-                label3.Text += "\n " + p.desc;
-                label2.Text += "\n €" + p.price;
-                total = Math.Round(total += p.price, 2);
+                if (isRefund)
+                {
+                    total = Math.Round(total += (p.price *-1), 2);
+                }
+                else
+                {
+                    total = Math.Round(total += p.price, 2);
+                }
+               
                 label5.Text = "€ " + total;
 
                 textBox1.Focus();
@@ -262,6 +273,64 @@ namespace Demo
             }
             
         }
+
+        private void button3_Click(object sender, EventArgs e) // refund
+        {
+            //var selectedItem = (dynamic)listView1.SelectedItems[0];
+            // selectedItem.Col3
+            string qty = listView1.SelectedItems[0].SubItems[3].Text;
+            double price = double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
+
+            if (qty.Contains('-'))
+            {
+                MessageBox.Show("Item Already refunded");
+                return;
+            }
+            listView1.SelectedItems[0].SubItems[3].Text = "-1";
+            listView1.SelectedItems[0].SubItems[2].Text = (price * -1).ToString();
+
+
+            total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
+            label5.Text = "€ " + Math.Round(total, 2, MidpointRounding.ToEven);
+        }
+
+        private void button4_Click(object sender, EventArgs e) // void
+        {
+            try
+            {
+                //MessageBox.Show(listView1.Items.Count.ToString());
+
+                string plu = listView1.SelectedItems[0].Text;
+
+                if (plu != null)
+                {
+                    string qty = listView1.SelectedItems[0].SubItems[3].Text;
+
+                    if (qty.Contains('-'))
+                    {
+                        MessageBox.Show("Item Already refunded,Cannot void");
+                        return;
+                    }
+
+                    c.removeProd(Utils.search(plu));
+
+                    total -= double.Parse(listView1.SelectedItems[0].SubItems[2].Text)*2;
+                    label5.Text = "€ "+ Math.Round(total, 2, MidpointRounding.ToEven);
+
+                    listView1.SelectedItems[0].Remove();
+                    //System.Windows.TextDecorations.Strikethrough;
+                }
+                else
+                {
+                    MessageBox.Show("Please select an item to void");
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+        }
     }
 
     public class Product {
@@ -269,6 +338,8 @@ namespace Demo
         public string desc { get; }
         public float price { get; }
         public bool allowFra { get; }
+
+        public bool isRefund { get; set; } = false;
 
         public Product(string PLU, string desc, float price, bool allowFra)
         {

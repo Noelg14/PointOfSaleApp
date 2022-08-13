@@ -74,6 +74,8 @@
             // 
             // Export
             // 
+            this.Export.AutoEllipsis = true;
+            this.Export.Enabled = false;
             this.Export.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.Export.Location = new System.Drawing.Point(3, 213);
             this.Export.Name = "Export";
@@ -85,6 +87,7 @@
             // 
             // button3
             // 
+            this.button3.Enabled = false;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.button3.Location = new System.Drawing.Point(3, 388);
             this.button3.Name = "button3";
@@ -97,7 +100,7 @@
             // button4
             // 
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.button4.Location = new System.Drawing.Point(3, 296);
+            this.button4.Location = new System.Drawing.Point(3, 325);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(190, 42);
             this.button4.TabIndex = 5;
@@ -110,7 +113,7 @@
             this.dropdown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.dropdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dropdown.FormattingEnabled = true;
-            this.dropdown.Location = new System.Drawing.Point(3, 344);
+            this.dropdown.Location = new System.Drawing.Point(3, 296);
             this.dropdown.Name = "dropdown";
             this.dropdown.Size = new System.Drawing.Size(190, 23);
             this.dropdown.TabIndex = 7;
