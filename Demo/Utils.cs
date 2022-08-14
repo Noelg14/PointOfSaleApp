@@ -61,16 +61,25 @@ namespace Demo
         }
         public static string getConfig(string config)
         {
-            string file = //"C:\\test\\config.dat";
-            Directory.GetCurrentDirectory() + "/Localdata/config.dat";
-           
+            string file;
+            if (Debugger.IsAttached)
+            {
+                 file = "C:\\test\\config.dat";
+            }
+            else
+            {
+               file= Directory.GetCurrentDirectory() + "/Localdata/config.dat";
+
+            }
+
             if (file == null)
             {
                 throw new Exception("An error ocurred");
             }
             if (!File.Exists(file))
             {
-                throw new Exception("File does not exist, please ensure file config exists");
+                log("File does not exist, please ensure file config exists");
+                return "N";
             }
             string[] conf = File.ReadAllLines(file);
             for (int i = 0; i < conf.Length; i++) // could be a switch, will look at
@@ -90,7 +99,7 @@ namespace Demo
             cnn.Open();
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = cnn;
-            cmd.CommandText = "SELECT * FROM PRODUCT WHERE PLU = '" + PLU + "' LIMIT 1";
+            cmd.CommandText = "SELECT * FROM PRODUCT WHERE PLU = '" + PLU + "' or `desc` = '" + PLU + "' LIMIT 1";
             log("Searching for PLU "+PLU);
             try
             {
@@ -99,6 +108,7 @@ namespace Demo
                 {
                     dr.Read();
                     Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3));
+                    p.qty = 1;
                     return p;
                 }
                 else
@@ -109,6 +119,113 @@ namespace Demo
             finally
             {
                 cnn.Close();
+            }
+
+
+        }
+        public static double getProductQty(string PLU)
+        {
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+
+            cmd.Connection = cnn;
+            try
+            {
+                cnn.Open();
+                cmd.Prepare();
+                cmd.CommandText = "select * from stocklvl where PLU = @plu";
+                cmd.Parameters.AddWithValue("@plu", PLU);
+                MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    dr.Read();
+                    return dr.GetDouble("QTY");
+                }
+                else
+                {
+                    dr.DisposeAsync();
+                    cmd.CommandText = $"insert into stocklvl(PLU,QTY) values('{PLU}',0);";
+                    cmd.ExecuteNonQuery();
+                   // MessageBox.Show("Added Product with QTY 0");
+                    return 0;
+                }
+            }
+            catch(MySqlException SQLe)
+            {
+                MessageBox.Show(SQLe.Message);
+            }
+            return 0;
+        }
+        public static void updateProductQty(string PLU, double newQTY)
+        {
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+
+            cmd.Connection = cnn;
+            try
+            {
+                cnn.Open();
+                cmd.Prepare();
+                cmd.CommandText = "select * from stocklvl where PLU = @plu";
+                cmd.Parameters.AddWithValue("@plu", PLU);
+                MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    dr.Dispose();
+                    cmd.Prepare();
+                    cmd.CommandText = "update stocklvl set QTY = @qty where PLU = @plu";
+                    cmd.Parameters.AddWithValue("@QTY", newQTY);
+                    cmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    dr.DisposeAsync();
+                    cmd.CommandText = $"insert into stocklvl(PLU,QTY) values('{PLU}', {newQTY} );";
+                    cmd.ExecuteNonQuery();
+                    //MessageBox.Show($"Added Product with QTY {newQTY}");
+                    //return 0;
+                }
+            }
+            catch (MySqlException SQLe)
+            {
+                MessageBox.Show(SQLe.Message);
+            }
+            //return 0;
+        }
+
+        public static List<Product> getButtons()
+        {
+            List<Product> list = new List<Product>();
+          
+            string connString = getConfig();
+            MySqlConnection cnn = new MySqlConnection(connString);
+            cnn.Open();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = cnn;
+            cmd.CommandText = "SELECT * FROM PRODUCT WHERE AllFRA = '1' group by PLU";
+            log("Searching for Buttons");
+            try
+            {
+                MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3));
+                        list.Add(p);
+                    }
+
+                }
+                else
+                {
+                    return list;
+                }
+                return list;
+            }
+            finally
+            {
+                cnn.Close();
+               
             }
 
 
@@ -144,6 +261,7 @@ namespace Demo
             foreach (Product p in c.products)
             {
                 cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+")";
+                updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
 
                 cmd.ExecuteNonQuery();
                 log("Writing to salelines");
@@ -264,6 +382,8 @@ namespace Demo
             }
             return dates;
         }
+
+
         #region Settings
         //Settings
         public static Dictionary<string,string> getSettings()
@@ -350,6 +470,38 @@ namespace Demo
             }
 
         }
+
+        public static List<string> getExports()
+        {
+
+            MySqlCommand cmd = initCmd();
+            MySqlConnection cnn = cmd.Connection;
+            //string data;
+            List<string> names = new List<string>();
+
+            try
+            {
+                cnn.Open();
+                //cmd.Prepare();
+                cmd.CommandText = "select * from settings where Type = 'export'";
+                //cmd.Parameters.AddWithValue("@key", key.ToString());
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    names.Add(dr.GetString("setting"));
+                    
+                }
+                return names;
+
+            }
+            finally
+            {
+                cnn.Close();
+            }
+
+        }
+
 
         #endregion
         // QR Code Stuff
@@ -519,11 +671,58 @@ namespace Demo
                 //p.StartInfo.Arguments = fileToOpen;
 
             }
+            else
+            {
+               
+            }
 
             // book.SaveAs(fileName + ".xlsx");
 
         }
         #endregion
+
+        // export based on DB saved query. This is a catch all for any excel export.
+
+        public static void GeneralExport(string type)
+        {
+
+            MySqlCommand cmd = initCmd();
+            MySqlConnection cnn = cmd.Connection;
+            string data;
+            try
+            {
+                cnn.Open();
+                cmd.Prepare();
+                cmd.CommandText = "select * from settings where setting = @key and Type='export'";
+                cmd.Parameters.AddWithValue("@key", type.ToString());
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                dr.Read();
+                if (!dr.HasRows)
+                {
+                    MessageBox.Show("No Such export exists, please try again");
+                    return;
+                }
+                data = dr.GetString("data"); // get query
+
+                dr.Dispose();
+                cmd.CommandText = data;
+
+
+                dr = cmd.ExecuteReader();
+                excelFunctions.createExcel(dr);
+
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+
+        }
 
         #region SQL stuff
         private static MySqlConnection initConn()

@@ -16,11 +16,13 @@ namespace Demo
         Cart cart { get; set; }
         bool paid { get; set; } = false;
         bool useQR = false;
+        List<PayItem> payments = new List<PayItem>();
 
         public Payment(double toPay,Cart c)
         {
             InitializeComponent();
-            label1.Text += " € " + toPay;
+            label1.Text += "€ " + Math.Round(toPay, 2, MidpointRounding.ToEven);
+            //label1.Text += " € " + toPay;
             this.toPay= toPay;
             this.cart = c;
             string qr = Utils.getConfig("USEQR");
@@ -49,6 +51,7 @@ namespace Demo
 
         private void pay(string text)
         {
+            payments.Add(new PayItem(text, toPay));
             Utils.recPayment(text, toPay, cart);
             MessageBox.Show("Paid €" + toPay, "Paid");
             this.paid = true;

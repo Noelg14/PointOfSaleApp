@@ -35,6 +35,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.Export = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.dropdown = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // printDialog1
@@ -66,12 +68,14 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(190, 77);
             this.button2.TabIndex = 2;
-            this.button2.Text = "Refresh Products";
+            this.button2.Text = "Export Stock";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Export
             // 
+            this.Export.AutoEllipsis = true;
+            this.Export.Enabled = false;
             this.Export.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.Export.Location = new System.Drawing.Point(3, 213);
             this.Export.Name = "Export";
@@ -83,20 +87,44 @@
             // 
             // button3
             // 
+            this.button3.Enabled = false;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.button3.Location = new System.Drawing.Point(3, 323);
+            this.button3.Location = new System.Drawing.Point(3, 388);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(190, 77);
+            this.button3.Size = new System.Drawing.Size(190, 50);
             this.button3.TabIndex = 4;
             this.button3.Text = "Open File";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.button4.Location = new System.Drawing.Point(3, 325);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(190, 42);
+            this.button4.TabIndex = 5;
+            this.button4.Text = "Run Export";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // dropdown
+            // 
+            this.dropdown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.dropdown.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.dropdown.FormattingEnabled = true;
+            this.dropdown.Location = new System.Drawing.Point(3, 296);
+            this.dropdown.Name = "dropdown";
+            this.dropdown.Size = new System.Drawing.Size(190, 23);
+            this.dropdown.TabIndex = 7;
             // 
             // frmManage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.dropdown);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.Export);
             this.Controls.Add(this.button2);
@@ -117,5 +145,7 @@
         private Button button2;
         private Button Export;
         private Button button3;
+        private Button button4;
+        private ComboBox dropdown;
     }
 }

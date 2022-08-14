@@ -22,6 +22,8 @@ namespace Demo
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             initChart(getData(), getDates());
+            dropdown.Items.AddRange(Utils.getExports().ToArray());
+            dropdown.SelectedIndex = 0;
            
         }
         private void button1_Click(object sender, EventArgs e)
@@ -50,7 +52,29 @@ namespace Demo
                 Title = "Sold",
                 LabelFormatter = value => value.ToString("N")
             });
-        } 
+        }
+        private void initChart<T>(string yName,List<T> yCol,string xName, List<string> xCol)
+        {
+            cartesianChart1.Series = new SeriesCollection
+            {
+                new ColumnSeries
+                {
+                    Title= yName,
+                    Values= new ChartValues<T>(yCol)
+                }
+            };
+            cartesianChart1.AxisX.Add(new Axis
+            {
+                Title = xName,
+                Labels = xCol
+            });
+
+            cartesianChart1.AxisY.Add(new Axis
+            {
+                Title = yName,
+                LabelFormatter = value => value.ToString("N")
+            });
+        }
         private void demoChart()
         {
             cartesianChart1.Series = new SeriesCollection
@@ -100,9 +124,11 @@ namespace Demo
             this.cartesianChart1.AxisY.Clear();
             
         }
-        private void button2_Click(object sender, EventArgs e)
+        private async void button2_Click(object sender, EventArgs e)
         {
             clearChart();
+            Utils.GeneralExport("stock");
+            //initChart<double>("Qtys", , "Products",);
 
         }
         private void Export_Click(object sender, EventArgs e)
@@ -132,7 +158,25 @@ namespace Demo
                 }
                 MessageBox.Show(data.ToString(),"First Row" );
             }
+            else
+            {
+
+            }
             
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string selected = dropdown.Text;
+            if (selected.Equals(""))
+            {
+                MessageBox.Show("Please select a report below");
+            }
+            else {
+                Utils.GeneralExport(selected);
+                
+            }
+
         }
     }
 }

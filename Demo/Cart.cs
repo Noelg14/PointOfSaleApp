@@ -9,6 +9,8 @@ namespace Demo
     public class Cart
     {
         public List<Product> products = new List<Product>();
+        //public Dictionary<Product,double> prod = new Dic<>();  Product / QTY?
+
         public long id;
         public Cart(List<Product> prods)
         {
@@ -24,9 +26,24 @@ namespace Demo
         {
             products.Add(p);
         }
+        public void removeProd(Product p)
+        {
+            products.Remove(p);
+        }
         public void Clear()
         {
             products.Clear();
+        }        
+        public double reCalculate()
+        {
+            double total = 0;
+            foreach (Product p in products)
+            {
+                total += p.price;
+            }
+
+            return total;
+           
         }
 
     }
