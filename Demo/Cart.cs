@@ -33,6 +33,17 @@ namespace Demo
         public void Clear()
         {
             products.Clear();
+        }        
+        public double reCalculate()
+        {
+            double total = 0;
+            foreach (Product p in products)
+            {
+                total += p.price;
+            }
+
+            return total;
+           
         }
 
     }

@@ -289,8 +289,17 @@ namespace Demo
             listView1.SelectedItems[0].SubItems[3].Text = "-1";
             listView1.SelectedItems[0].SubItems[2].Text = (price * -1).ToString();
 
+            foreach(Product prod in c.products)
+            {
+                if (prod.PLU.Equals(listView1.SelectedItems[0].SubItems[0].Text))
+                {
+                    prod.qty = -1;
+                    prod.price *= -1;
+                }
+            }
 
-            total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
+            //total += c.reCalculate();
+            total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text) * 2; // add the mius value;
             label5.Text = "€ " + Math.Round(total, 2, MidpointRounding.ToEven);
         }
 
@@ -308,13 +317,17 @@ namespace Demo
 
                     if (qty.Contains('-'))
                     {
-                        MessageBox.Show("Item Already refunded,Cannot void");
+                        //MessageBox.Show("Item Already refunded,Cannot void");
+                        c.removeProd(Utils.search(plu));
+                        total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text) * -1; // add the mius value;
+                        label5.Text = "€ " + Math.Round(total, 2, MidpointRounding.ToEven);
+                        listView1.SelectedItems[0].Remove();
                         return;
                     }
 
                     c.removeProd(Utils.search(plu));
 
-                    total -= double.Parse(listView1.SelectedItems[0].SubItems[2].Text)*2;
+                    total -= double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
                     label5.Text = "€ "+ Math.Round(total, 2, MidpointRounding.ToEven);
 
                     listView1.SelectedItems[0].Remove();
@@ -336,10 +349,10 @@ namespace Demo
     public class Product {
         public string PLU { get; }
         public string desc { get; }
-        public float price { get; }
+        public float price { get; set; }
         public bool allowFra { get; }
 
-        public bool isRefund { get; set; } = false;
+        public double qty { get; set; } = 1;
 
         public Product(string PLU, string desc, float price, bool allowFra)
         {

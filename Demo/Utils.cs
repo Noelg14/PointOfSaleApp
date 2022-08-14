@@ -108,6 +108,7 @@ namespace Demo
                 {
                     dr.Read();
                     Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3));
+                    p.qty = 1;
                     return p;
                 }
                 else
