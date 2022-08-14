@@ -261,7 +261,7 @@ namespace Demo
             foreach (Product p in c.products)
             {
                 cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+")";
-                updateProductQty(p.PLU, getProductQty(p.PLU) - 1);
+                updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
 
                 cmd.ExecuteNonQuery();
                 log("Writing to salelines");

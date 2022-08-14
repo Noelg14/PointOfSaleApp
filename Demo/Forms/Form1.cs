@@ -10,7 +10,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.5.9";
+        public readonly string version = "0.6.1";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
@@ -276,36 +276,54 @@ namespace Demo
 
         private void button3_Click(object sender, EventArgs e) // refund
         {
-            //var selectedItem = (dynamic)listView1.SelectedItems[0];
-            // selectedItem.Col3
-            string qty = listView1.SelectedItems[0].SubItems[3].Text;
-            double price = double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
-
-            if (qty.Contains('-'))
+            if (listView1.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Item Already refunded");
+                MessageBox.Show("Please select an item");
                 return;
             }
-            listView1.SelectedItems[0].SubItems[3].Text = "-1";
-            listView1.SelectedItems[0].SubItems[2].Text = (price * -1).ToString();
-
-            foreach(Product prod in c.products)
+            try
             {
-                if (prod.PLU.Equals(listView1.SelectedItems[0].SubItems[0].Text))
-                {
-                    prod.qty = -1;
-                    prod.price *= -1;
-                }
-            }
+                //var selectedItem = (dynamic)listView1.SelectedItems[0];
+                // selectedItem.Col3
 
-            //total += c.reCalculate();
-            total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text) * 2; // add the mius value;
-            label5.Text = "€ " + Math.Round(total, 2, MidpointRounding.ToEven);
+                string qty  = listView1.SelectedItems[0].SubItems[3].Text;
+                double price = double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
+
+                if (qty.Contains('-'))
+                {
+                    MessageBox.Show("Item Already refunded");
+                    return;
+                }
+                listView1.SelectedItems[0].SubItems[3].Text = "-1";
+                listView1.SelectedItems[0].SubItems[2].Text = (price * -1).ToString();
+
+                foreach (Product prod in c.products)
+                {
+                    if (prod.PLU.Equals(listView1.SelectedItems[0].SubItems[0].Text))
+                    {
+                        prod.qty = -1;
+                        prod.price *= -1;
+                    }
+                }
+
+                //total += c.reCalculate();
+                total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text) * 2; // add the mius value;
+                label5.Text = "€ " + Math.Round(total, 2, MidpointRounding.ToEven);
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, "An Error Ocurred");
+            }
         }
 
         private void button4_Click(object sender, EventArgs e) // void
         {
+            if (listView1.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Please select an item");
+                return;
+            }
             try
+
             {
                 //MessageBox.Show(listView1.Items.Count.ToString());
 

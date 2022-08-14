@@ -21,7 +21,8 @@ namespace Demo
         public Payment(double toPay,Cart c)
         {
             InitializeComponent();
-            label1.Text += " € " + toPay;
+            label1.Text += "€ " + Math.Round(toPay, 2, MidpointRounding.ToEven);
+            //label1.Text += " € " + toPay;
             this.toPay= toPay;
             this.cart = c;
             string qr = Utils.getConfig("USEQR");
