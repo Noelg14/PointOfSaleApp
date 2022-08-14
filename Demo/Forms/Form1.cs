@@ -32,8 +32,6 @@ namespace Demo
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 
-
-
             //
             Rectangle r = Screen.FromControl(this).Bounds;
             button1.Left = (r.Width - (r.Width)/4);
