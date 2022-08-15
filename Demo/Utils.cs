@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 
 namespace Demo
 {
-    internal class Utils
+    public class Utils
     {
         public static string getConfig()
         {
@@ -242,7 +242,7 @@ namespace Demo
                 MySqlCommand cmd = new MySqlCommand();
 
                 cmd.Connection = cnn;
-                cmd.CommandText = "INSERT INTO sales VALUES(" + c.id + "," + total + ",'"+ date+ "')";
+                cmd.CommandText = "INSERT INTO sales VALUES(" + c.id + "," + total + ",'"+ date+ "',null)";
                 Console.WriteLine(cmd.CommandText);
                 log("Writing to sales");
                 cmd.ExecuteNonQuery();
@@ -260,7 +260,7 @@ namespace Demo
             cmd.Connection = cnn;
             foreach (Product p in c.products)
             {
-                cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+")";
+                cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+",null)";
                 updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
 
                 cmd.ExecuteNonQuery();
@@ -358,7 +358,7 @@ namespace Demo
             }
             return dates;
         }
-        public static List<Product> getProductData()
+        public static List<Product> getProductData() // doesnt get product data?
         {
             List<Product> dates = new List<Product>();
             MySqlConnection cnn = new MySqlConnection();
@@ -382,7 +382,6 @@ namespace Demo
             }
             return dates;
         }
-
 
         #region Settings
         //Settings
@@ -441,7 +440,6 @@ namespace Demo
                 cnn.Close();
             }
         }
-
         public static string getIndiviudalSetting(string key)
         {
 
@@ -470,7 +468,6 @@ namespace Demo
             }
 
         }
-
         public static List<string> getExports()
         {
 
@@ -501,8 +498,6 @@ namespace Demo
             }
 
         }
-
-
         #endregion
         // QR Code Stuff
         public static Bitmap genQR(string data)
@@ -724,14 +719,15 @@ namespace Demo
 
         }
 
-        #region SQL stuff
-        private static MySqlConnection initConn()
+        #region SQL stuff 
+        //Making these public as it will be easier
+        public static MySqlConnection initConn()
         {
             MySqlConnection cnn = new MySqlConnection();
             cnn.ConnectionString = getConfig();
             return cnn;
         }
-        private static MySqlCommand initCmd()
+        public static MySqlCommand initCmd()
         {
 
             MySqlCommand cmd = new MySqlCommand();

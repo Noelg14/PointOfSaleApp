@@ -31,6 +31,7 @@ namespace Demo
             //this.TopMost = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.BackColor = Color.FromArgb(int.Parse(Utils.getIndiviudalSetting("color")));
 
             //
             Rectangle r = Screen.FromControl(this).Bounds;
@@ -106,7 +107,7 @@ namespace Demo
                     Utils.log("Refund issued");
                 }
                
-                Utils.recSale(c, total);
+                //Utils.recSale(c, total);
                 Utils.log("Button Pay Now Pressed");
 
                 bool paid = Payment.newPayment(total, c);
@@ -187,7 +188,7 @@ namespace Demo
 
         public static void notify()
         {            
-
+            
             Form1 f = Form1.thisForm;
             f.clear();
             f.textBox1.Enabled = true;
@@ -201,6 +202,13 @@ namespace Demo
             f.textBox1.Enabled = true;
             f = null;
             Utils.log("Back - enabling textbox");
+        }
+        public static void notifyColor()
+        {
+
+            Form1 f = Form1.thisForm;
+            f.updateColor();
+            Utils.log("update color");
         }
 
         private void toolStripLabel1_Click_1(object sender, EventArgs e)
@@ -359,6 +367,10 @@ namespace Demo
                 MessageBox.Show(ex.Message);
             }
             
+        }
+        private void updateColor()
+        {
+            this.BackColor = Color.FromArgb(int.Parse(Utils.getIndiviudalSetting("color")));
         }
     }
 

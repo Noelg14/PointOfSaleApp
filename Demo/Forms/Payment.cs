@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -53,12 +54,18 @@ namespace Demo
         {
             payments.Add(new PayItem(text, toPay));
             Utils.recPayment(text, toPay, cart);
+            Utils.recSale(this.cart, this.toPay);
             MessageBox.Show("Paid €" + toPay, "Paid");
             this.paid = true;
             sendNotif();
             if (useQR)
             {
                 showQR(cart);
+            }
+            if (Utils.getConfig("SENDSALES").Equals("Y"))
+            {
+                Process.Start("sendtomaster.exe");
+
             }
             this.Dispose();
         }
@@ -95,5 +102,6 @@ namespace Demo
         {
             new qr(Utils.genQR(c.id.ToString())).Show();
         }
+
     }
 }
