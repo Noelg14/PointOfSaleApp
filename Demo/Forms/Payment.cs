@@ -65,7 +65,6 @@ namespace Demo
             if (Utils.getConfig("SENDSALES").Equals("Y"))
             {
                 Process.Start("sendtomaster.exe");
-
             }
             this.Dispose();
         }

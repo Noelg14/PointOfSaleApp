@@ -65,29 +65,9 @@ namespace sendToMaster
             {
                 System.Net.ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
-                // Get the BackgroundWorker that raised this event.
                 BackgroundWorker worker = sender as BackgroundWorker;
 
-                // Assign the result of the computation
-                // to the Result property of the DoWorkEventArgs
-                // object. This is will be available to the 
-                // RunWorkerCompleted eventhandler.
-                /////#
-                // Add senidng here.
 
-                //List<Product> prod = Utils.getButtons();
-                //worker.ReportProgress(10);
-                //int prog =(int) (100 - 90 / prod.Count);
-                //int current = 10;
-                //foreach (Product p in prod)
-                //{
-                //    current += prog;
-                //    if(current > 100)
-                //    {
-                //        current = 100;
-                //    }
-                //    worker.ReportProgress(current);
-                //}
 
                 List<Models.sales> sale = dbFunctions.GetSales();
                 worker.ReportProgress(25);
@@ -120,25 +100,34 @@ namespace sendToMaster
                     string apiURL = Utils.getConfig("HO_SERVER");
                     HttpContent content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
                     File.AppendAllText("Log.txt", "Sending \n");
-                    _httpclient.PostAsync(apiURL, content);
                     Thread.Sleep(100);
-                    //res.EnsureSuccessStatusCode();
-                    
-                    File.AppendAllText("Log.txt", "Sent\n");
+                    HttpResponseMessage hrm = _httpclient.PostAsync(apiURL, content).Result;
+                    if (hrm.IsSuccessStatusCode)
+                    {
+                        //res.EnsureSuccessStatusCode();
+
+                        File.AppendAllText("Log.txt", "Sent\n");
 
 
-                    worker.ReportProgress(80);
-                    //update to show posted 
-                    string rows = dbFunctions.updateSales().ToString();
-                    File.AppendAllText("Log.txt", $"Updated {rows} sale rows");                
-                    
-                    rows = dbFunctions.updateSaleLine().ToString();
-                    File.AppendAllText("Log.txt", $"Updated {rows} saleline rows");  
+                        worker.ReportProgress(80);
+                        //update to show posted 
+                        string rows = dbFunctions.updateSales().ToString();
+                        File.AppendAllText("Log.txt", $"Updated {rows} sale rows");
+
+                        rows = dbFunctions.updateSaleLine().ToString();
+                        File.AppendAllText("Log.txt", $"Updated {rows} saleline rows");
+                    }
+                    else
+                    {
+                        throw new Exception("An error ocurred sending data \n "+hrm.Content);
+                    }
+
+
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
-                    File.AppendAllText("Log.txt", "Err\n");
+                    File.AppendAllText("Log.txt", ex.Message);
                 }
 
                 worker.ReportProgress(100);

@@ -64,6 +64,14 @@ namespace HOApi.Controllers
 
 
         }
+        [HttpGet]
+        [Route("/api/hello")]
+        public string getHello()
+        {
+            return "There";
+
+        }
+
 
         //// PUT api/<importController>/5
         //[HttpPut("{id}")]
