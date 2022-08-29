@@ -192,7 +192,6 @@ namespace Demo
             }
             //return 0;
         }
-
         public static List<Product> getButtons()
         {
             List<Product> list = new List<Product>();
@@ -382,7 +381,6 @@ namespace Demo
             }
             return dates;
         }
-
         #region Settings
         //Settings
         public static Dictionary<string,string> getSettings()
@@ -510,7 +508,6 @@ namespace Demo
             return qrCodeAsBitmap;
         }
         #region Excel
-      
         public static void ExcelExport<T>(List<T> data,string optionalType="Sales")
         {
             string fileName = "Report1";
@@ -646,7 +643,6 @@ namespace Demo
 
         }
         #endregion
-
         // export based on DB saved query. This is a catch all for any excel export.
         public static void GeneralExport(string type)
         {
@@ -688,7 +684,6 @@ namespace Demo
             }
 
         }
-
         #region SQL stuff 
         //Making these public as it will be easier
         public static MySqlConnection initConn()
@@ -704,8 +699,6 @@ namespace Demo
             cmd.Connection=initConn();
             return cmd;
         }
-
         #endregion
-
     }
 }

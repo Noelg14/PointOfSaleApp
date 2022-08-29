@@ -5,7 +5,6 @@ namespace HOApi.Repository
 {
     public class dbWork
     {
-
         public static void addSales(List<Models.sales> sales)
         {
             MySqlCommand cmd = initCmd();
@@ -36,7 +35,6 @@ namespace HOApi.Repository
             }
 
         }
-
         public static void addSaleLines(List<Models.salesline> salelines)
         {
             MySqlCommand cmd = initCmd();
@@ -68,8 +66,76 @@ namespace HOApi.Repository
 
         }
 
+        public static void addStock(List<Models.stock> stock)
+        {
+            MySqlCommand cmd = initCmd();
+            MySqlConnection cnn = cmd.Connection;
+
+            try
+            {
+                truncTable("stockbck"); // clear table
+                cnn.Open();
+                cmd.CommandText = "INSERT INTO stockbck\r\nSELECT * FROM stocklvl"; // backup existing
+                cmd.ExecuteNonQuery();
+
+               
+                truncTable("stocklvl"); // clear table
+
+
+                cmd.Prepare();
+                cmd.CommandText = "INSERT INTO stocklvl values(@PLU,@value)";
+
+                foreach (Models.stock item in stock)
+                {
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@PLU", item.PLU);
+                    cmd.Parameters.AddWithValue("@value", double.Parse(item.qty));
+                    //cmd.Parameters.AddWithValue("@Cart", item.cartID);
+
+                    cmd.ExecuteNonQuery();
+                    //Console.WriteLine("Added sale");
+                }
+                Console.WriteLine("Complete");
+            }
+
+            catch (MySqlException mse)
+            {
+                Console.WriteLine(mse.Message);
+            }
+
+        }
+
+        private static bool truncTable(string tableName)
+        {
+
+            MySqlCommand cmd = initCmd();
+            MySqlConnection cnn = cmd.Connection;
+
+            try
+            {
+                cnn.Open();
+                cmd.Prepare();
+                cmd.CommandText = "TRUNCATE TABLE @table";
+
+                cmd.Parameters.AddWithValue("@table", tableName);
+
+                cmd.ExecuteNonQuery();
+                return true;
+            }
+            catch(MySqlException msqle)
+            {
+                return false;
+            }
+            finally
+            {
+                cnn.Close();
+            }
+
+        }
+
+
         #region SQL stuff 
-        //Making these public as it will be easier
+            //Making these public as it will be easier
         public static MySqlConnection initConn()
         {
             MySqlConnection cnn = new MySqlConnection();

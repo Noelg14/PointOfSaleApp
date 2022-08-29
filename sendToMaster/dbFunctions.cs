@@ -105,6 +105,52 @@ namespace sendToMaster
 
         }
 
+        public static List<Models.stock> GetStock()
+        {
+
+            MySqlCommand cmd = Utils.initCmd();
+            MySqlConnection cnn = cmd.Connection;
+            string data;
+
+            List<Models.stock> list = new List<Models.stock>();
+
+            try
+            {
+                cnn.Open();
+                //cmd.Prepare();
+                cmd.CommandText = "select * from settings where setting = 'sendStock' and Type='HO'";
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                dr.Read();
+                if (!dr.HasRows)
+                {
+                    MessageBox.Show("No Such export exists, please try again");
+                    return new List<Models.stock>();
+                }
+                data = dr.GetString("data"); // get query
+
+                dr.Dispose();
+                cmd.CommandText = data;
+
+                dr = cmd.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    list.Add(new Models.stock(dr.GetString(0), dr.GetString(1)));
+                }
+                return list;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return null;
+            }
+            finally
+            {
+                cnn.Close();
+            }
+
+        }
 
         public static int updateSales()
         {

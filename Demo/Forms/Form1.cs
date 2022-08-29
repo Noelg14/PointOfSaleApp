@@ -181,7 +181,9 @@ namespace Demo
         private void dynButtton_Click(object sender, EventArgs e)
         {
             Button s = (Button)sender;
-            addToCart((Product)s.Tag);
+            Product p = (Product)s.Tag;
+            addToCart(Utils.search(p.PLU));
+            //addToCart((Product)s.Tag);
             //MessageBox.Show(sender.GetType().ToString());
            // addToCart(Utils.search());
         }

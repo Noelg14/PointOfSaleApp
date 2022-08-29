@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc; 
 using Newtonsoft.Json;
+using System.IO;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -64,11 +65,43 @@ namespace HOApi.Controllers
 
 
         }
+        
+        
         [HttpGet]
         [Route("/api/hello")]
         public string getHello()
         {
             return "There";
+
+        }
+
+        [HttpPost]
+        [Route("/api/stock")]
+        public void PostStock([FromBody] Models.Data root)
+        {
+            //List<Models.stock> import = imp;
+
+            try
+            {
+                _logger.LogInformation("Got request : PostStock");
+                System.IO.File.WriteAllText("Web.txt",root.ToString());
+                //Models.exportItem import = JsonConvert.DeserializeObject<Models.exportItem>(imp);
+                //_logger.LogInformation(import.Count.ToString());
+                //if (import.Count > 0)
+                //{
+                    _logger.LogInformation("Adding stock");
+                    //Repository.dbWork.addStock(import);
+                    _logger.LogInformation("Adding stock complete");
+                //}
+               // else { _logger.LogInformation("No stock to add"); }
+
+            }
+            catch (Exception e)
+            {
+
+                _logger.LogError("Failed " + e.Message);
+            }
+
 
         }
 
