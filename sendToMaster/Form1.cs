@@ -27,7 +27,7 @@ namespace sendToMaster
 
             backgroundWorker1.RunWorkerAsync();
 
-            File.AppendAllText("Log.txt", "Init file\n");
+            File.AppendAllText("Log.txt", "\nInit file\n");
 
 
 

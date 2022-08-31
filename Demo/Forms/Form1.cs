@@ -106,13 +106,22 @@ namespace Demo
                     //total *= -1;
                     Utils.log("Refund issued");
                 }
-               
                 //Utils.recSale(c, total);
                 Utils.log("Button Pay Now Pressed");
 
-                bool paid = Payment.newPayment(total, c);
+                if ((Application.OpenForms["Payment"] as Payment) != null)
+                {
+                    Application.OpenForms["Payment"].BringToFront();
+                }
+                else
+                {
 
-                this.textBox1.Enabled = false;
+                    bool paid = Payment.newPayment(total, c);
+
+                    this.textBox1.Enabled = false;
+                    this.button2.Enabled = false;
+
+                }
 
             }
             if (c.products.Count == 0)
@@ -187,13 +196,13 @@ namespace Demo
             //MessageBox.Show(sender.GetType().ToString());
            // addToCart(Utils.search());
         }
-
         public static void notify()
         {            
             
             Form1 f = Form1.thisForm;
             f.clear();
             f.textBox1.Enabled = true;
+            f.button2.Enabled = true;
             f = null;
             Utils.log("Clear form");
         }
@@ -202,6 +211,7 @@ namespace Demo
 
             Form1 f = Form1.thisForm;
             f.textBox1.Enabled = true;
+            f.button2.Enabled = true;
             f = null;
             Utils.log("Back - enabling textbox");
         }
