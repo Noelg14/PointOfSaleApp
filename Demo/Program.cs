@@ -1,3 +1,5 @@
+using Demo.Forms;
+
 namespace Demo
 {
     internal static class Program
@@ -24,13 +26,25 @@ namespace Demo
                             break;
 
                         case ("qr"):
-                            Utils.log("Running param"+args[0]);
+                            Utils.log("Running param "+args[0]);
                             Application.Run(new qr(Utils.genQR("https://noelgriffin.ie")));
                             break;
 
                         case ("manage"):
                             Utils.log("Running param" + args[0]);
                             Application.Run(new frmManage());
+                            break;
+                        case ("products"):
+                            Utils.log("Running param" + args[0]);
+                            Application.Run(new AddProd());
+                            break;                        
+                        case ("stock"):
+                            Utils.log("Running param" + args[0]);
+                            Application.Run(new frmStock());
+                            break;
+                        case ("voucher"):
+                            Utils.log("Running param" + args[0]);
+                            Application.Run(new vouchTest());
                             break;
 
                         default:

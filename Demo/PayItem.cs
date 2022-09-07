@@ -19,4 +19,19 @@ namespace Demo
 
 
     }
+    public struct Voucher {
+        public string number { get; }
+        public double balance { get; }
+        public Voucher(string n, double b)
+        {
+            this.number = n;
+            this.balance = b;
+        }
+        public string ToString()
+        {
+            return $"Voucher No: {this.number} . Balance : {this.balance}";
+        }
+    }
+
+
 }

@@ -124,9 +124,9 @@
             this.checkBox1.AutoSize = true;
             this.checkBox1.Location = new System.Drawing.Point(197, 280);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(56, 19);
+            this.checkBox1.Size = new System.Drawing.Size(55, 19);
             this.checkBox1.TabIndex = 8;
-            this.checkBox1.Text = "Allow";
+            this.checkBox1.Text = "Show";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // button2

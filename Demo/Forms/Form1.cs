@@ -10,7 +10,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.6.1";
+        public readonly string version = "0.6.3";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
@@ -18,7 +18,7 @@ namespace Demo
         double total=0;
         Cart c = new Cart();
         bool paid;
-        static Form1 thisForm; // probably terrible :(
+        static Form1 thisForm; 
 
         public Form1()
         {
@@ -31,7 +31,13 @@ namespace Demo
             //this.TopMost = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.BackColor = Color.FromArgb(int.Parse(Utils.getIndiviudalSetting("color")));
+
+            int color = int.Parse(Utils.getIndiviudalSetting("color"));
+            if(color != 0)
+            {
+                this.BackColor = Color.FromArgb(color);
+            }
+
 
             //
             Rectangle r = Screen.FromControl(this).Bounds;

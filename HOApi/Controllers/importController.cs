@@ -77,23 +77,23 @@ namespace HOApi.Controllers
 
         [HttpPost]
         [Route("/api/stock")]
-        public void PostStock([FromBody] Models.Data root)
+        public void PostStock([FromBody] Models.StockExp root)
         {
-            //List<Models.stock> import = imp;
+            //List<Models.StockExp> import = root;
 
             try
             {
                 _logger.LogInformation("Got request : PostStock");
-                System.IO.File.WriteAllText("Web.txt",root.ToString());
-                //Models.exportItem import = JsonConvert.DeserializeObject<Models.exportItem>(imp);
+                //System.IO.File.WriteAllText("Web.txt",root.ToString());
+                //Models.StockExp import = JsonConvert.DeserializeObject<Models.StockExp>(root);
                 //_logger.LogInformation(import.Count.ToString());
-                //if (import.Count > 0)
-                //{
+                if (root.stock.Count > 0)
+                {
                     _logger.LogInformation("Adding stock");
-                    //Repository.dbWork.addStock(import);
+                    Repository.dbWork.addStock(root.stock);
                     _logger.LogInformation("Adding stock complete");
-                //}
-               // else { _logger.LogInformation("No stock to add"); }
+                }
+               else { _logger.LogInformation("No stock to add"); }
 
             }
             catch (Exception e)

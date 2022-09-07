@@ -287,6 +287,56 @@ namespace Demo
             }
 
         }
+
+        public static Voucher GetVoucher(string number)
+        {
+            MySqlCommand cmd = initCmd();
+            MySqlConnection conn = initConn();
+            cmd.Connection = conn;
+            try{
+                conn.Open();
+                cmd.CommandText = $"SELECT * FROM Voucher where Number ='{number}'";
+                MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    dr.Read();
+                    return new Voucher(dr.GetString(0), dr.GetDouble(1));
+                }
+            }catch(Exception e)
+            {
+                
+            }
+            finally
+            {
+                conn.Close();
+            }
+            return new Voucher();
+        }
+
+        public static void UpdateVoucher(string number,double balance)
+        {
+            MySqlCommand cmd = initCmd();
+            MySqlConnection conn = initConn();
+            cmd.Connection = conn;
+            try
+            {
+                conn.Open();
+                cmd.CommandText = $"Update Voucher set balance = {balance} where Number ='{number}'";
+                int rows = cmd.ExecuteNonQuery();
+                
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
         public static void log(string msg)
         {
 
@@ -297,7 +347,7 @@ namespace Demo
             cnn.Open();
             try
             {
-                cmd.CommandText = "INSERT INTO log VALUES(NULL,'"+msg+"','"+DateTime.UtcNow.ToString()+"');";
+                cmd.CommandText = $"INSERT INTO log VALUES(NULL,'{msg}','"+DateTime.UtcNow.ToString()+"');";
                 cmd.ExecuteNonQuery();
             }
             finally
@@ -457,7 +507,7 @@ namespace Demo
                     data = dr.GetString("data");
                     return data;
                 }
-                return null;
+                return "0";
 
             }
             finally

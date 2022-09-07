@@ -21,4 +21,17 @@ namespace HOApi.Models
         }
 
     }
+    public class StockExp
+    {
+        public List<stock> stock;
+
+        public StockExp(List<stock> s)
+        {
+            stock = stock;
+        }
+        public StockExp()
+        {
+        }
+
+    }
 }

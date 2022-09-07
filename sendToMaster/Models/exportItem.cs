@@ -21,4 +21,17 @@ namespace sendToMaster.Models
         }
 
     }
+    internal class StockExp
+    {
+        public List<stock> stock;
+
+        public StockExp(List<stock> s)
+        {
+            stock = stock;
+        }
+        public StockExp()
+        {
+        }
+
+    }
 }

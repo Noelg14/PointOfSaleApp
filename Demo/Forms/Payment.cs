@@ -40,9 +40,20 @@ namespace Demo
 
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e) //Voucher
         {
-            pay(button3.Text);
+            if(textBox1.Visible == false)
+            {
+                textBox1.Visible = true;
+                MessageBox.Show("Please enter voucher number ", "Enter Voucher");
+            }
+            if (textBox1.Visible == true && textBox1.Text != "")
+            {
+                Voucher v = Utils.GetVoucher(textBox1.Text);
+                MessageBox.Show(v.ToString());
+                //pay(button3.Text);
+            }
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -55,7 +66,7 @@ namespace Demo
             payments.Add(new PayItem(text, toPay));
             Utils.recPayment(text, toPay, cart);
             Utils.recSale(this.cart, this.toPay);
-            MessageBox.Show("Paid €" + toPay, "Paid");
+            MessageBox.Show("Paid €" + Math.Round(toPay,2), "Paid");
             this.paid = true;
             sendNotif();
             if (useQR)

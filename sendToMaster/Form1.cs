@@ -15,7 +15,7 @@ namespace sendToMaster
     public partial class Form1 : Form
     {
         Models.exportItem exportItem = new Models.exportItem();
-        Models.stock stock = new Models.stock();
+        Models.StockExp StockExp = new Models.StockExp();
 
         public static HttpClient _httpclient = new HttpClient();
         public Form1()
@@ -85,12 +85,14 @@ namespace sendToMaster
                 exportItem.sales = sale;
                 exportItem.saleline = saleline;
 
+                StockExp.stock = stock;
+
 
                 worker.ReportProgress(60);
                 //Thread.Sleep(500);
                 //send to Server
                 worker.ReportProgress(75);
-                string stockObj = JsonConvert.SerializeObject(stock);
+                string stockObj = JsonConvert.SerializeObject(StockExp);
 
                 string jsonObj = JsonConvert.SerializeObject(exportItem);
 
@@ -106,6 +108,7 @@ namespace sendToMaster
                     File.AppendAllText("Log.txt", "Sending \n");
                     Thread.Sleep(100);
                     HttpResponseMessage hrm = _httpclient.PostAsync(apiURL+"/sales", content).Result;
+
                     if (hrm.IsSuccessStatusCode)
                     {
                         //res.EnsureSuccessStatusCode();
@@ -123,7 +126,7 @@ namespace sendToMaster
                     }
                     #endregion
 
-                   /* #region Stock
+                    #region Stock
                     content = new StringContent(stockObj, Encoding.UTF8, "application/json");
                     File.AppendAllText("Log.txt", "Sending Stock \n");
                     Thread.Sleep(150);
@@ -141,7 +144,7 @@ namespace sendToMaster
                     {
                         throw new Exception("An error ocurred sending data \n "+hrm.Content);
                     }
-                   */
+                  
 
                 }
                 catch (Exception ex)
