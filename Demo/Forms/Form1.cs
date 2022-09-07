@@ -10,7 +10,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.6.1";
+        public readonly string version = "0.6.3";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
@@ -18,7 +18,7 @@ namespace Demo
         double total=0;
         Cart c = new Cart();
         bool paid;
-        static Form1 thisForm; // probably terrible :(
+        static Form1 thisForm; 
 
         public Form1()
         {
@@ -31,6 +31,13 @@ namespace Demo
             //this.TopMost = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+
+            int color = int.Parse(Utils.getIndiviudalSetting("color"));
+            if(color != 0)
+            {
+                this.BackColor = Color.FromArgb(color);
+            }
+
 
             //
             Rectangle r = Screen.FromControl(this).Bounds;
@@ -105,13 +112,22 @@ namespace Demo
                     //total *= -1;
                     Utils.log("Refund issued");
                 }
-               
-                Utils.recSale(c, total);
+                //Utils.recSale(c, total);
                 Utils.log("Button Pay Now Pressed");
 
-                bool paid = Payment.newPayment(total, c);
+                if ((Application.OpenForms["Payment"] as Payment) != null)
+                {
+                    Application.OpenForms["Payment"].BringToFront();
+                }
+                else
+                {
 
-                this.textBox1.Enabled = false;
+                    bool paid = Payment.newPayment(total, c);
+
+                    this.textBox1.Enabled = false;
+                    this.button2.Enabled = false;
+
+                }
 
             }
             if (c.products.Count == 0)
@@ -180,17 +196,19 @@ namespace Demo
         private void dynButtton_Click(object sender, EventArgs e)
         {
             Button s = (Button)sender;
-            addToCart((Product)s.Tag);
+            Product p = (Product)s.Tag;
+            addToCart(Utils.search(p.PLU));
+            //addToCart((Product)s.Tag);
             //MessageBox.Show(sender.GetType().ToString());
            // addToCart(Utils.search());
         }
-
         public static void notify()
         {            
-
+            
             Form1 f = Form1.thisForm;
             f.clear();
             f.textBox1.Enabled = true;
+            f.button2.Enabled = true;
             f = null;
             Utils.log("Clear form");
         }
@@ -199,8 +217,16 @@ namespace Demo
 
             Form1 f = Form1.thisForm;
             f.textBox1.Enabled = true;
+            f.button2.Enabled = true;
             f = null;
             Utils.log("Back - enabling textbox");
+        }
+        public static void notifyColor()
+        {
+
+            Form1 f = Form1.thisForm;
+            f.updateColor();
+            Utils.log("update color");
         }
 
         private void toolStripLabel1_Click_1(object sender, EventArgs e)
@@ -259,11 +285,15 @@ namespace Demo
             }
         }
 
-        private void toolStripButton2_Click(object sender, EventArgs e)
+        private  void toolStripButton2_Click(object sender, EventArgs e)
         {
             DialogResult res = MessageBox.Show($"Are you sure you want to Exit?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (res == DialogResult.OK)
             {
+                if (Utils.getConfig("SENDSALES").ToUpper().Equals("N"))
+                {
+                    Process.Start("sendtomaster.exe");
+                }
                 Application.Exit();
             }
             if (res == DialogResult.Cancel)
@@ -359,6 +389,10 @@ namespace Demo
                 MessageBox.Show(ex.Message);
             }
             
+        }
+        private void updateColor()
+        {
+            this.BackColor = Color.FromArgb(int.Parse(Utils.getIndiviudalSetting("color")));
         }
     }
 

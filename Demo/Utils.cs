@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 
 namespace Demo
 {
-    internal class Utils
+    public class Utils
     {
         public static string getConfig()
         {
@@ -62,15 +62,15 @@ namespace Demo
         public static string getConfig(string config)
         {
             string file;
-            if (Debugger.IsAttached)
-            {
-                 file = "C:\\test\\config.dat";
-            }
-            else
-            {
+            //if (Debugger.IsAttached)
+            //{
+            //     file = "C:\\test\\config.dat";
+            //}
+            //else
+            //{
                file= Directory.GetCurrentDirectory() + "/Localdata/config.dat";
 
-            }
+           // }
 
             if (file == null)
             {
@@ -192,7 +192,6 @@ namespace Demo
             }
             //return 0;
         }
-
         public static List<Product> getButtons()
         {
             List<Product> list = new List<Product>();
@@ -242,7 +241,7 @@ namespace Demo
                 MySqlCommand cmd = new MySqlCommand();
 
                 cmd.Connection = cnn;
-                cmd.CommandText = "INSERT INTO sales VALUES(" + c.id + "," + total + ",'"+ date+ "')";
+                cmd.CommandText = "INSERT INTO sales VALUES(" + c.id + "," + total + ",'"+ date+ "',null)";
                 Console.WriteLine(cmd.CommandText);
                 log("Writing to sales");
                 cmd.ExecuteNonQuery();
@@ -260,7 +259,7 @@ namespace Demo
             cmd.Connection = cnn;
             foreach (Product p in c.products)
             {
-                cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+")";
+                cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+",null)";
                 updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
 
                 cmd.ExecuteNonQuery();
@@ -288,6 +287,56 @@ namespace Demo
             }
 
         }
+
+        public static Voucher GetVoucher(string number)
+        {
+            MySqlCommand cmd = initCmd();
+            MySqlConnection conn = initConn();
+            cmd.Connection = conn;
+            try{
+                conn.Open();
+                cmd.CommandText = $"SELECT * FROM Voucher where Number ='{number}'";
+                MySqlDataReader dr = cmd.ExecuteReader();
+                if (dr.HasRows)
+                {
+                    dr.Read();
+                    return new Voucher(dr.GetString(0), dr.GetDouble(1));
+                }
+            }catch(Exception e)
+            {
+                
+            }
+            finally
+            {
+                conn.Close();
+            }
+            return new Voucher();
+        }
+
+        public static void UpdateVoucher(string number,double balance)
+        {
+            MySqlCommand cmd = initCmd();
+            MySqlConnection conn = initConn();
+            cmd.Connection = conn;
+            try
+            {
+                conn.Open();
+                cmd.CommandText = $"Update Voucher set balance = {balance} where Number ='{number}'";
+                int rows = cmd.ExecuteNonQuery();
+                
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+        }
+
+
         public static void log(string msg)
         {
 
@@ -298,7 +347,7 @@ namespace Demo
             cnn.Open();
             try
             {
-                cmd.CommandText = "INSERT INTO log VALUES(NULL,'"+msg+"','"+DateTime.UtcNow.ToString()+"');";
+                cmd.CommandText = $"INSERT INTO log VALUES(NULL,'{msg}','"+DateTime.UtcNow.ToString()+"');";
                 cmd.ExecuteNonQuery();
             }
             finally
@@ -358,7 +407,7 @@ namespace Demo
             }
             return dates;
         }
-        public static List<Product> getProductData()
+        public static List<Product> getProductData() // doesnt get product data?
         {
             List<Product> dates = new List<Product>();
             MySqlConnection cnn = new MySqlConnection();
@@ -382,8 +431,6 @@ namespace Demo
             }
             return dates;
         }
-
-
         #region Settings
         //Settings
         public static Dictionary<string,string> getSettings()
@@ -441,7 +488,6 @@ namespace Demo
                 cnn.Close();
             }
         }
-
         public static string getIndiviudalSetting(string key)
         {
 
@@ -461,7 +507,7 @@ namespace Demo
                     data = dr.GetString("data");
                     return data;
                 }
-                return null;
+                return "0";
 
             }
             finally
@@ -470,7 +516,6 @@ namespace Demo
             }
 
         }
-
         public static List<string> getExports()
         {
 
@@ -501,8 +546,6 @@ namespace Demo
             }
 
         }
-
-
         #endregion
         // QR Code Stuff
         public static Bitmap genQR(string data)
@@ -515,36 +558,6 @@ namespace Demo
             return qrCodeAsBitmap;
         }
         #region Excel
-        //public static void ExcelTest()
-        //{
-        //    C1XLBook book = new C1XLBook();
-        //    book.Author = "Noel Griffin";
-        //    XLSheet sheet = book.Sheets[0];
-        //    int i;
-        //    for (i = 0; i <= 9; i++)
-        //    {
-        //        sheet[i, 0].Value = (i + 1) * 10;
-        //        sheet[i, 1].Value = (i + 1) * 100;
-        //        sheet[i, 2].Value = (i + 1) * 1000;
-        //    }
-        //    book.Save("MyBook.xlsx");
-        //}
-
-        //public static void ClosedXMLTest()
-        //{
-        //    string fileName = "Report1";
-        //    if (File.Exists(fileName+".xlsx"))
-        //    {
-        //        File.Delete(fileName + ".xlsx");
-        //    }
-
-        //    XLWorkbook book = new XLWorkbook();
-        //    var ws = book.Worksheets.Add("Sheet1");
-        //    ws.Cell("A1").Value = "TEST";
-        //    ws.Cell("A2").Value = "Value";
-        //    book.SaveAs(fileName + ".xlsx");
-
-        //}
         public static void ExcelExport<T>(List<T> data,string optionalType="Sales")
         {
             string fileName = "Report1";
@@ -680,9 +693,7 @@ namespace Demo
 
         }
         #endregion
-
         // export based on DB saved query. This is a catch all for any excel export.
-
         public static void GeneralExport(string type)
         {
 
@@ -723,23 +734,21 @@ namespace Demo
             }
 
         }
-
-        #region SQL stuff
-        private static MySqlConnection initConn()
+        #region SQL stuff 
+        //Making these public as it will be easier
+        public static MySqlConnection initConn()
         {
             MySqlConnection cnn = new MySqlConnection();
             cnn.ConnectionString = getConfig();
             return cnn;
         }
-        private static MySqlCommand initCmd()
+        public static MySqlCommand initCmd()
         {
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection=initConn();
             return cmd;
         }
-
         #endregion
-
     }
 }
