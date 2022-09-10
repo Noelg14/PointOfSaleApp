@@ -98,7 +98,7 @@ namespace sendToMaster
 
                 File.AppendAllText("Log.txt", "Conv to json\n");
 
-                File.WriteAllText("JSON.txt", jsonObj);
+                File.WriteAllText("JSON.txt", stockObj);
 
                 try
                 {
@@ -107,7 +107,7 @@ namespace sendToMaster
                     HttpContent content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
                     File.AppendAllText("Log.txt", "Sending \n");
                     Thread.Sleep(100);
-                    HttpResponseMessage hrm = _httpclient.PostAsync(apiURL+"/sales", content).Result;
+                    HttpResponseMessage hrm = _httpclient.PostAsync(apiURL+"/stock", content).Result;
 
                     if (hrm.IsSuccessStatusCode)
                     {

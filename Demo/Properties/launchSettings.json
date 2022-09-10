@@ -2,7 +2,6 @@
   "profiles": {
     "Demo": {
       "commandName": "Project",
-      "commandLineArgs": "voucher",
       "remoteDebugEnabled": false
     }
   }

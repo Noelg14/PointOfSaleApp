@@ -114,6 +114,13 @@ namespace Demo
                 }
                 //Utils.recSale(c, total);
                 Utils.log("Button Pay Now Pressed");
+                if(total == 0)
+                {
+                    MessageBox.Show("Paid","Thank you");
+                    Utils.recPayment("NONE", total, c); // need to record as sending etc
+                    clear();
+                    return;
+                }
 
                 if ((Application.OpenForms["Payment"] as Payment) != null)
                 {
