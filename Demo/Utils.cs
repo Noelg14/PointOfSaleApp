@@ -89,7 +89,7 @@ namespace Demo
                    return conf[i].Split('=')[1].Trim();
                 }
             }
-            return null;
+            return "";
         }
         public static Product search(string PLU)
         {
@@ -259,6 +259,8 @@ namespace Demo
             cmd.Connection = cnn;
             foreach (Product p in c.products)
             {
+
+                // adding * of qty to ensure refunds are recorded right
                 cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+",null)";
                 updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
 
@@ -462,6 +464,36 @@ namespace Demo
             }
             return null;
         }
+        public static List<string> getTypes()
+        {
+            List< string> types = new List<string>();
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+            cmd.Connection = cnn;
+            cmd.CommandText = "Select * from types";
+            cnn.Open();
+            try
+            {
+
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    types.Add(dr.GetString("Desc"));
+                }
+                return types;
+            }
+            catch (Exception ex)
+            {
+                log(ex.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return null;
+        }
+
         public static void updateSettings(string name,string data)
         {
          

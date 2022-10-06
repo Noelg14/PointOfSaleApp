@@ -17,6 +17,7 @@ namespace Demo.Forms
         {
             InitializeComponent();
             textBox2.Enabled = false;
+            this.Text = "Get Voucher";
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)

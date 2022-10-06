@@ -24,6 +24,7 @@ namespace Demo
             initChart(getData(), getDates());
             dropdown.Items.AddRange(Utils.getExports().ToArray());
             dropdown.SelectedIndex = 0;
+            this.Text = "Reporting";
            
         }
         private void button1_Click(object sender, EventArgs e)
@@ -134,8 +135,9 @@ namespace Demo
         private void Export_Click(object sender, EventArgs e)
         {
             //Utils.ExcelExport(getData());
+            //Utils.ExcelExport(getDates(), getData());
 
-            Utils.ExcelExport(getDates(), getData());
+            ReportService.createDocument();
 
 
         }

@@ -19,6 +19,7 @@ namespace sendToMaster
             }catch(Exception exc)
             {
                 MessageBox.Show(exc.Message);
+                Application.Exit();
             }
 
 

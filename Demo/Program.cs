@@ -46,6 +46,10 @@ namespace Demo
                             Utils.log("Running param" + args[0]);
                             Application.Run(new vouchTest());
                             break;
+                        case ("--admin"):
+                            Utils.log("Running param" + args[0]);
+                            Application.Run(new frmManage());
+                            break;
 
                         default:
                             Utils.log("Running param "+args[0]);

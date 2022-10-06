@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LiveCharts.Helpers;
 using MySql.Data.MySqlClient;
 
 namespace Demo
@@ -15,10 +16,18 @@ namespace Demo
     {
         string connString = Utils.getConfig();
         bool changed = false;
+            
         public AddProd()
         {
             InitializeComponent();
             Utils.log("Admin menu accessed");
+
+            List<string> type = Utils.getTypes();
+            comboBox1.Items.AddRange(type.ToArray()) ;
+
+            comboBox1.Enabled = false;
+            //comboBox1.SelectedIndex=0;
+
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -87,15 +96,11 @@ namespace Demo
                     //cmd.CommandText = "INSERT INTO product VALUES(" + PLU.Text + "," + Desc.Text + ","+ Price.Text + ","++")";
                     cmd.Connection = cnn;
 
-                    //cmd.Prepare();
-                    //cmd.Parameters.AddWithValue("@plu", PLU.Text);
-                    //cmd.Parameters.AddWithValue("@desc", Desc.Text);
-                    //cmd.Parameters.AddWithValue("@price", Price.Text);
                     if (checkBox1.Checked)
                     {
                         allFra = 1;
                     }
-                    cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Double.Parse(Price.Text) + "," + allFra + ")";
+                    cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Double.Parse(Price.Text) + "," + allFra + ",'N')";
                     cmd.ExecuteNonQuery();
                     MessageBox.Show("Products Added");
                     Utils.log("Product added : " + PLU.Text);
@@ -136,7 +141,7 @@ namespace Demo
             PLU.Enabled = true;
             this.changed = false;
         }
-        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Form1_Closing(object sender, CancelEventArgs e)
         {
         }
 

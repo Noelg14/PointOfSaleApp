@@ -16,6 +16,7 @@ namespace Demo
         public bool isRefund;
 
         double total=0;
+        
         Cart c = new Cart();
         bool paid;
         static Form1 thisForm; 
@@ -48,13 +49,14 @@ namespace Demo
 
             button3.Left = (r.Width - (r.Width) / 4) - 200;
             button3.Top = (r.Height - (r.Height) / 4);            
+
             button4.Left = (r.Width - (r.Width) / 4) - 200;
             button4.Top = (r.Height - (r.Height) / 4) - 100;
 
 
             panel1.Height= (r.Height - 200);
             textBox1.Width=panel1.Width;
-            label5.Text = "€ " + total;
+            label5.Text = "€ " + total.ToString("0.00");
             Utils.log("Init Form1");
             this.Text += " Version : " + version;
             thisForm = this;
@@ -188,7 +190,7 @@ namespace Demo
             label2.Text = "Price";
             label1.Text = "PLU";
             label3.Text = "Desc";
-            label5.Text = "€" + total ;
+            label5.Text = "€ " + total.ToString("0.00") ;
             c.Clear();
 
             listView1.Items.Clear();
@@ -285,7 +287,7 @@ namespace Demo
                     total = Math.Round(total += p.price, 2);
                 }
                
-                label5.Text = "€ " + total;
+                label5.Text = "€ " + total.ToString("0.00");
 
                 textBox1.Focus();
                 textBox1.Text = "";
@@ -297,9 +299,13 @@ namespace Demo
             DialogResult res = MessageBox.Show($"Are you sure you want to Exit?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (res == DialogResult.OK)
             {
-                if (Utils.getConfig("SENDSALES").ToUpper().Equals("N"))
+                if (!Utils.getConfig("HO_SERVER").Equals(""))
                 {
-                    Process.Start("sendtomaster.exe");
+                    if (Utils.getConfig("SENDSALES").ToUpper().Equals("N"))
+                    {
+                        Process.Start("sendtomaster.exe");
+                    }
+                    //Application.Exit();
                 }
                 Application.Exit();
             }

@@ -75,13 +75,12 @@
             // Export
             // 
             this.Export.AutoEllipsis = true;
-            this.Export.Enabled = false;
             this.Export.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.Export.Location = new System.Drawing.Point(3, 213);
             this.Export.Name = "Export";
             this.Export.Size = new System.Drawing.Size(190, 77);
             this.Export.TabIndex = 3;
-            this.Export.Text = "Export to Excel";
+            this.Export.Text = "Create PDF";
             this.Export.UseVisualStyleBackColor = true;
             this.Export.Click += new System.EventHandler(this.Export_Click);
             // 
