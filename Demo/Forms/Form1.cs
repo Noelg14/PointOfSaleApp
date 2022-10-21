@@ -5,12 +5,13 @@ using System; //Given
 using System.Windows.Forms; //Given
 using System.Diagnostics;
 using static System.Windows.Forms.ListViewItem;
+using System.IO;
 
 namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.6.3";
+        public readonly string version = "0.6.5";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
@@ -23,15 +24,36 @@ namespace Demo
 
         public Form1()
         {
-         
+
+            if (!File.Exists(".key.lic"))
+            {
+                MessageBox.Show("No Licence found.");
+              
+                Environment.Exit(1);
+            }
+            else
+            {
+                string lic = File.ReadAllText(".key.lic");
+                if((lic.Equals("") || lic == null)){
+                    MessageBox.Show("No Licence found.");
+                    Utils.log($"No Licence found");
+                    Environment.Exit(1);
+                }
+                else
+                {
+                    Utils.log($"Opening using licence {lic}");
+                }
+            }
+
+
             InitializeComponent();
 
             // Make fullscreen
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             //this.TopMost = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormBorderStyle =FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
 
             int color = int.Parse(Utils.getIndiviudalSetting("color"));
             if(color != 0)
@@ -40,7 +62,8 @@ namespace Demo
             }
 
 
-            //
+            // All these are based on a 1080p screen
+            // may need to look at scaling this better
             Rectangle r = Screen.FromControl(this).Bounds;
             button1.Left = (r.Width - (r.Width)/4);
             button1.Top= (r.Height - (r.Height)/4);
@@ -57,8 +80,10 @@ namespace Demo
             panel1.Height= (r.Height - 200);
             textBox1.Width=panel1.Width;
             label5.Text = "€ " + total.ToString("0.00");
+
             Utils.log("Init Form1");
             this.Text += " Version : " + version;
+
             thisForm = this;
 
             if (Debugger.IsAttached)
@@ -66,6 +91,7 @@ namespace Demo
                 this.Text += " Debug Mode";
             }
 
+            //Get burrons from DB
             List<Product> buttons = Utils.getButtons();
 
             foreach(Product p in buttons)

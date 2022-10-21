@@ -137,8 +137,24 @@ namespace Demo
             //Utils.ExcelExport(getData());
             //Utils.ExcelExport(getDates(), getData());
 
-            ReportService.createDocument();
-
+            DialogResult result = MessageBox.Show("Run Selected Report?", "Run?", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                string file = ReportService.createDocument(dropdown.Text);
+                result = MessageBox.Show("Open report?", "Run?", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    ProcessStartInfo psi = new ProcessStartInfo(file);
+                    psi.UseShellExecute = true;
+                    psi.WindowStyle = ProcessWindowStyle.Minimized;
+                    Process.Start(psi);
+                }
+                if (result == DialogResult.No)
+                {
+                    ReportService.createDocument();
+                }
+                //ReportService.createDocument();
+            }
 
         }
         private void button3_Click(object sender, EventArgs e)

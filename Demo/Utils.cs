@@ -12,6 +12,7 @@ namespace Demo
 {
     public class Utils
     {
+        //Get DB Configs
         public static string getConfig()
         {
 
@@ -59,6 +60,7 @@ namespace Demo
             }
             return conString = "server=" + server + ";database=" + catalog + ";uid=" + user + ";pwd=" + pw + ";";
         }
+        //Get a specific Setting from config file
         public static string getConfig(string config)
         {
             string file;
@@ -91,6 +93,7 @@ namespace Demo
             }
             return "";
         }
+        //Search for product
         public static Product search(string PLU)
         {
             Product product = null;
@@ -123,6 +126,7 @@ namespace Demo
 
 
         }
+        //Get product qty in stock
         public static double getProductQty(string PLU)
         {
             MySqlConnection cnn = initConn();
@@ -756,7 +760,7 @@ namespace Demo
                 excelFunctions.createExcel(dr);
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }
@@ -764,8 +768,51 @@ namespace Demo
             {
                 cnn.Close();
             }
-
         }
+
+        public static DataTable GetExportData(string type)
+            {
+
+                MySqlCommand cmd = initCmd();
+                MySqlConnection cnn = cmd.Connection;
+                string data;
+                try
+                {
+                    cnn.Open();
+                    cmd.Prepare();
+                    cmd.CommandText = "select * from settings where setting = @key and Type='export'";
+                    cmd.Parameters.AddWithValue("@key", type.ToString());
+
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    dr.Read();
+                    if (!dr.HasRows)
+                    {
+                        MessageBox.Show("No Such export exists, please try again");
+                        return new DataTable();
+                    }
+                    data = dr.GetString("data"); // get query
+
+                    dr.Dispose();
+                    cmd.CommandText = data;
+                    DataTable dt = new DataTable();
+
+                    dr = cmd.ExecuteReader();
+                    dt.Load(dr);
+                    return dt;
+                // excelFunctions.createExcel(dr);
+
+            }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    return new DataTable();
+                }
+                finally
+                {
+                    cnn.Close();
+                }
+
+            }
         #region SQL stuff 
         //Making these public as it will be easier
         public static MySqlConnection initConn()
