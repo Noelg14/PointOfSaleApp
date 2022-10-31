@@ -48,7 +48,7 @@ namespace Demo
                             break;
                         case ("--admin"):
                             Utils.log("Running param" + args[0]);
-                            Application.Run(new frmManage());
+                            Application.Run(new TestUtils());
                             break;
 
                         default:

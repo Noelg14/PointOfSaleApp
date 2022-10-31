@@ -2,6 +2,7 @@
   "profiles": {
     "Demo": {
       "commandName": "Project",
+      "commandLineArgs": "--admin",
       "remoteDebugEnabled": false
     }
   }

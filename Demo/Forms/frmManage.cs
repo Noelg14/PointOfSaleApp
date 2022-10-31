@@ -12,16 +12,28 @@ using LiveCharts;
 using LiveCharts.Wpf;
 using ClosedXML.Excel;
 using System.Diagnostics;
+using System.Windows;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Demo
 {
     public partial class frmManage : Form
     {
+
         public frmManage()
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            initChart(getData(), getDates());
+
+            if (Utils.getIndiviudalSetting("USE_CHARTS").Equals("Y"))
+            {
+                initChart(getData(), getDates());
+            }
+            else
+            {
+                cartesianChart1.Visible = false;
+            }
+
             dropdown.Items.AddRange(Utils.getExports().ToArray());
             dropdown.SelectedIndex = 0;
             this.Text = "Reporting";

@@ -24,6 +24,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Forms\.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="favicon.ico" />
   </ItemGroup>
 

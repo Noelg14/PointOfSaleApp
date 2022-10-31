@@ -441,7 +441,7 @@ namespace Demo
         public float price { get; set; }
         public bool allowFra { get; }
 
-        public double qty { get; set; } = 1;
+        public double qty { get; set; } = 0;
 
         public Product(string PLU, string desc, float price, bool allowFra)
         {
