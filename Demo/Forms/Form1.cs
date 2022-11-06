@@ -6,6 +6,7 @@ using System.Windows.Forms; //Given
 using System.Diagnostics;
 using static System.Windows.Forms.ListViewItem;
 using System.IO;
+using Demo.Forms;
 
 namespace Demo
 {
@@ -432,6 +433,11 @@ namespace Demo
         private void updateColor()
         {
             this.BackColor = Color.FromArgb(int.Parse(Utils.getIndiviudalSetting("color")));
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            new vouchTest().Show();
         }
     }
 

@@ -137,6 +137,50 @@ namespace Demo.Services
             
 
         }
+        public static double UpdateVoucher(string id, double usageAmt,Cart c)
+        {
+            VoucherService v = VoucherService.Instance;
+            try
+            {
+                double oldBalance = checkBalance(id);
+                if (oldBalance == -1)
+                {
+                    return oldBalance;
+                }
+
+                v.cnn.Open();
+                v.cmd.Connection = v.cnn;
+
+                double curBal = oldBalance - usageAmt;
+                if (curBal < 0)
+                {
+                    return -99;
+                }
+                v.cmd.CommandText = $"UPDATE voucher set balance={curBal} where Number ='{id}'";
+                v.cmd.ExecuteNonQuery();
+
+                v.cmd.CommandText = $"INSERT INTO voucherusage(Number,OldBalance,NewBalance,CartID) VALUES ({id},{oldBalance},{curBal},{c.id});";
+                v.cmd.ExecuteNonQuery();
+
+
+                return curBal;
+
+
+            }
+            catch (Exception e)
+            {
+                Utils.log(e.Message);
+                return -1;
+            }
+            finally
+            {
+                v.cnn.Close();
+            }
+
+
+
+        }
+
 
         private static double checkBalance(string id)
         {

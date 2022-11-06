@@ -79,7 +79,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(175, 39);
             this.button1.TabIndex = 4;
-            this.button1.Text = "Save";
+            this.button1.Text = "Exit";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -109,6 +109,7 @@
             this.MinimizeBox = false;
             this.Name = "vouchTest";
             this.Text = "vouchTest";
+            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 

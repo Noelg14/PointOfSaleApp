@@ -35,8 +35,8 @@ namespace Demo.Forms
                     textBox1.Text = vouch.number;
                     textBox2.Text = vouch.balance.ToString() ;
 
-                    textBox2.Enabled = true;
-                    textBox1.Enabled = false ;
+                    textBox2.Enabled = false;
+                    //textBox1.Enabled = false ;
                 }
                 else
                 {
@@ -49,8 +49,7 @@ namespace Demo.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Utils.UpdateVoucher(textBox1.Text, Double.Parse(textBox2.Text));
-            clear();
+            this.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)

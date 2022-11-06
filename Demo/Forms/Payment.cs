@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Demo.Services;
+using DocumentFormat.OpenXml.Vml;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -49,8 +51,32 @@ namespace Demo
             }
             if (textBox1.Visible == true && textBox1.Text != "")
             {
-                Voucher v = Utils.GetVoucher(textBox1.Text);
-                MessageBox.Show(v.ToString());
+                Models.Voucher v = VoucherService.getVoucherDetails(textBox1.Text);
+                if(v is null)
+                {
+                    MessageBox.Show("voucher does not exist");
+                    return;
+                }
+
+                if (v.Balance <= toPay)
+                {
+                    MessageBox.Show("Cannot use this voucher, please try another");
+                    return;
+                }
+                DialogResult res =MessageBox.Show($"Voucher has {v.Balance} on it, are you sure you want to use {toPay}?","Check",MessageBoxButtons.OKCancel);
+                if(res != DialogResult.OK)
+                {
+                    textBox1.Text = "";
+                    textBox1.Visible = false ;
+                    return;
+                }
+                else
+                {
+
+                    VoucherService.UpdateVoucher(v.Id, toPay, cart);
+                    pay(button3.Text);
+                }
+
                 //pay(button3.Text);
             }
 
