@@ -87,7 +87,7 @@ namespace Demo
             pay(button2.Text);
         }
 
-        private void pay(string text)
+        private void pay(string text) // should update this to be an EventHandler, then add to button.click and read text via cast of sender.
         {
             payments.Add(new PayItem(text, toPay));
             Utils.recPayment(text, toPay, cart);

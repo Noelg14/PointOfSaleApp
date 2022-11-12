@@ -294,53 +294,62 @@ namespace Demo
 
         }
 
-        public static Voucher GetVoucher(string number)
-        {
-            MySqlCommand cmd = initCmd();
-            MySqlConnection conn = initConn();
-            cmd.Connection = conn;
-            try{
-                conn.Open();
-                cmd.CommandText = $"SELECT * FROM Voucher where Number ='{number}'";
-                MySqlDataReader dr = cmd.ExecuteReader();
-                if (dr.HasRows)
-                {
-                    dr.Read();
-                    return new Voucher(dr.GetString(0), dr.GetDouble(1));
-                }
-            }catch(Exception e)
-            {
+        ///// <summary>
+        ///// Deprecated - use VoucherService
+        ///// </summary>
+        ///// <param name="number"></param>
+        ///// <returns></returns>
+        //public static Voucher GetVoucher(string number)
+        //{
+        //    MySqlCommand cmd = initCmd();
+        //    MySqlConnection conn = initConn();
+        //    cmd.Connection = conn;
+        //    try{
+        //        conn.Open();
+        //        cmd.CommandText = $"SELECT * FROM Voucher where Number ='{number}'";
+        //        MySqlDataReader dr = cmd.ExecuteReader();
+        //        if (dr.HasRows)
+        //        {
+        //            dr.Read();
+        //            return new Voucher(dr.GetString(0), dr.GetDouble(1));
+        //        }
+        //    }catch(Exception e)
+        //    {
                 
-            }
-            finally
-            {
-                conn.Close();
-            }
-            return new Voucher();
-        }
-
-        public static void UpdateVoucher(string number,double balance)
-        {
-            MySqlCommand cmd = initCmd();
-            MySqlConnection conn = initConn();
-            cmd.Connection = conn;
-            try
-            {
-                conn.Open();
-                cmd.CommandText = $"Update Voucher set balance = {balance} where Number ='{number}'";
-                int rows = cmd.ExecuteNonQuery();
+        //    }
+        //    finally
+        //    {
+        //        conn.Close();
+        //    }
+        //    return new Voucher();
+        //}
+        ///// <summary>
+        ///// Deprecated - use VoucherService
+        ///// </summary>
+        ///// <param name="number"></param>
+        ///// <param name="balance"></param>
+        //public static void UpdateVoucher(string number,double balance)
+        //{
+        //    MySqlCommand cmd = initCmd();
+        //    MySqlConnection conn = initConn();
+        //    cmd.Connection = conn;
+        //    try
+        //    {
+        //        conn.Open();
+        //        cmd.CommandText = $"Update Voucher set balance = {balance} where Number ='{number}'";
+        //        int rows = cmd.ExecuteNonQuery();
                 
-            }
-            catch (Exception e)
-            {
+        //    }
+        //    catch (Exception e)
+        //    {
 
-            }
-            finally
-            {
-                conn.Close();
-            }
+        //    }
+        //    finally
+        //    {
+        //        conn.Close();
+        //    }
 
-        }
+        //}
 
 
         public static void log(string msg)

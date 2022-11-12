@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Forms;
+using Demo;
+using Demo.Services;
 
 namespace Demo.Forms
 {
@@ -29,11 +31,11 @@ namespace Demo.Forms
         {
             if(e.KeyCode == Keys.Enter)
             {
-                Voucher vouch = Utils.GetVoucher(textBox1.Text);
-                if(vouch.number is not null)
+                Models.Voucher vouch = VoucherService.getVoucherDetails(textBox1.Text);
+                if(vouch.Id is not null)
                 {
-                    textBox1.Text = vouch.number;
-                    textBox2.Text = vouch.balance.ToString() ;
+                    textBox1.Text = vouch.Id;
+                    textBox2.Text = "€ "+vouch.Balance.ToString() ;
 
                     textBox2.Enabled = false;
                     //textBox1.Enabled = false ;
