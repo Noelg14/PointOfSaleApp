@@ -7,17 +7,19 @@ using System.Diagnostics;
 using static System.Windows.Forms.ListViewItem;
 using System.IO;
 using Demo.Forms;
+using System.CodeDom;
 
 namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.6.5";
+        public readonly string version = "0.6.7";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
 
         double total=0;
+        List<Product> globalButtons = new List<Product>();
         
         Cart c = new Cart();
         bool paid;
@@ -62,7 +64,7 @@ namespace Demo
                 this.BackColor = Color.FromArgb(color);
             }
 
-
+            //TODO : better Scaling work
             // All these are based on a 1080p screen
             // may need to look at scaling this better
             Rectangle r = Screen.FromControl(this).Bounds;
@@ -92,35 +94,10 @@ namespace Demo
                 this.Text += " Debug Mode";
             }
 
-            //Get burrons from DB
-            List<Product> buttons = Utils.getButtons();
-
-            foreach(Product p in buttons)
-            {
-                Button myNewButton = new()
-                {
-                    Location = new Point(buttonX, buttonY),
-                    Size = new Size(150, 50),
-                    Text = p.desc,
-                    Tag = p,
-                    FlatStyle = FlatStyle.Flat,
-                    ForeColor = Color.SlateBlue,
-                    BackColor = SystemColors.Control
-            };
-                myNewButton.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
-                myNewButton.FlatAppearance.BorderSize = 2;
-                myNewButton.Click += dynButtton_Click;
-                this.Controls.Add(myNewButton);
+            // get buttons
+            updateButtons();
 
 
-                buttonX += 175;
-                if(buttonX >= 1875 )
-                {
-                    buttonY +=  100;
-                    buttonX = 1000;
-                }
-
-            }
             listView1.View = View.Details;
             listView1.GridLines = true;
             listView1.FullRowSelect = true;
@@ -190,6 +167,10 @@ namespace Demo
                 if (p != null)
                 {
 
+                    if(p.type == 'G')
+                    {
+                        MessageBox.Show("Enter a value for the Voucher");
+                    }
                     addToCart(p);
                 }
                 if (p is null)
@@ -200,6 +181,24 @@ namespace Demo
                 }
 
             }
+            //if(e.KeyCode == Keys.F1)
+            //{
+            //    if(listView1.Items.Count > 0)
+            //    {
+            //        listView1.LabelEdit = true;
+            //        var item = listView1.Items[0];
+                        
+            //        item.Selected = true;
+            //        item.BeginEdit();
+                    
+            //        if (!item.Selected)
+            //        {
+            //            c.reCalculate();
+                        
+            //        }
+
+            //    }
+            //}
             else
             {
                 
@@ -439,6 +438,47 @@ namespace Demo
         {
             new vouchTest().Show();
         }
+
+        public void updateButtons()
+        {
+            clearButtons();
+            //Get buttons from DB
+            globalButtons = Utils.getButtons();
+
+            foreach (Product p in globalButtons)
+            {
+                Button myNewButton = new()
+                {
+                    Location = new Point(buttonX, buttonY),
+                    Size = new Size(150, 50),
+                    Text = p.desc,
+                    Tag = p,
+                    FlatStyle = FlatStyle.Flat,
+                    ForeColor = Color.SlateBlue,
+                    BackColor = SystemColors.Control
+                };
+                myNewButton.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+                myNewButton.FlatAppearance.BorderSize = 2;
+                myNewButton.Click += dynButtton_Click;
+                this.Controls.Add(myNewButton);
+
+
+                buttonX += 175;
+                if (buttonX >= 1875)
+                {
+                    buttonY += 100;
+                    buttonX = 1000;
+                }
+
+            }
+        }
+        /// <summary>
+        /// Clear List of current buttons
+        /// </summary>
+        private void clearButtons()
+        {
+            globalButtons = new List<Product>();
+        }
     }
 
     public class Product {
@@ -446,15 +486,16 @@ namespace Demo
         public string desc { get; }
         public float price { get; set; }
         public bool allowFra { get; }
-
         public double qty { get; set; } = 0;
+        public char type { get; } = 'N';
 
-        public Product(string PLU, string desc, float price, bool allowFra)
+        public Product(string PLU, string desc, float price, bool allowFra,char type)
         {
             this.PLU = PLU;
             this.desc = desc;
             this.price = price;
             this.allowFra = allowFra;
+            this.type = type;
 
         }
         public Product(string PLU, string desc, float price)

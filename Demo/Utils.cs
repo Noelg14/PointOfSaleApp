@@ -7,6 +7,7 @@ using System.IO;
 using QRCoder;
 using ClosedXML.Excel;
 using System.Data.SqlClient;
+using Demo.Services;
 
 namespace Demo
 {
@@ -110,7 +111,7 @@ namespace Demo
                 if (dr.HasRows)
                 {
                     dr.Read();
-                    Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3));
+                    Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3),dr.GetChar("Type"));
                     p.qty = 1;
                     return p;
                 }
@@ -125,6 +126,10 @@ namespace Demo
             }
 
 
+        }
+        public static string getTypeDesc(char type)
+        {
+            return "";
         }
         //Get product qty in stock
         public static double getProductQty(string PLU)
@@ -214,7 +219,7 @@ namespace Demo
                 {
                     while (dr.Read())
                     {
-                        Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3));
+                        Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3),dr.GetChar("Type"));
                         list.Add(p);
                     }
 
@@ -267,6 +272,13 @@ namespace Demo
                 // adding * of qty to ensure refunds are recorded right
                 cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+",null)";
                 updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
+                
+                // if voucher do this :
+                if(p.type == 'G')
+                {
+                    
+                    VoucherService.CreateNewVoucher(VoucherService.getNewVoucherRef().ToString() , p.price);
+                }
 
                 cmd.ExecuteNonQuery();
                 log("Writing to salelines");

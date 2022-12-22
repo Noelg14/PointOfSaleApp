@@ -110,7 +110,7 @@ namespace HOApi.Repository
 
             MySqlCommand cmd = initCmd();
             MySqlConnection cnn = cmd.Connection;
-
+            
             try
             {
                 cnn.Open();

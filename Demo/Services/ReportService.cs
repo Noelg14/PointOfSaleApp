@@ -12,6 +12,7 @@ using PdfSharp.Pdf;
 using PdfSharp.Pdf.Advanced;
 using System.Data;
 using Color = MigraDoc.DocumentObjectModel.Color;
+using Org.BouncyCastle.Asn1.Misc;
 
 namespace Demo
 {
@@ -65,7 +66,7 @@ namespace Demo
                 foreach(Object d in dataArray)
                 {
                     paragraph.AddFormattedText(d.ToString());
-                    paragraph.AddFormattedText("|");
+                    paragraph.AddFormattedText(" | ");
                 }
 
                 paragraph.AddFormattedText("\n");
@@ -74,9 +75,17 @@ namespace Demo
             PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer(false);
             pdfRenderer.Document = doc;
             pdfRenderer.RenderDocument();
+            try
+            {
 
-            pdfRenderer.PdfDocument.Save(Directory.GetCurrentDirectory() + $"\\Reports\\{reportFormat}.pdf");
-            return Directory.GetCurrentDirectory() + $"\\Reports\\{reportFormat}.pdf";
+                pdfRenderer.PdfDocument.Save(Directory.GetCurrentDirectory() + $"\\Reports\\{reportFormat}.pdf");
+                return Directory.GetCurrentDirectory() + $"\\Reports\\{reportFormat}.pdf";
+            }
+            catch(Exception e ) {
+                Utils.log("Failed to save file: " + reportFormat);
+                return "";
+            }
+
             //Process.Start("hello.pdf");
         }
     }

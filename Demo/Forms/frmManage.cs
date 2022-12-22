@@ -153,6 +153,11 @@ namespace Demo
             if (result == DialogResult.Yes)
             {
                 string file = ReportService.createDocument(dropdown.Text);
+                if (file.Equals(""))
+                {
+                    MessageBox.Show("An error occurred generating the report");
+                    return;
+                }
                 result = MessageBox.Show("Open report?", "Run?", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {

@@ -24,7 +24,6 @@ namespace Demo.Services
         {
             Instance = this;
         }
-
         public static Models.Voucher getVoucherDetails(string id)
         {
             VoucherService v = VoucherService.Instance;
@@ -44,7 +43,6 @@ namespace Demo.Services
 
             return vouch;
         }
-
         public static string CreateNewVoucher(string id,double bal)
         {
             
@@ -70,6 +68,7 @@ namespace Demo.Services
                     {
                         v.cmd.CommandText = $"INSERT INTO voucher(Number,Balance) VALUES('{id}',{bal})";
                         v.cmd.ExecuteNonQuery();
+                        res = "Created";
                     }
                     catch (InvalidOperationException ioe)
                     {
@@ -93,7 +92,6 @@ namespace Demo.Services
             }
             return res;
         }
-
         public static double UpdateVoucher(string id,double usageAmt)
         {
             VoucherService v = VoucherService.Instance;
@@ -180,8 +178,6 @@ namespace Demo.Services
 
 
         }
-
-
         private static double checkBalance(string id)
         {
             VoucherService v = VoucherService.Instance;
@@ -202,6 +198,26 @@ namespace Demo.Services
             return vouch;
         }
 
+        private static int getLastVoucherRef()
+        {
+            VoucherService v = VoucherService.Instance;
+            int last;
+            v.cnn.Open();
+            v.cmd.Connection = v.cnn;
 
+            v.cmd.CommandText = $"Select Max(Number) from voucher";
+            MySqlDataReader dr = (MySqlDataReader)v.cmd.ExecuteReader();
+            dr.Read();
+            last = dr.GetInt32(0);
+            v.cnn.Close();
+            dr.CloseAsync();
+
+            return last;
+        }
+        public static int getNewVoucherRef()
+        {
+            int last = getLastVoucherRef();
+            return ++last;
+        }
     }
 }

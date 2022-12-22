@@ -25,8 +25,8 @@ namespace Demo
             List<string> type = Utils.getTypes();
             comboBox1.Items.AddRange(type.ToArray()) ;
 
-            comboBox1.Enabled = false;
-            //comboBox1.SelectedIndex=0;
+            comboBox1.Enabled = true;
+            comboBox1.SelectedIndex=0;
 
         }
 
@@ -123,6 +123,7 @@ namespace Demo
                 Price.Text = p.price.ToString();
                 checkBox1.Checked= p.allowFra ? true : false;
                 changed = true;
+                comboBox1.Enabled = false;
                 PLU.Enabled = false;
             }
         }
@@ -138,6 +139,7 @@ namespace Demo
             Desc.Text = "";
             Price.Text = "";
             checkBox1.Checked = false;
+            comboBox1.Enabled = true;
             PLU.Enabled = true;
             this.changed = false;
         }
@@ -170,6 +172,11 @@ namespace Demo
             }
             clear();
             button2.Text = "Back";
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
     }
