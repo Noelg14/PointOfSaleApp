@@ -271,17 +271,21 @@ namespace Demo
 
                 // adding * of qty to ensure refunds are recorded right
                 cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+",null)";
-                updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
-                
-                // if voucher do this :
-                if(p.type == 'G')
-                {
-                    
-                    VoucherService.CreateNewVoucher(VoucherService.getNewVoucherRef().ToString() , p.price);
-                }
-
                 cmd.ExecuteNonQuery();
                 log("Writing to salelines");
+                // if voucher do this :
+                if (p.type == 'G')
+                {
+
+                    string vouch = VoucherService.CreateNewVoucher(VoucherService.getNewVoucherRef().ToString(), p.price);
+                    log($"adding Voucher");
+                }
+                //if non stock, do not calculate 
+                if (p.type != 'D')
+                {
+                    updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
+                    log($"updated stock level of item {p.PLU}");
+                }
             }
             return;
         }
@@ -518,7 +522,35 @@ namespace Demo
             }
             return null;
         }
+        public static Dictionary<string,char> getTypeDict()
+        {
+            Dictionary<string, char> dict = new Dictionary<string, char>();
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+            cmd.Connection = cnn;
+            cmd.CommandText = "Select * from types";
+            cnn.Open();
+            try
+            {
 
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    dict.Add(dr.GetString("Desc"), dr.GetString("Key").ToCharArray()[0]);
+                }
+                return dict;
+            }
+            catch (Exception ex)
+            {
+                log(ex.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return null;
+        }
         public static void updateSettings(string name,string data)
         {
          

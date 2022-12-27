@@ -29,13 +29,13 @@ namespace Demo.Forms
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
                 Models.Voucher vouch = VoucherService.getVoucherDetails(textBox1.Text);
-                if(vouch.Id is not null)
+                if (vouch is not null)
                 {
                     textBox1.Text = vouch.Id;
-                    textBox2.Text = "€ "+vouch.Balance.ToString() ;
+                    textBox2.Text = "€ " + vouch.Balance.ToString();
 
                     textBox2.Enabled = false;
                     //textBox1.Enabled = false ;

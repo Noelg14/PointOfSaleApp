@@ -167,10 +167,10 @@ namespace Demo
                 if (p != null)
                 {
 
-                    if(p.type == 'G')
-                    {
-                        MessageBox.Show("Enter a value for the Voucher");
-                    }
+                    //if(p.type == 'G')
+                    //{
+                    //    MessageBox.Show("Enter a value for the Voucher");
+                    //}
                     addToCart(p);
                 }
                 if (p is null)
@@ -232,6 +232,7 @@ namespace Demo
         {
             Button s = (Button)sender;
             Product p = (Product)s.Tag;
+
             addToCart(Utils.search(p.PLU));
             //addToCart((Product)s.Tag);
             //MessageBox.Show(sender.GetType().ToString());
@@ -299,6 +300,11 @@ namespace Demo
             //Product p = Utils.search(textBox1.Text.ToString());
             if (p != null)
             {
+                // if voucher get value
+                if (p.type == 'G')
+                {
+                    MessageBox.Show("Enter a value for the Voucher");
+                }
                 c.AddProd(p);
                 string[] row = { p.PLU, p.desc, p.price.ToString(), "1" };
                 listView1.Items.Add(new ListViewItem(row));

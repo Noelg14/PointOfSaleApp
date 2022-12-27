@@ -27,7 +27,7 @@ namespace Demo
             this.number = n;
             this.balance = b;
         }
-        public string ToString()
+        public override string ToString()
         {
             return $"Voucher No: {this.number} . Balance : {this.balance}";
         }
