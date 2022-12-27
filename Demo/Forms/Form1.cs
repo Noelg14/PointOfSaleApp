@@ -13,7 +13,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.6.7";
+        public readonly string version = "0.6.9.2";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
@@ -306,7 +306,7 @@ namespace Demo
                     MessageBox.Show("Enter a value for the Voucher");
                 }
                 c.AddProd(p);
-                string[] row = { p.PLU, p.desc, p.price.ToString(), "1" };
+                string[] row = { p.PLU, p.desc, p.price.ToString("0.00"), "1" };
                 listView1.Items.Add(new ListViewItem(row));
 
 

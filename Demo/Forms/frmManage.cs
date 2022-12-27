@@ -158,7 +158,7 @@ namespace Demo
                     MessageBox.Show("An error occurred generating the report");
                     return;
                 }
-                result = MessageBox.Show("Open report?", "Run?", MessageBoxButtons.YesNo);
+                result = MessageBox.Show("Open report?", "Open report?", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     ProcessStartInfo psi = new ProcessStartInfo(file);
@@ -168,7 +168,7 @@ namespace Demo
                 }
                 if (result == DialogResult.No)
                 {
-                    ReportService.createDocument();
+                    //ReportService.createDocument();
                 }
                 //ReportService.createDocument();
             }

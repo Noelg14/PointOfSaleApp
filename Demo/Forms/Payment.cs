@@ -92,17 +92,26 @@ namespace Demo
             payments.Add(new PayItem(text, toPay));
             Utils.recPayment(text, toPay, cart);
             Utils.recSale(this.cart, this.toPay);
-            MessageBox.Show("Paid €" + Math.Round(toPay,2), "Paid");
+            //MessageBox.Show("Paid €" + Math.Round(toPay,2), "Paid");
             this.paid = true;
-            sendNotif();
             if (useQR)
             {
                 showQR(cart);
+            }
+            DialogResult result = MessageBox.Show("Create pdf receipt?", "Create & Open?", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                
+                ProcessStartInfo psi = new ProcessStartInfo(ReportService.createRecDocument("",cart,text));
+                psi.UseShellExecute = true;
+                psi.WindowStyle = ProcessWindowStyle.Minimized;
+                Process.Start(psi);
             }
             if (Utils.getConfig("SENDSALES").Equals("Y"))
             {
                 Process.Start("sendtomaster.exe");
             }
+            sendNotif();
             this.Dispose();
         }
         public bool isPaid()
