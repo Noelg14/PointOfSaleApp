@@ -10,6 +10,9 @@ using Demo.Forms;
 using System.CodeDom;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Color = System.Drawing.Color;
+using System.ComponentModel;
+using DocumentFormat.OpenXml.Presentation;
+using System.Media;
 
 namespace Demo
 {
@@ -52,6 +55,8 @@ namespace Demo
 
 
             InitializeComponent();
+            InitializeBackgroundWorker();
+
 
             // Make fullscreen
             this.MaximizeBox = false;
@@ -103,6 +108,7 @@ namespace Demo
             listView1.View = View.Details;
             listView1.GridLines = true;
             listView1.FullRowSelect = true;
+            backgroundWorker1.RunWorkerAsync();
 
         }
 
@@ -325,7 +331,7 @@ namespace Demo
                         //MessageBox.Show("Enter a value for the Voucher");
                         new VouchEntry().Show();
                         c.removeProd(p);
-                        
+                        Application.OpenForms["VouchEntry"].Focus();
                     }
  
                 }
@@ -522,6 +528,57 @@ namespace Demo
         {
             globalButtons = new List<Product>();
         }
+#region BackGround_Worker
+        private void InitializeBackgroundWorker()
+        {
+            backgroundWorker1.DoWork += new DoWorkEventHandler(backgroundWorker1_DoWork);
+
+            backgroundWorker1.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker1_RunWorkerCompleted);
+
+
+        }
+
+        private async void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                string targetDir = Directory.GetCurrentDirectory() + "\\Reports\\";
+
+                string[] files =Directory.GetFiles(targetDir);
+                int counter = 0;
+                foreach (string file in files) {
+                    if (file.EndsWith(".pdf"))
+                    {
+                        File.Delete(file);
+                        ++counter;
+                    }
+
+                }
+                Utils.log($"Deleted {counter} old pdf files");
+
+            }catch(IOException ioe)
+            {
+                Utils.log("An Error ocurred when clearing files");
+            }
+        }
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // First, handle the case where an exception was thrown.
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+            }
+            else
+            {
+                Utils.log("Worker complete");
+                //SoundPlayer sp = new SoundPlayer();
+                //sp.SoundLocation = "E:\\Samples\\Hybrid Trap - Dubstep\\Brass\\WA Brass Shot C# 30.wav";
+                //sp.Load();
+                //sp.Play();
+            }
+
+        }
+        #endregion
     }
 
     public class Product {
@@ -531,6 +588,7 @@ namespace Demo
         public bool allowFra { get; }
         public double qty { get; set; } = 0;
         public char type { get; } = 'N';
+        public string sID { get; set; } = "";
 
         public Product(string PLU, string desc, float price, bool allowFra,char type)
         {

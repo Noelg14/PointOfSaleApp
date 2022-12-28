@@ -62,6 +62,7 @@
             this.textBox1.Size = new System.Drawing.Size(448, 93);
             this.textBox1.TabIndex = 2;
             this.textBox1.Text = "€";
+            this.textBox1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyUp);
             // 
             // VouchEntry
             // 

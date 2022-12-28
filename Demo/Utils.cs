@@ -238,7 +238,7 @@ namespace Demo
 
 
         }
-        public static void recSale(Cart c, double total)
+        public static void recSale(Cart c, double total,out Cart cart)
         {
             string date = DateTime.Now.ToString("yyyy-MM-dd");
             //Console.WriteLine(date);
@@ -254,7 +254,7 @@ namespace Demo
                 Console.WriteLine(cmd.CommandText);
                 log("Writing to sales");
                 cmd.ExecuteNonQuery();
-                recLine(c, cnn);
+                recLine(c, cnn,out cart);
 
             }
             finally
@@ -262,7 +262,7 @@ namespace Demo
                 cnn.Close();
             }
         }
-        private static void recLine(Cart c,MySqlConnection cnn) //does connection close here? 
+        private static void recLine(Cart c,MySqlConnection cnn,out Cart cart) //does connection close here? 
         {
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = cnn;
@@ -276,8 +276,9 @@ namespace Demo
                 // if voucher do this :
                 if (p.type == 'G')
                 {
-
-                    string vouch = VoucherService.CreateNewVoucher(VoucherService.getNewVoucherRef().ToString(), p.price);
+                    string vouchRef = VoucherService.getNewVoucherRef().ToString();
+                    VoucherService.CreateNewVoucher(vouchRef, p.price);
+                    p.sID = vouchRef;
                     log($"adding Voucher");
                 }
                 //if non stock, do not calculate 
@@ -287,7 +288,7 @@ namespace Demo
                     log($"updated stock level of item {p.PLU}");
                 }
             }
-            return;
+            cart = c;
         }
         public static void recPayment(string type,double amount,Cart c)
         {

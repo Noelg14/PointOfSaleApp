@@ -86,8 +86,8 @@ namespace Demo
                 else
                 {
 
-                    VoucherService.UpdateVoucher(v.Id, toPay, cart);
-                    pay(button3.Text);
+                    double remaining = VoucherService.UpdateVoucher(v.Id, toPay, cart);
+                    pay(button3.Text,v.Id, remaining);
                 }
 
                 //pay(button3.Text);
@@ -100,11 +100,11 @@ namespace Demo
             pay(button2.Text);
         }
 
-        private void pay(string text) // should update this to be an EventHandler, then add to button.click and read text via cast of sender.
+        private void pay(string text,string vouchref ="",double bal = -99) // should update this to be an EventHandler, then add to button.click and read text via cast of sender.
         {
             payments.Add(new PayItem(text, toPay));
             Utils.recPayment(text, toPay, cart);
-            Utils.recSale(this.cart, this.toPay);
+            Utils.recSale(this.cart, this.toPay,out Cart c);
             //MessageBox.Show("Paid €" + Math.Round(toPay,2), "Paid");
             this.paid = true;
             if (useQR)
@@ -114,13 +114,19 @@ namespace Demo
             DialogResult result = MessageBox.Show("Create pdf receipt?", "Create & Open?", MessageBoxButtons.YesNo);
             if (result == DialogResult.Yes)
             {
+                ProcessStartInfo psi = new ProcessStartInfo(ReportService.createRecDocument("", c, text));
+                // If paid by voucher use the following method header
+                //
+                if (vouchref != "" && bal != -99)
+                {
+                    psi = new ProcessStartInfo(ReportService.createRecDocument("", c, text, vouchref, bal));
+                }
                 
-                ProcessStartInfo psi = new ProcessStartInfo(ReportService.createRecDocument("",cart,text));
                 psi.UseShellExecute = true;
                 psi.WindowStyle = ProcessWindowStyle.Minimized;
                 Process.Start(psi);
             }
-            if (Utils.getConfig("SENDSALES").Equals("Y"))
+            if (sendSales)
             {
                 Process.Start("sendtomaster.exe");
             }

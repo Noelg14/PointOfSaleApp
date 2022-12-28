@@ -20,7 +20,7 @@ namespace Demo
 {
     internal class ReportService
     {
-        public static string createRecDocument(string id="rec",Cart cartDetails = null,string pay ="none")
+        public static string createRecDocument(string id="rec",Cart cartDetails = null,string pay ="none",string payVouch ="",double bal = -99)
         {
             CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
             Document doc = new Document();
@@ -49,12 +49,22 @@ namespace Demo
                 double s = 0;
                 foreach (Product p in cartDetails.products)
                 {
+
                     paragraph.AddFormattedText(p.PLU+"\n"+p.desc + " " +currentCulture.NumberFormat.CurrencySymbol+ p.price.ToString("0.00") + "\n", TextFormat.Bold);
+                    if (p.type == 'G')
+                    {
+                        paragraph.AddFormattedText($"Voucher Ref: {p.sID}",TextFormat.Italic);
+                    }
                     s += p.price;
                 }
+                paragraph.AddFormattedText("\n");
                 paragraph.AddFormattedText($"\nTotal : {currentCulture.NumberFormat.CurrencySymbol}"+s.ToString("#.##") + "\n");
                 
                 paragraph.AddFormattedText($"Paid By: {pay}\n");
+                if(payVouch != "" && bal != -99)
+                {
+                    paragraph.AddFormattedText($"Using Voucher {payVouch} \nBalance Remaining {currentCulture.NumberFormat.CurrencySymbol}{Math.Round(bal,2)}\n",TextFormat.Italic);
+                }
 
                 paragraph = section.AddParagraph();
                 Stream fs = new FileStream($"{cartDetails.id}.jpeg", FileMode.OpenOrCreate);

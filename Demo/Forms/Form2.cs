@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Shell;
 
 namespace Demo.Forms
 {
@@ -15,6 +16,7 @@ namespace Demo.Forms
         public VouchEntry()
         {
             InitializeComponent();
+            textBox1.Focus();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -31,6 +33,14 @@ namespace Demo.Forms
                 this.Dispose();
             }
 
+        }
+
+        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+            {
+                button1_Click(sender, e);
+            }
         }
     }
 }

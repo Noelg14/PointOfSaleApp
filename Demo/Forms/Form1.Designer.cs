@@ -57,6 +57,7 @@
             this.Price = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.productBindingSource)).BeginInit();
@@ -399,5 +400,6 @@
         private ColumnHeader listQTY;
         private Button button4;
         private ToolStripButton toolStripButton3;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
