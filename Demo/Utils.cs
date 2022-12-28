@@ -376,6 +376,7 @@ namespace Demo
             MySqlConnection cnn = initConn();
             cmd.Connection = cnn;
             cnn.Open();
+            msg.Replace("'", "");
             try
             {
                 cmd.CommandText = $"INSERT INTO log VALUES(NULL,'{msg}','"+DateTime.UtcNow.ToString()+"');";

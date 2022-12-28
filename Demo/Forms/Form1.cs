@@ -8,6 +8,8 @@ using static System.Windows.Forms.ListViewItem;
 using System.IO;
 using Demo.Forms;
 using System.CodeDom;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Color = System.Drawing.Color;
 
 namespace Demo
 {
@@ -248,6 +250,20 @@ namespace Demo
             f = null;
             Utils.log("Clear form");
         }
+        public static void notifyVoucher(double value)
+        {
+
+            Form1 f = Form1.thisForm;
+            //f.clear();
+            f.listView1.Items.Remove(f.listView1.Items[f.listView1.Items.Count-1]);
+            f.textBox1.Enabled = true;
+            f.button2.Enabled = true;
+            Product gv = Utils.search("gv");
+            Utils.log($"Adding voucher with Value {value} to Cart");
+            gv.price = (float)Math.Round(value, 2);
+            f.addToCart(gv);
+
+        }
         public static void notifyBack()
         {
 
@@ -300,12 +316,20 @@ namespace Demo
             //Product p = Utils.search(textBox1.Text.ToString());
             if (p != null)
             {
-                // if voucher get value
-                if (p.type == 'G')
-                {
-                    MessageBox.Show("Enter a value for the Voucher");
-                }
                 c.AddProd(p);
+                // if voucher get value
+                if (p.type == 'G' )
+                {
+                    if(p.price == (float)0F)
+                    {
+                        //MessageBox.Show("Enter a value for the Voucher");
+                        new VouchEntry().Show();
+                        c.removeProd(p);
+                        
+                    }
+ 
+                }
+               
                 string[] row = { p.PLU, p.desc, p.price.ToString("0.00"), "1" };
                 listView1.Items.Add(new ListViewItem(row));
 
@@ -399,12 +423,17 @@ namespace Demo
 
             {
                 //MessageBox.Show(listView1.Items.Count.ToString());
-
+                //build our product
                 string plu = listView1.SelectedItems[0].Text;
+                string desc = listView1.SelectedItems[0].SubItems[1].Text;
+                float price = (float)Double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
+                string qty = listView1.SelectedItems[0].SubItems[3].Text;
+                Product p = new Product(plu, desc, price);
+                p.qty = Double.Parse(qty);
 
                 if (plu != null)
                 {
-                    string qty = listView1.SelectedItems[0].SubItems[3].Text;
+
 
                     if (qty.Contains('-'))
                     {
@@ -416,7 +445,8 @@ namespace Demo
                         return;
                     }
 
-                    bool gone = c.removeProd(Utils.search(plu));
+
+                    bool gone = c.removeProd(p);
 
                     if(gone)
                     {

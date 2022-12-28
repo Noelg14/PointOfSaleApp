@@ -42,13 +42,13 @@ namespace Demo
             }
         }
 
-            private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             pay(button1.Text);
 
         }
 
-        private void button3_Click(object sender, EventArgs e) //Voucher
+        private void button3_Click(object sender, EventArgs e) //Vouchers
         {
             if(textBox1.Visible == false)
             {
