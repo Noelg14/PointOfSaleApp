@@ -18,7 +18,7 @@ namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.6.9.2";
+        public readonly string version = "0.7.0.1";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
