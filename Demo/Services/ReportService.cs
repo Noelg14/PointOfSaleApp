@@ -49,12 +49,22 @@ namespace Demo
                 double s = 0;
                 foreach (Product p in cartDetails.products)
                 {
-                    paragraph.AddFormattedText(p.PLU+" "+p.desc + " " +currentCulture.NumberFormat.CurrencySymbol+ p.price.ToString("0.00") + "\n", TextFormat.Bold);
+                    paragraph.AddFormattedText(p.PLU+"\n"+p.desc + " " +currentCulture.NumberFormat.CurrencySymbol+ p.price.ToString("0.00") + "\n", TextFormat.Bold);
                     s += p.price;
                 }
                 paragraph.AddFormattedText($"\nTotal : {currentCulture.NumberFormat.CurrencySymbol}"+s.ToString("#.##") + "\n");
                 
                 paragraph.AddFormattedText($"Paid By: {pay}\n");
+
+                paragraph = section.AddParagraph();
+                Stream fs = new FileStream($"{cartDetails.id}.jpeg", FileMode.OpenOrCreate);
+                Image img = Utils.genQR(cartDetails.id.ToString());
+                img.Save(fs, System.Drawing.Imaging.ImageFormat.Jpeg);
+                fs.Close();
+
+                paragraph.AddImage($"{cartDetails.id}.jpeg");
+
+
             }
             PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer(false);
             pdfRenderer.Document = doc;

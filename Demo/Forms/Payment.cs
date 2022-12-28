@@ -19,24 +19,30 @@ namespace Demo
         Cart cart { get; set; }
         bool paid { get; set; } = false;
         bool useQR = false;
+        bool sendSales = false;
         List<PayItem> payments = new List<PayItem>();
 
-        public Payment(double toPay,Cart c)
+        public Payment(double toPay, Cart c)
         {
             InitializeComponent();
             label1.Text += "€ " + Math.Round(toPay, 2, MidpointRounding.ToEven);
             //label1.Text += " € " + toPay;
-            this.toPay= toPay;
+            this.toPay = toPay;
             this.cart = c;
             string qr = Utils.getConfig("USEQR");
             if (qr.Equals("Y"))
             {
                 useQR = true;
             }
+            if (Utils.getConfig("SENDSALES").Equals("Y"))
+            {
+                sendSales = true;
 
+
+            }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+            private void button1_Click(object sender, EventArgs e)
         {
             pay(button1.Text);
 
@@ -51,6 +57,7 @@ namespace Demo
             }
             if (textBox1.Visible == true && textBox1.Text != "")
             {
+
                 Models.Voucher v = VoucherService.getVoucherDetails(textBox1.Text);
                 if(v is null)
                 {
@@ -58,12 +65,18 @@ namespace Demo
                     return;
                 }
 
-                if (v.Balance <= toPay)
+                if (v.Balance < toPay)
                 {
                     MessageBox.Show("Cannot use this voucher, please try another");
                     return;
                 }
-                DialogResult res =MessageBox.Show($"Voucher has {v.Balance} on it, are you sure you want to use {toPay}?","Check",MessageBoxButtons.OKCancel);
+                string msg = $"Voucher has €{v.Balance} on it, are you sure you want to use €{toPay}?";
+                if (toPay < 0)
+                {
+                    msg = $"Voucher will be topped up by €{Math.Abs(toPay)} & will have a balance of €{v.Balance + Math.Abs(toPay)}, Continue?";
+                }
+
+                DialogResult res =MessageBox.Show(msg,"Check",MessageBoxButtons.OKCancel);
                 if(res != DialogResult.OK)
                 {
                     textBox1.Text = "";

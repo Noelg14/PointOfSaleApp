@@ -410,18 +410,25 @@ namespace Demo
                     {
                         //MessageBox.Show("Item Already refunded,Cannot void");
                         c.removeProd(Utils.search(plu));
-                        total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text) * -1; // add the mius value;
+                        total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text) * -1; // add the minus value;
                         label5.Text = "€ " + Math.Round(total, 2, MidpointRounding.ToEven);
                         listView1.SelectedItems[0].Remove();
                         return;
                     }
 
-                    c.removeProd(Utils.search(plu));
+                    bool gone = c.removeProd(Utils.search(plu));
 
-                    total -= double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
-                    label5.Text = "€ "+ Math.Round(total, 2, MidpointRounding.ToEven);
+                    if(gone)
+                    {
+                        total -= double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
+                        label5.Text = "€ " + Math.Round(total, 2, MidpointRounding.ToEven);
+                        listView1.SelectedItems[0].Remove();
+                    }
+                    else
+                    {
+                        MessageBox.Show("An error ocurred when voiding");
+                    }
 
-                    listView1.SelectedItems[0].Remove();
                     //System.Windows.TextDecorations.Strikethrough;
                 }
                 else
@@ -515,6 +522,22 @@ namespace Demo
         public Product()
         {
 
+        }
+
+        public override bool Equals(object comp)
+        {
+            if (comp == null) { return false; }
+
+            Product compare = (Product)comp;
+ 
+            if(this.price == compare.price && this.PLU == compare.PLU && this.qty==compare.qty && this.desc == compare.desc)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }
