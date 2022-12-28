@@ -12,18 +12,31 @@ using LiveCharts;
 using LiveCharts.Wpf;
 using ClosedXML.Excel;
 using System.Diagnostics;
+using System.Windows;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Demo
 {
     public partial class frmManage : Form
     {
+
         public frmManage()
         {
             InitializeComponent();
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            initChart(getData(), getDates());
+
+            if (Utils.getIndiviudalSetting("USE_CHARTS").Equals("Y"))
+            {
+                initChart(getData(), getDates());
+            }
+            else
+            {
+                cartesianChart1.Visible = false;
+            }
+
             dropdown.Items.AddRange(Utils.getExports().ToArray());
             dropdown.SelectedIndex = 0;
+            this.Text = "Reporting";
            
         }
         private void button1_Click(object sender, EventArgs e)
@@ -134,9 +147,31 @@ namespace Demo
         private void Export_Click(object sender, EventArgs e)
         {
             //Utils.ExcelExport(getData());
+            //Utils.ExcelExport(getDates(), getData());
 
-            Utils.ExcelExport(getDates(), getData());
-
+            DialogResult result = MessageBox.Show("Run Selected Report?", "Run?", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                string file = ReportService.createDocument(dropdown.Text);
+                if (file.Equals(""))
+                {
+                    MessageBox.Show("An error occurred generating the report");
+                    return;
+                }
+                result = MessageBox.Show("Open report?", "Open report?", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    ProcessStartInfo psi = new ProcessStartInfo(file);
+                    psi.UseShellExecute = true;
+                    psi.WindowStyle = ProcessWindowStyle.Minimized;
+                    Process.Start(psi);
+                }
+                if (result == DialogResult.No)
+                {
+                    //ReportService.createDocument();
+                }
+                //ReportService.createDocument();
+            }
 
         }
         private void button3_Click(object sender, EventArgs e)

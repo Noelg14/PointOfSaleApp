@@ -26,9 +26,9 @@ namespace Demo
         {
             products.Add(p);
         }
-        public void removeProd(Product p)
+        public bool removeProd(Product p)
         {
-            products.Remove(p);
+            return products.Remove(p);
         }
         public void Clear()
         {

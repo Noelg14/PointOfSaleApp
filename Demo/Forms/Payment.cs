@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Demo.Services;
+using DocumentFormat.OpenXml.Vml;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,21 +19,27 @@ namespace Demo
         Cart cart { get; set; }
         bool paid { get; set; } = false;
         bool useQR = false;
+        bool sendSales = false;
         List<PayItem> payments = new List<PayItem>();
 
-        public Payment(double toPay,Cart c)
+        public Payment(double toPay, Cart c)
         {
             InitializeComponent();
             label1.Text += "€ " + Math.Round(toPay, 2, MidpointRounding.ToEven);
             //label1.Text += " € " + toPay;
-            this.toPay= toPay;
+            this.toPay = toPay;
             this.cart = c;
             string qr = Utils.getConfig("USEQR");
             if (qr.Equals("Y"))
             {
                 useQR = true;
             }
+            if (Utils.getConfig("SENDSALES").Equals("Y"))
+            {
+                sendSales = true;
 
+
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -40,7 +48,7 @@ namespace Demo
 
         }
 
-        private void button3_Click(object sender, EventArgs e) //Voucher
+        private void button3_Click(object sender, EventArgs e) //Vouchers
         {
             if(textBox1.Visible == false)
             {
@@ -49,8 +57,39 @@ namespace Demo
             }
             if (textBox1.Visible == true && textBox1.Text != "")
             {
-                Voucher v = Utils.GetVoucher(textBox1.Text);
-                MessageBox.Show(v.ToString());
+
+                Models.Voucher v = VoucherService.getVoucherDetails(textBox1.Text);
+                if(v is null)
+                {
+                    MessageBox.Show("voucher does not exist");
+                    return;
+                }
+
+                if (v.Balance < toPay)
+                {
+                    MessageBox.Show("Cannot use this voucher, please try another");
+                    return;
+                }
+                string msg = $"Voucher has €{v.Balance} on it, are you sure you want to use €{toPay}?";
+                if (toPay < 0)
+                {
+                    msg = $"Voucher will be topped up by €{Math.Abs(toPay)} & will have a balance of €{v.Balance + Math.Abs(toPay)}, Continue?";
+                }
+
+                DialogResult res =MessageBox.Show(msg,"Check",MessageBoxButtons.OKCancel);
+                if(res != DialogResult.OK)
+                {
+                    textBox1.Text = "";
+                    textBox1.Visible = false ;
+                    return;
+                }
+                else
+                {
+
+                    double remaining = VoucherService.UpdateVoucher(v.Id, toPay, cart);
+                    pay(button3.Text,v.Id, remaining);
+                }
+
                 //pay(button3.Text);
             }
 
@@ -61,22 +100,37 @@ namespace Demo
             pay(button2.Text);
         }
 
-        private void pay(string text)
+        private void pay(string text,string vouchref ="",double bal = -99) // should update this to be an EventHandler, then add to button.click and read text via cast of sender.
         {
             payments.Add(new PayItem(text, toPay));
             Utils.recPayment(text, toPay, cart);
-            Utils.recSale(this.cart, this.toPay);
-            MessageBox.Show("Paid €" + Math.Round(toPay,2), "Paid");
+            Utils.recSale(this.cart, this.toPay,out Cart c);
+            //MessageBox.Show("Paid €" + Math.Round(toPay,2), "Paid");
             this.paid = true;
-            sendNotif();
             if (useQR)
             {
                 showQR(cart);
             }
-            if (Utils.getConfig("SENDSALES").Equals("Y"))
+            DialogResult result = MessageBox.Show("Create pdf receipt?", "Create & Open?", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                ProcessStartInfo psi = new ProcessStartInfo(ReportService.createRecDocument("", c, text));
+                // If paid by voucher use the following method header
+                //
+                if (vouchref != "" && bal != -99)
+                {
+                    psi = new ProcessStartInfo(ReportService.createRecDocument("", c, text, vouchref, bal));
+                }
+                
+                psi.UseShellExecute = true;
+                psi.WindowStyle = ProcessWindowStyle.Minimized;
+                Process.Start(psi);
+            }
+            if (sendSales)
             {
                 Process.Start("sendtomaster.exe");
             }
+            sendNotif();
             this.Dispose();
         }
         public bool isPaid()

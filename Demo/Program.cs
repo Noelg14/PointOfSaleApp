@@ -19,7 +19,8 @@ namespace Demo
                 ApplicationConfiguration.Initialize();
                 if (args.Length != 0)
                 {
-                    switch (args[0]) {
+                    //normalise args first:
+                    switch (args[0].ToLower()) {
                         case ("test"):
                             Utils.log("Running test param");
                             Application.Run(new frmManage());
@@ -46,9 +47,13 @@ namespace Demo
                             Utils.log("Running param" + args[0]);
                             Application.Run(new vouchTest());
                             break;
+                        case ("--admin"):
+                            Utils.log("Running param" + args[0]);
+                            Application.Run(new TestUtils());
+                            break;
 
                         default:
-                            Utils.log("Running param "+args[0]);
+                            Utils.log($"Running default {args[0]}");
                             Application.Run(new Form1());
                             break;
                     }

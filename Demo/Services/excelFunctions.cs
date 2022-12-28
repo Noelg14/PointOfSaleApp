@@ -81,7 +81,6 @@ namespace Demo
             }
 
         }
-    
         private static string checkFolder(string folder)
         {
             if (!Directory.Exists(folder))

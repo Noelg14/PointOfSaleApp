@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Forms;
+using Demo;
+using Demo.Services;
 
 namespace Demo.Forms
 {
@@ -17,6 +19,7 @@ namespace Demo.Forms
         {
             InitializeComponent();
             textBox2.Enabled = false;
+            this.Text = "Get Voucher";
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -26,16 +29,16 @@ namespace Demo.Forms
 
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter)
             {
-                Voucher vouch = Utils.GetVoucher(textBox1.Text);
-                if(vouch.number is not null)
+                Models.Voucher vouch = VoucherService.getVoucherDetails(textBox1.Text);
+                if (vouch is not null)
                 {
-                    textBox1.Text = vouch.number;
-                    textBox2.Text = vouch.balance.ToString() ;
+                    textBox1.Text = vouch.Id;
+                    textBox2.Text = "€ " + vouch.Balance.ToString();
 
-                    textBox2.Enabled = true;
-                    textBox1.Enabled = false ;
+                    textBox2.Enabled = false;
+                    //textBox1.Enabled = false ;
                 }
                 else
                 {
@@ -48,8 +51,7 @@ namespace Demo.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Utils.UpdateVoucher(textBox1.Text, Double.Parse(textBox2.Text));
-            clear();
+            this.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)

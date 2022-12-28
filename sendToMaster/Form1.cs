@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using Demo;
 using Newtonsoft.Json;
 using System.Net;
-
+using DocumentFormat.OpenXml.Drawing;
 
 namespace sendToMaster
 {
@@ -16,6 +16,7 @@ namespace sendToMaster
     {
         Models.exportItem exportItem = new Models.exportItem();
         Models.StockExp StockExp = new Models.StockExp();
+        string apiURL = "";
 
         public static HttpClient _httpclient = new HttpClient();
         public Form1()
@@ -25,9 +26,17 @@ namespace sendToMaster
             backgroundWorker1.WorkerSupportsCancellation = true;
             InitializeBackgroundWorker();
 
-            backgroundWorker1.RunWorkerAsync();
-
             File.AppendAllText("Log.txt", "\nInit file\n");
+
+            if (!Utils.getConfig("HO_SERVER").Equals(""))
+            {
+                apiURL = Utils.getConfig("HO_SERVER");
+                backgroundWorker1.RunWorkerAsync();
+            }
+            else
+            {
+                throw new Exception("Config not found");
+            }
 
 
 
@@ -98,7 +107,7 @@ namespace sendToMaster
 
                 File.AppendAllText("Log.txt", "Conv to json\n");
 
-                File.WriteAllText("JSON.txt", jsonObj);
+                File.WriteAllText("JSON.txt", stockObj);
 
                 try
                 {
@@ -107,7 +116,7 @@ namespace sendToMaster
                     HttpContent content = new StringContent(jsonObj, Encoding.UTF8, "application/json");
                     File.AppendAllText("Log.txt", "Sending \n");
                     Thread.Sleep(100);
-                    HttpResponseMessage hrm = _httpclient.PostAsync(apiURL+"/sales", content).Result;
+                    HttpResponseMessage hrm = _httpclient.PostAsync(apiURL+"/stock", content).Result;
 
                     if (hrm.IsSuccessStatusCode)
                     {

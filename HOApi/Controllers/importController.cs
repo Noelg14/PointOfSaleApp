@@ -15,19 +15,6 @@ namespace HOApi.Controllers
 
         public importController(ILogger<importController> logger) =>
             _logger = logger;
-        //// GET: api/<importController>
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET api/<importController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
 
         // POST api/<importController>
         [HttpPost]
@@ -84,9 +71,7 @@ namespace HOApi.Controllers
             try
             {
                 _logger.LogInformation("Got request : PostStock");
-                //System.IO.File.WriteAllText("Web.txt",root.ToString());
-                //Models.StockExp import = JsonConvert.DeserializeObject<Models.StockExp>(root);
-                //_logger.LogInformation(import.Count.ToString());
+
                 if (root.stock.Count > 0)
                 {
                     _logger.LogInformation("Adding stock");

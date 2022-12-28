@@ -7,11 +7,13 @@ using System.IO;
 using QRCoder;
 using ClosedXML.Excel;
 using System.Data.SqlClient;
+using Demo.Services;
 
 namespace Demo
 {
     public class Utils
     {
+        //Get DB Configs
         public static string getConfig()
         {
 
@@ -59,6 +61,7 @@ namespace Demo
             }
             return conString = "server=" + server + ";database=" + catalog + ";uid=" + user + ";pwd=" + pw + ";";
         }
+        //Get a specific Setting from config file
         public static string getConfig(string config)
         {
             string file;
@@ -89,8 +92,9 @@ namespace Demo
                    return conf[i].Split('=')[1].Trim();
                 }
             }
-            return null;
+            return "";
         }
+        //Search for product
         public static Product search(string PLU)
         {
             Product product = null;
@@ -107,7 +111,7 @@ namespace Demo
                 if (dr.HasRows)
                 {
                     dr.Read();
-                    Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3));
+                    Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3),dr.GetChar("Type"));
                     p.qty = 1;
                     return p;
                 }
@@ -123,6 +127,11 @@ namespace Demo
 
 
         }
+        public static string getTypeDesc(char type)
+        {
+            return "";
+        }
+        //Get product qty in stock
         public static double getProductQty(string PLU)
         {
             MySqlConnection cnn = initConn();
@@ -210,7 +219,7 @@ namespace Demo
                 {
                     while (dr.Read())
                     {
-                        Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3));
+                        Product p = new Product(dr.GetString(0), dr.GetString(1), dr.GetFloat(2), dr.GetBoolean(3),dr.GetChar("Type"));
                         list.Add(p);
                     }
 
@@ -229,7 +238,7 @@ namespace Demo
 
 
         }
-        public static void recSale(Cart c, double total)
+        public static void recSale(Cart c, double total,out Cart cart)
         {
             string date = DateTime.Now.ToString("yyyy-MM-dd");
             //Console.WriteLine(date);
@@ -245,7 +254,7 @@ namespace Demo
                 Console.WriteLine(cmd.CommandText);
                 log("Writing to sales");
                 cmd.ExecuteNonQuery();
-                recLine(c, cnn);
+                recLine(c, cnn,out cart);
 
             }
             finally
@@ -253,19 +262,33 @@ namespace Demo
                 cnn.Close();
             }
         }
-        private static void recLine(Cart c,MySqlConnection cnn) //does connection close here? 
+        private static void recLine(Cart c,MySqlConnection cnn,out Cart cart) //does connection close here? 
         {
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = cnn;
             foreach (Product p in c.products)
             {
-                cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+",null)";
-                updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
 
+                // adding * of qty to ensure refunds are recorded right
+                cmd.CommandText = "INSERT INTO salelines VALUES('" + p.PLU+ "'," + p.price + ","+c.id+",null)";
                 cmd.ExecuteNonQuery();
                 log("Writing to salelines");
+                // if voucher do this :
+                if (p.type == 'G')
+                {
+                    string vouchRef = VoucherService.getNewVoucherRef().ToString();
+                    VoucherService.CreateNewVoucher(vouchRef, p.price);
+                    p.sID = vouchRef;
+                    log($"adding Voucher");
+                }
+                //if non stock, do not calculate 
+                if (p.type != 'D')
+                {
+                    updateProductQty(p.PLU, getProductQty(p.PLU) - p.qty);
+                    log($"updated stock level of item {p.PLU}");
+                }
             }
-            return;
+            cart = c;
         }
         public static void recPayment(string type,double amount,Cart c)
         {
@@ -288,53 +311,62 @@ namespace Demo
 
         }
 
-        public static Voucher GetVoucher(string number)
-        {
-            MySqlCommand cmd = initCmd();
-            MySqlConnection conn = initConn();
-            cmd.Connection = conn;
-            try{
-                conn.Open();
-                cmd.CommandText = $"SELECT * FROM Voucher where Number ='{number}'";
-                MySqlDataReader dr = cmd.ExecuteReader();
-                if (dr.HasRows)
-                {
-                    dr.Read();
-                    return new Voucher(dr.GetString(0), dr.GetDouble(1));
-                }
-            }catch(Exception e)
-            {
+        ///// <summary>
+        ///// Deprecated - use VoucherService
+        ///// </summary>
+        ///// <param name="number"></param>
+        ///// <returns></returns>
+        //public static Voucher GetVoucher(string number)
+        //{
+        //    MySqlCommand cmd = initCmd();
+        //    MySqlConnection conn = initConn();
+        //    cmd.Connection = conn;
+        //    try{
+        //        conn.Open();
+        //        cmd.CommandText = $"SELECT * FROM Voucher where Number ='{number}'";
+        //        MySqlDataReader dr = cmd.ExecuteReader();
+        //        if (dr.HasRows)
+        //        {
+        //            dr.Read();
+        //            return new Voucher(dr.GetString(0), dr.GetDouble(1));
+        //        }
+        //    }catch(Exception e)
+        //    {
                 
-            }
-            finally
-            {
-                conn.Close();
-            }
-            return new Voucher();
-        }
-
-        public static void UpdateVoucher(string number,double balance)
-        {
-            MySqlCommand cmd = initCmd();
-            MySqlConnection conn = initConn();
-            cmd.Connection = conn;
-            try
-            {
-                conn.Open();
-                cmd.CommandText = $"Update Voucher set balance = {balance} where Number ='{number}'";
-                int rows = cmd.ExecuteNonQuery();
+        //    }
+        //    finally
+        //    {
+        //        conn.Close();
+        //    }
+        //    return new Voucher();
+        //}
+        ///// <summary>
+        ///// Deprecated - use VoucherService
+        ///// </summary>
+        ///// <param name="number"></param>
+        ///// <param name="balance"></param>
+        //public static void UpdateVoucher(string number,double balance)
+        //{
+        //    MySqlCommand cmd = initCmd();
+        //    MySqlConnection conn = initConn();
+        //    cmd.Connection = conn;
+        //    try
+        //    {
+        //        conn.Open();
+        //        cmd.CommandText = $"Update Voucher set balance = {balance} where Number ='{number}'";
+        //        int rows = cmd.ExecuteNonQuery();
                 
-            }
-            catch (Exception e)
-            {
+        //    }
+        //    catch (Exception e)
+        //    {
 
-            }
-            finally
-            {
-                conn.Close();
-            }
+        //    }
+        //    finally
+        //    {
+        //        conn.Close();
+        //    }
 
-        }
+        //}
 
 
         public static void log(string msg)
@@ -345,6 +377,7 @@ namespace Demo
             MySqlConnection cnn = initConn();
             cmd.Connection = cnn;
             cnn.Open();
+            msg.Replace("'", "");
             try
             {
                 cmd.CommandText = $"INSERT INTO log VALUES(NULL,'{msg}','"+DateTime.UtcNow.ToString()+"');";
@@ -453,6 +486,64 @@ namespace Demo
                 return kv;
             }
             catch(Exception ex)
+            {
+                log(ex.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return null;
+        }
+        public static List<string> getTypes()
+        {
+            List< string> types = new List<string>();
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+            cmd.Connection = cnn;
+            cmd.CommandText = "Select * from types";
+            cnn.Open();
+            try
+            {
+
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    types.Add(dr.GetString("Desc"));
+                }
+                return types;
+            }
+            catch (Exception ex)
+            {
+                log(ex.Message);
+            }
+            finally
+            {
+                cnn.Close();
+            }
+            return null;
+        }
+        public static Dictionary<string,char> getTypeDict()
+        {
+            Dictionary<string, char> dict = new Dictionary<string, char>();
+            MySqlConnection cnn = initConn();
+            MySqlCommand cmd = initCmd();
+            cmd.Connection = cnn;
+            cmd.CommandText = "Select * from types";
+            cnn.Open();
+            try
+            {
+
+
+                MySqlDataReader dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    dict.Add(dr.GetString("Desc"), dr.GetString("Key").ToCharArray()[0]);
+                }
+                return dict;
+            }
+            catch (Exception ex)
             {
                 log(ex.Message);
             }
@@ -724,7 +815,7 @@ namespace Demo
                 excelFunctions.createExcel(dr);
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }
@@ -732,8 +823,51 @@ namespace Demo
             {
                 cnn.Close();
             }
-
         }
+
+        public static DataTable GetExportData(string type)
+            {
+
+                MySqlCommand cmd = initCmd();
+                MySqlConnection cnn = cmd.Connection;
+                string data;
+                try
+                {
+                    cnn.Open();
+                    cmd.Prepare();
+                    cmd.CommandText = "select * from settings where setting = @key and Type='export'";
+                    cmd.Parameters.AddWithValue("@key", type.ToString());
+
+                    MySqlDataReader dr = cmd.ExecuteReader();
+                    dr.Read();
+                    if (!dr.HasRows)
+                    {
+                        MessageBox.Show("No Such export exists, please try again");
+                        return new DataTable();
+                    }
+                    data = dr.GetString("data"); // get query
+
+                    dr.Dispose();
+                    cmd.CommandText = data;
+                    DataTable dt = new DataTable();
+
+                    dr = cmd.ExecuteReader();
+                    dt.Load(dr);
+                    return dt;
+                // excelFunctions.createExcel(dr);
+
+            }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    return new DataTable();
+                }
+                finally
+                {
+                    cnn.Close();
+                }
+
+            }
         #region SQL stuff 
         //Making these public as it will be easier
         public static MySqlConnection initConn()

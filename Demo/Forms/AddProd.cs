@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,10 +16,23 @@ namespace Demo
     {
         string connString = Utils.getConfig();
         bool changed = false;
+        Dictionary<string, char> TypeKey = new Dictionary<string, char>();
+
+
         public AddProd()
         {
             InitializeComponent();
             Utils.log("Admin menu accessed");
+
+            List<string> type = Utils.getTypes();
+            //Dict to get the Key for sql query
+            TypeKey = Utils.getTypeDict();
+            comboBox1.Items.AddRange(type.ToArray());
+
+            //enable initially for creating new items
+            comboBox1.Enabled = false;
+            comboBox1.SelectedIndex=0;
+
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -26,13 +40,15 @@ namespace Demo
 
         }
         // below is messy, may look at tidying up but does for now
+        //May look at moving to service down the line.
+        // works fine for now 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (PLU.Text == "")
+            if (PLU.Text == "") // no text, return no need to do anything 
             {
                 return;
             }
-            if (changed)
+            if (changed) // if text or/anything has changed 
             {
                 MySqlConnection cnn = new MySqlConnection();
                 cnn.ConnectionString = connString;
@@ -69,12 +85,17 @@ namespace Demo
                 }
                 return;
             }
+            ///if not changed 
+            ///try recall existing item
+            ///if p is null (does not exist)
+            ///Lets create a new item
             Product p=Utils.search(PLU.Text);
             if (p == null)
             {
-                if (!textChanged())
+                if (!textChanged()) // check if price and desc have changed 
                 {
                     this.PLU.Enabled = false;
+                    comboBox1.Enabled = true;
                     return;
                 }
                 MySqlConnection cnn = new MySqlConnection();
@@ -84,18 +105,18 @@ namespace Demo
                 {
                     cnn.Open();
                     MySqlCommand cmd = new MySqlCommand();
-                    //cmd.CommandText = "INSERT INTO product VALUES(" + PLU.Text + "," + Desc.Text + ","+ Price.Text + ","++")";
                     cmd.Connection = cnn;
 
-                    //cmd.Prepare();
-                    //cmd.Parameters.AddWithValue("@plu", PLU.Text);
-                    //cmd.Parameters.AddWithValue("@desc", Desc.Text);
-                    //cmd.Parameters.AddWithValue("@price", Price.Text);
                     if (checkBox1.Checked)
                     {
                         allFra = 1;
                     }
-                    cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Double.Parse(Price.Text) + "," + allFra + ")";
+                    // now lets get the Type Key
+                    char typeID = 'N';
+                    TypeKey.TryGetValue(comboBox1.SelectedItem.ToString(), out typeID);
+                    //insert 
+
+                    cmd.CommandText = "INSERT INTO product VALUES('" + PLU.Text + "','" + Desc.Text + "'," + Double.Parse(Price.Text) + "," + allFra + ",'"+typeID+"')";
                     cmd.ExecuteNonQuery();
                     MessageBox.Show("Products Added");
                     Utils.log("Product added : " + PLU.Text);
@@ -118,6 +139,8 @@ namespace Demo
                 Price.Text = p.price.ToString();
                 checkBox1.Checked= p.allowFra ? true : false;
                 changed = true;
+                comboBox1.Enabled = false;
+                comboBox1.SelectedItem = TypeKey.FirstOrDefault(x => x.Value == p.type).Key;
                 PLU.Enabled = false;
             }
         }
@@ -133,10 +156,12 @@ namespace Demo
             Desc.Text = "";
             Price.Text = "";
             checkBox1.Checked = false;
+            comboBox1.Enabled = true;
             PLU.Enabled = true;
+            comboBox1.Enabled = false;
             this.changed = false;
         }
-        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Form1_Closing(object sender, CancelEventArgs e)
         {
         }
 
@@ -165,6 +190,11 @@ namespace Demo
             }
             clear();
             button2.Text = "Back";
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
     }

@@ -5,32 +5,65 @@ using System; //Given
 using System.Windows.Forms; //Given
 using System.Diagnostics;
 using static System.Windows.Forms.ListViewItem;
+using System.IO;
+using Demo.Forms;
+using System.CodeDom;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Color = System.Drawing.Color;
+using System.ComponentModel;
+using DocumentFormat.OpenXml.Presentation;
+using System.Media;
 
 namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.6.3";
+        public readonly string version = "0.7.0.1";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
 
         double total=0;
+        List<Product> globalButtons = new List<Product>();
+        
         Cart c = new Cart();
         bool paid;
         static Form1 thisForm; 
 
         public Form1()
         {
-         
+
+            if (!File.Exists(".key.lic"))
+            {
+                MessageBox.Show("No Licence found.");
+              
+                Environment.Exit(1);
+            }
+            else
+            {
+                string lic = File.ReadAllText(".key.lic");
+                if((lic.Equals("") || lic == null)){
+                    MessageBox.Show("No Licence found.");
+                    Utils.log($"No Licence found");
+                    Environment.Exit(1);
+                }
+                else
+                {
+                    Utils.log($"Opening using licence {lic}");
+                }
+            }
+
+
             InitializeComponent();
+            InitializeBackgroundWorker();
+
 
             // Make fullscreen
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             //this.TopMost = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormBorderStyle =FormBorderStyle.None;
+            this.WindowState = FormWindowState.Maximized;
 
             int color = int.Parse(Utils.getIndiviudalSetting("color"));
             if(color != 0)
@@ -38,8 +71,9 @@ namespace Demo
                 this.BackColor = Color.FromArgb(color);
             }
 
-
-            //
+            //TODO : better Scaling work
+            // All these are based on a 1080p screen
+            // may need to look at scaling this better
             Rectangle r = Screen.FromControl(this).Bounds;
             button1.Left = (r.Width - (r.Width)/4);
             button1.Top= (r.Height - (r.Height)/4);
@@ -48,15 +82,18 @@ namespace Demo
 
             button3.Left = (r.Width - (r.Width) / 4) - 200;
             button3.Top = (r.Height - (r.Height) / 4);            
+
             button4.Left = (r.Width - (r.Width) / 4) - 200;
             button4.Top = (r.Height - (r.Height) / 4) - 100;
 
 
             panel1.Height= (r.Height - 200);
             textBox1.Width=panel1.Width;
-            label5.Text = "€ " + total;
+            label5.Text = "€ " + total.ToString("0.00");
+
             Utils.log("Init Form1");
             this.Text += " Version : " + version;
+
             thisForm = this;
 
             if (Debugger.IsAttached)
@@ -64,37 +101,14 @@ namespace Demo
                 this.Text += " Debug Mode";
             }
 
-            List<Product> buttons = Utils.getButtons();
-
-            foreach(Product p in buttons)
-            {
-                Button myNewButton = new()
-                {
-                    Location = new Point(buttonX, buttonY),
-                    Size = new Size(150, 50),
-                    Text = p.desc,
-                    Tag = p,
-                    FlatStyle = FlatStyle.Flat,
-                    ForeColor = Color.SlateBlue,
-                    BackColor = SystemColors.Control
-            };
-                myNewButton.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
-                myNewButton.FlatAppearance.BorderSize = 2;
-                myNewButton.Click += dynButtton_Click;
-                this.Controls.Add(myNewButton);
+            // get buttons
+            updateButtons();
 
 
-                buttonX += 175;
-                if(buttonX >= 1875 )
-                {
-                    buttonY +=  100;
-                    buttonX = 1000;
-                }
-
-            }
             listView1.View = View.Details;
             listView1.GridLines = true;
             listView1.FullRowSelect = true;
+            backgroundWorker1.RunWorkerAsync();
 
         }
 
@@ -114,6 +128,13 @@ namespace Demo
                 }
                 //Utils.recSale(c, total);
                 Utils.log("Button Pay Now Pressed");
+                if(total == 0)
+                {
+                    MessageBox.Show("Paid","Thank you");
+                    Utils.recPayment("NONE", total, c); // need to record as sending etc
+                    clear();
+                    return;
+                }
 
                 if ((Application.OpenForms["Payment"] as Payment) != null)
                 {
@@ -154,6 +175,10 @@ namespace Demo
                 if (p != null)
                 {
 
+                    //if(p.type == 'G')
+                    //{
+                    //    MessageBox.Show("Enter a value for the Voucher");
+                    //}
                     addToCart(p);
                 }
                 if (p is null)
@@ -164,6 +189,24 @@ namespace Demo
                 }
 
             }
+            //if(e.KeyCode == Keys.F1)
+            //{
+            //    if(listView1.Items.Count > 0)
+            //    {
+            //        listView1.LabelEdit = true;
+            //        var item = listView1.Items[0];
+                        
+            //        item.Selected = true;
+            //        item.BeginEdit();
+                    
+            //        if (!item.Selected)
+            //        {
+            //            c.reCalculate();
+                        
+            //        }
+
+            //    }
+            //}
             else
             {
                 
@@ -181,7 +224,7 @@ namespace Demo
             label2.Text = "Price";
             label1.Text = "PLU";
             label3.Text = "Desc";
-            label5.Text = "€" + total ;
+            label5.Text = "€ " + total.ToString("0.00") ;
             c.Clear();
 
             listView1.Items.Clear();
@@ -197,6 +240,7 @@ namespace Demo
         {
             Button s = (Button)sender;
             Product p = (Product)s.Tag;
+
             addToCart(Utils.search(p.PLU));
             //addToCart((Product)s.Tag);
             //MessageBox.Show(sender.GetType().ToString());
@@ -211,6 +255,20 @@ namespace Demo
             f.button2.Enabled = true;
             f = null;
             Utils.log("Clear form");
+        }
+        public static void notifyVoucher(double value)
+        {
+
+            Form1 f = Form1.thisForm;
+            //f.clear();
+            f.listView1.Items.Remove(f.listView1.Items[f.listView1.Items.Count-1]);
+            f.textBox1.Enabled = true;
+            f.button2.Enabled = true;
+            Product gv = Utils.search("gv");
+            Utils.log($"Adding voucher with Value {value} to Cart");
+            gv.price = (float)Math.Round(value, 2);
+            f.addToCart(gv);
+
         }
         public static void notifyBack()
         {
@@ -265,7 +323,20 @@ namespace Demo
             if (p != null)
             {
                 c.AddProd(p);
-                string[] row = { p.PLU, p.desc, p.price.ToString(), "1" };
+                // if voucher get value
+                if (p.type == 'G' )
+                {
+                    if(p.price == (float)0F)
+                    {
+                        //MessageBox.Show("Enter a value for the Voucher");
+                        new VouchEntry().Show();
+                        c.removeProd(p);
+                        Application.OpenForms["VouchEntry"].Focus();
+                    }
+ 
+                }
+               
+                string[] row = { p.PLU, p.desc, p.price.ToString("0.00"), "1" };
                 listView1.Items.Add(new ListViewItem(row));
 
 
@@ -278,7 +349,7 @@ namespace Demo
                     total = Math.Round(total += p.price, 2);
                 }
                
-                label5.Text = "€ " + total;
+                label5.Text = "€ " + total.ToString("0.00");
 
                 textBox1.Focus();
                 textBox1.Text = "";
@@ -290,9 +361,13 @@ namespace Demo
             DialogResult res = MessageBox.Show($"Are you sure you want to Exit?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (res == DialogResult.OK)
             {
-                if (Utils.getConfig("SENDSALES").ToUpper().Equals("N"))
+                if (!Utils.getConfig("HO_SERVER").Equals(""))
                 {
-                    Process.Start("sendtomaster.exe");
+                    if (Utils.getConfig("SENDSALES").ToUpper().Equals("N"))
+                    {
+                        Process.Start("sendtomaster.exe");
+                    }
+                    //Application.Exit();
                 }
                 Application.Exit();
             }
@@ -354,29 +429,42 @@ namespace Demo
 
             {
                 //MessageBox.Show(listView1.Items.Count.ToString());
-
+                //build our product
                 string plu = listView1.SelectedItems[0].Text;
+                string desc = listView1.SelectedItems[0].SubItems[1].Text;
+                float price = (float)Double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
+                string qty = listView1.SelectedItems[0].SubItems[3].Text;
+                Product p = new Product(plu, desc, price);
+                p.qty = Double.Parse(qty);
 
                 if (plu != null)
                 {
-                    string qty = listView1.SelectedItems[0].SubItems[3].Text;
+
 
                     if (qty.Contains('-'))
                     {
                         //MessageBox.Show("Item Already refunded,Cannot void");
                         c.removeProd(Utils.search(plu));
-                        total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text) * -1; // add the mius value;
+                        total += double.Parse(listView1.SelectedItems[0].SubItems[2].Text) * -1; // add the minus value;
                         label5.Text = "€ " + Math.Round(total, 2, MidpointRounding.ToEven);
                         listView1.SelectedItems[0].Remove();
                         return;
                     }
 
-                    c.removeProd(Utils.search(plu));
 
-                    total -= double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
-                    label5.Text = "€ "+ Math.Round(total, 2, MidpointRounding.ToEven);
+                    bool gone = c.removeProd(p);
 
-                    listView1.SelectedItems[0].Remove();
+                    if(gone)
+                    {
+                        total -= double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
+                        label5.Text = "€ " + Math.Round(total, 2, MidpointRounding.ToEven);
+                        listView1.SelectedItems[0].Remove();
+                    }
+                    else
+                    {
+                        MessageBox.Show("An error ocurred when voiding");
+                    }
+
                     //System.Windows.TextDecorations.Strikethrough;
                 }
                 else
@@ -394,6 +482,103 @@ namespace Demo
         {
             this.BackColor = Color.FromArgb(int.Parse(Utils.getIndiviudalSetting("color")));
         }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            new vouchTest().Show();
+        }
+
+        public void updateButtons()
+        {
+            clearButtons();
+            //Get buttons from DB
+            globalButtons = Utils.getButtons();
+
+            foreach (Product p in globalButtons)
+            {
+                Button myNewButton = new()
+                {
+                    Location = new Point(buttonX, buttonY),
+                    Size = new Size(150, 50),
+                    Text = p.desc,
+                    Tag = p,
+                    FlatStyle = FlatStyle.Flat,
+                    ForeColor = Color.SlateBlue,
+                    BackColor = SystemColors.Control
+                };
+                myNewButton.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+                myNewButton.FlatAppearance.BorderSize = 2;
+                myNewButton.Click += dynButtton_Click;
+                this.Controls.Add(myNewButton);
+
+
+                buttonX += 175;
+                if (buttonX >= 1875)
+                {
+                    buttonY += 100;
+                    buttonX = 1000;
+                }
+
+            }
+        }
+        /// <summary>
+        /// Clear List of current buttons
+        /// </summary>
+        private void clearButtons()
+        {
+            globalButtons = new List<Product>();
+        }
+#region BackGround_Worker
+        private void InitializeBackgroundWorker()
+        {
+            backgroundWorker1.DoWork += new DoWorkEventHandler(backgroundWorker1_DoWork);
+
+            backgroundWorker1.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker1_RunWorkerCompleted);
+
+
+        }
+
+        private async void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            try
+            {
+                string targetDir = Directory.GetCurrentDirectory() + "\\Reports\\";
+
+                string[] files =Directory.GetFiles(targetDir);
+                int counter = 0;
+                foreach (string file in files) {
+                    if (file.EndsWith(".pdf"))
+                    {
+                        File.Delete(file);
+                        ++counter;
+                    }
+
+                }
+                Utils.log($"Deleted {counter} old pdf files");
+
+            }catch(IOException ioe)
+            {
+                Utils.log("An Error ocurred when clearing files");
+            }
+        }
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // First, handle the case where an exception was thrown.
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+            }
+            else
+            {
+                Utils.log("Worker complete");
+                //SoundPlayer sp = new SoundPlayer();
+                //sp.SoundLocation = "E:\\Samples\\Hybrid Trap - Dubstep\\Brass\\WA Brass Shot C# 30.wav";
+                //sp.Load();
+                //sp.Play();
+            }
+
+        }
+        #endregion
     }
 
     public class Product {
@@ -401,15 +586,17 @@ namespace Demo
         public string desc { get; }
         public float price { get; set; }
         public bool allowFra { get; }
+        public double qty { get; set; } = 0;
+        public char type { get; } = 'N';
+        public string sID { get; set; } = "";
 
-        public double qty { get; set; } = 1;
-
-        public Product(string PLU, string desc, float price, bool allowFra)
+        public Product(string PLU, string desc, float price, bool allowFra,char type)
         {
             this.PLU = PLU;
             this.desc = desc;
             this.price = price;
             this.allowFra = allowFra;
+            this.type = type;
 
         }
         public Product(string PLU, string desc, float price)
@@ -423,6 +610,22 @@ namespace Demo
         public Product()
         {
 
+        }
+
+        public override bool Equals(object comp)
+        {
+            if (comp == null) { return false; }
+
+            Product compare = (Product)comp;
+ 
+            if(this.price == compare.price && this.PLU == compare.PLU && this.qty==compare.qty && this.desc == compare.desc)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

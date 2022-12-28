@@ -83,7 +83,7 @@ namespace HOApi.Repository
 
 
                 cmd.Prepare();
-                cmd.CommandText = "INSERT INTO stocklvl values(@PLU,@value)";
+                cmd.CommandText = "INSERT INTO stocklvl values(@PLU,@value,curdate())";
 
                 foreach (Models.stock item in stock)
                 {
@@ -110,14 +110,14 @@ namespace HOApi.Repository
 
             MySqlCommand cmd = initCmd();
             MySqlConnection cnn = cmd.Connection;
-
+            
             try
             {
                 cnn.Open();
-                cmd.Prepare();
-                cmd.CommandText = "TRUNCATE TABLE @table";
+               // cmd.Prepare();
+                cmd.CommandText = $"TRUNCATE TABLE {tableName}";
 
-                cmd.Parameters.AddWithValue("@table", tableName);
+                //cmd.Parameters.AddWithValue("@table", tableName);
 
                 cmd.ExecuteNonQuery();
                 return true;
