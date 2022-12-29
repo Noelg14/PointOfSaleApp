@@ -70,10 +70,10 @@ namespace Demo
                     MessageBox.Show("Cannot use this voucher, please try another");
                     return;
                 }
-                string msg = $"Voucher has €{v.Balance} on it, are you sure you want to use €{toPay}?";
+                string msg = $"Voucher has €{Math.Round(v.Balance,2)} on it, are you sure you want to use €{Math.Round(toPay,2)}?";
                 if (toPay < 0)
                 {
-                    msg = $"Voucher will be topped up by €{Math.Abs(toPay)} & will have a balance of €{v.Balance + Math.Abs(toPay)}, Continue?";
+                    msg = $"Voucher will be topped up by €{Math.Abs(toPay)} & will have a balance of €{Math.Abs(v.Balance)+toPay}, Continue?";
                 }
 
                 DialogResult res =MessageBox.Show(msg,"Check",MessageBoxButtons.OKCancel);

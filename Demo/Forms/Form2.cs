@@ -42,5 +42,10 @@ namespace Demo.Forms
                 button1_Click(sender, e);
             }
         }
+
+        private void VouchEntry_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Form1.notifyVoucher(-99);
+        }
     }
 }

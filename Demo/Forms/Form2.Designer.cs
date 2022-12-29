@@ -82,6 +82,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Voucher Entry";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.VouchEntry_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -4,14 +4,12 @@ using System.Windows.Forms.Integration; //Not so Given.
 using System; //Given 
 using System.Windows.Forms; //Given
 using System.Diagnostics;
-using static System.Windows.Forms.ListViewItem;
 using System.IO;
 using Demo.Forms;
-using System.CodeDom;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Color = System.Drawing.Color;
 using System.ComponentModel;
-using DocumentFormat.OpenXml.Presentation;
+using Tuple = System.Tuple;
 using System.Media;
 
 namespace Demo
@@ -264,6 +262,10 @@ namespace Demo
             f.listView1.Items.Remove(f.listView1.Items[f.listView1.Items.Count-1]);
             f.textBox1.Enabled = true;
             f.button2.Enabled = true;
+            if(value == -99)
+            {
+                return;
+            }
             Product gv = Utils.search("gv");
             Utils.log($"Adding voucher with Value {value} to Cart");
             gv.price = (float)Math.Round(value, 2);
@@ -388,7 +390,11 @@ namespace Demo
             {
                 //var selectedItem = (dynamic)listView1.SelectedItems[0];
                 // selectedItem.Col3
-
+                if (Utils.search(listView1.SelectedItems[0].SubItems[0].Text).type == 'G')
+                {
+                    MessageBox.Show("Cannot currently refund a voucher");
+                    return;
+                }
                 string qty  = listView1.SelectedItems[0].SubItems[3].Text;
                 double price = double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
 
@@ -571,10 +577,15 @@ namespace Demo
             else
             {
                 Utils.log("Worker complete");
-                //SoundPlayer sp = new SoundPlayer();
-                //sp.SoundLocation = "E:\\Samples\\Hybrid Trap - Dubstep\\Brass\\WA Brass Shot C# 30.wav";
-                //sp.Load();
-                //sp.Play();
+                SoundPlayer sp = new SoundPlayer();
+
+                sp.SoundLocation = Utils.getConfig("SOUND_LOCATION");
+                if(sp.SoundLocation != "" || sp.SoundLocation.Contains(".mp3"))
+                {
+                    sp.Load();
+                    sp.Play();
+                }
+
             }
 
         }
@@ -626,6 +637,10 @@ namespace Demo
             {
                 return false;
             }
+        }
+        public override int GetHashCode()
+        {
+            return Tuple.Create(this.PLU,this.desc).GetHashCode();
         }
 
     }
