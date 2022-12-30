@@ -258,6 +258,7 @@ namespace Demo
         {
 
             Form1 f = Form1.thisForm;
+            f.Enabled = true;
             //f.clear();
             f.listView1.Items.Remove(f.listView1.Items[f.listView1.Items.Count-1]);
             f.textBox1.Enabled = true;
@@ -334,6 +335,7 @@ namespace Demo
                         new VouchEntry().Show();
                         c.removeProd(p);
                         Application.OpenForms["VouchEntry"].Focus();
+                        this.Enabled = false;
                     }
  
                 }

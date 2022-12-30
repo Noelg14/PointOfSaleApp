@@ -53,7 +53,7 @@ namespace Demo
                     paragraph.AddFormattedText(p.PLU+"\n"+p.desc + " " +currentCulture.NumberFormat.CurrencySymbol+ p.price.ToString("0.00") + "\n", TextFormat.Bold);
                     if (p.type == 'G')
                     {
-                        paragraph.AddFormattedText($"Voucher Ref: {p.sID}",TextFormat.Italic);
+                        paragraph.AddFormattedText($"Voucher Ref: {p.sID}\n",TextFormat.Italic);
                     }
                     s += p.price;
                 }
