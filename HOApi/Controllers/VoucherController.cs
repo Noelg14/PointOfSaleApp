@@ -30,17 +30,20 @@ namespace HOApi.Controllers
         // POST api/<VoucherController>
         [HttpPost("{id}")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(500)]
-        public string UpdateBalance(string id,double newBal)
+        [ProducesResponseType(400)]
+        public IActionResult UpdateBalance(string id,double newBal)
         {
             Voucher v = VoucherRepo.updateBalance(id,newBal);
             if (v.Id != id)
             {
-                return "{message:'Could not update Voucher'";
+                // if voucher does not exist, return bad request
+                return StatusCode(400,"Voucher does not exist");
             }
             else
             {
-                return JsonConvert.SerializeObject(v);
+                //all good return
+                return StatusCode(200,v);
+                //return JsonConvert.SerializeObject(v);
             }
         }
 

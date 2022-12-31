@@ -51,15 +51,8 @@ namespace HOApi.Repository
 
             try
             {
-                Voucher v = Voucher.GetNewVoucher();
+                Voucher v = getVoucher(id);
                 _cnn.Open();
-                cmd.CommandText = $"SELECT * FROM voucher where Number ='{id}' LIMIT 1";
-                MySqlDataReader dr = cmd.ExecuteReader();
-                if (dr.HasRows)
-                {
-                    dr.Read();
-                    v = new Voucher(dr.GetString(0), dr.GetDouble(1));
-                    dr.Close();
                     if (v.Balance < usage)
                     {
                         v.Message = "Cannot update as balance is less than usage";
@@ -73,10 +66,8 @@ namespace HOApi.Repository
                     }
 
                     v.updateBal(usage);
+                    v.Message = $"Sucessfully used €{usage.ToString("0.00")}";
                     return v;
-
-                }
-                return v;
             }
             catch (Exception e)
             {
