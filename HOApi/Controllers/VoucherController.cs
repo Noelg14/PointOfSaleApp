@@ -28,8 +28,7 @@ namespace HOApi.Controllers
             Voucher v = VoucherRepo.getVoucher(id);
             if(v.Id is null)
             {
-                ErrorMsg em = new ErrorMsg("Voucher does not exist", "400");
-                return StatusCode(400,JsonConvert.SerializeObject(em));
+                return StatusCode(400, new ErrorMsg($"Voucher {id} does not exist", "400"));
             }
             else
             {
