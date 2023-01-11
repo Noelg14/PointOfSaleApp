@@ -24,6 +24,8 @@ namespace HOApi.Controllers
 
         // POST api/<ProductController>
         [HttpPost]
+        // have this as 1 call? IEnum<Product> or as indiviudual calls?
+        //Both?
         public void Post([FromBody] string value)
         {
         }
@@ -34,10 +36,10 @@ namespace HOApi.Controllers
         {
         }
 
-        // DELETE api/<ProductController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        //// DELETE api/<ProductController>/5
+        //[HttpDelete("{id}")]
+        //public void Delete(int id)
+        //{
+        //}
     }
 }

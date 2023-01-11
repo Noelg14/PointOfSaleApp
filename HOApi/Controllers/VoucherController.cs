@@ -17,14 +17,25 @@ namespace HOApi.Controllers
         //public IEnumerable<string> Get()
         //{
         //    return new string[] { "value1", "value2" };
-        //}
+        //} 
 
         // GET api/<VoucherController>/5
         [HttpGet("{id}")]
-        public string GetBalance(string id)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult GetBalance(string id)
         {
             Voucher v = VoucherRepo.getVoucher(id);
-            return JsonConvert.SerializeObject(v);
+            if(v.Id is null)
+            {
+                ErrorMsg em = new ErrorMsg("Voucher does not exist", "400");
+                return StatusCode(400,JsonConvert.SerializeObject(em));
+            }
+            else
+            {
+                return StatusCode(200, v);
+            }
+
         }
 
         // POST api/<VoucherController>
@@ -36,8 +47,8 @@ namespace HOApi.Controllers
             Voucher v = VoucherRepo.updateBalance(id,newBal);
             if (v.Id != id)
             {
-                // if voucher does not exist, return bad request
-                return StatusCode(400,"Voucher does not exist");
+                // if voucher does not exist, return bad 
+                return StatusCode(400,new ErrorMsg("Voucher does not exist","400"));
             }
             else
             {
