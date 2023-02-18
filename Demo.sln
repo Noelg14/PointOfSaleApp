@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo", "Demo\Demo.csproj", "{44193D44-8F14-49FE-BCFF-AA21BEE5BA30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POS", "Demo\POS.csproj", "{44193D44-8F14-49FE-BCFF-AA21BEE5BA30}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sendToMaster", "sendToMaster\sendToMaster.csproj", "{7F974035-DFB8-484E-9429-BE7C08E2E822}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HOApi", "HOApi\HOApi.csproj", "{D6C0FFAB-8341-4B4C-90C2-8D666332CEB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HOApi", "HOApi\HOApi.csproj", "{D6C0FFAB-8341-4B4C-90C2-8D666332CEB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
