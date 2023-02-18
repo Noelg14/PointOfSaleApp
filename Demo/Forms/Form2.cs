@@ -23,10 +23,12 @@ namespace Demo.Forms
         {
             try
             {
-                double m = double.Parse(textBox1.Text.Replace("€", string.Empty));
+                double m = double.Parse(textBox1.Text);
+                
                 Form1.notifyVoucher(m);
             }catch(Exception ex) {
-                Utils.log("error");
+                Utils.log($"error {ex.Message}");
+                Form1.notifyVoucher(-99);
             }
             finally
             {
@@ -46,6 +48,11 @@ namespace Demo.Forms
         private void VouchEntry_FormClosing(object sender, FormClosingEventArgs e)
         {
             Form1.notifyVoucher(-99);
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

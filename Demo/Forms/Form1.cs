@@ -1,4 +1,3 @@
-using MySql.Data.MySqlClient;
 using System.Timers;
 using System.Windows.Forms.Integration; //Not so Given.
 using System; //Given 
@@ -6,18 +5,16 @@ using System.Windows.Forms; //Given
 using System.Diagnostics;
 using System.IO;
 using Demo.Forms;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Color = System.Drawing.Color;
 using System.ComponentModel;
 using Tuple = System.Tuple;
 using System.Media;
-using System.Diagnostics.Metrics;
 
 namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.7.0.1";
+        public readonly string version = "0.7.2.1";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
@@ -82,8 +79,8 @@ namespace Demo
             button3.Left = (r.Width - (r.Width) / 4) - 200;
             button3.Top = (r.Height - (r.Height) / 4);            
 
-            button4.Left = (r.Width - (r.Width) / 4) - 200;
-            button4.Top = (r.Height - (r.Height) / 4) - 100;
+            button4.Left = r.Width - (r.Width) / 4 - 200;
+            button4.Top = r.Height - (r.Height) / 4 - 100;
 
 
             panel1.Height= (r.Height - 200);
@@ -264,7 +261,7 @@ namespace Demo
             f.listView1.Items.Remove(f.listView1.Items[f.listView1.Items.Count-1]);
             f.textBox1.Enabled = true;
             f.button2.Enabled = true;
-            if(value == -99)
+            if(value == -99 || value ==0)
             {
                 return;
             }
@@ -294,6 +291,14 @@ namespace Demo
         private void toolStripLabel1_Click_1(object sender, EventArgs e)
         {
             new frmManage().Show();
+        }
+        private void ListView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button.Equals(MouseButtons.Right))
+            {
+                MessageBox.Show("Right Click");
+            }
+            //throw new NotImplementedException();
         }
 
         private void Form1_Resize(object sender, EventArgs e)
