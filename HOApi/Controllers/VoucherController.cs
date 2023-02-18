@@ -41,13 +41,13 @@ namespace HOApi.Controllers
         [HttpPost("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult UpdateBalance(string id,double newBal)
+        public IActionResult UpdateBalance(string id,double usage)
         {
-            Voucher v = VoucherRepo.updateBalance(id,newBal);
+            Voucher v = VoucherRepo.updateBalance(id,usage);
             if (v.Id != id)
             {
                 // if voucher does not exist, return bad 
-                return StatusCode(400,new ErrorMsg("Voucher does not exist","400"));
+                return StatusCode(400, new ErrorMsg($"Voucher {id} does not exist", "400"));
             }
             else
             {

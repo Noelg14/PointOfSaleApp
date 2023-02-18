@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Demo.Models;
+using DocumentFormat.OpenXml.Presentation;
 using MySql.Data.MySqlClient;
-
+using Newtonsoft.Json;
 
 namespace Demo.Services
 {
@@ -19,6 +22,7 @@ namespace Demo.Services
 
         private readonly IDbConnection cnn = Utils.initConn();
         private readonly IDbCommand cmd = Utils.initCmd();
+        private static HttpClient _http = new HttpClient();
 
         private VoucherService()
         {
@@ -27,7 +31,7 @@ namespace Demo.Services
         public static Models.Voucher getVoucherDetails(string id)
         {
             VoucherService v = VoucherService.Instance;
-            Demo.Models.Voucher vouch = null;
+            Models.Voucher vouch = null;
             v.cnn.Open();
             v.cmd.Connection = v.cnn;
             
@@ -198,6 +202,33 @@ namespace Demo.Services
             return vouch;
         }
 
+        public static double UpdateVoucherRemote(string id, double usageAmt, Cart c)
+        {
+            string apiBase = Utils.getConfig("HO_SERVER");
+            if (apiBase.Equals(""))
+            {
+                return UpdateVoucher(id,usageAmt, c);
+                // no remote setup, use local instead
+            }
+            apiBase += $"/Voucher/{id}?newbal={usageAmt}";
+            try
+            {
+                HttpResponseMessage resp = _http.PostAsync(apiBase, null).Result;
+                if (resp.IsSuccessStatusCode)
+                {
+                    string content = resp.Content.ReadAsStringAsync().Result;
+                    return JsonConvert.DeserializeObject<Models.Voucher>(content).Balance;
+                }
+            } catch (Exception e) {
+                Utils.log(e.Message);
+                return -1;
+            }
+            return -1;
+
+
+
+        }
+
         private static int getLastVoucherRef()
         {
             VoucherService v = VoucherService.Instance;
@@ -205,7 +236,7 @@ namespace Demo.Services
             v.cnn.Open();
             v.cmd.Connection = v.cnn;
 
-            v.cmd.CommandText = $"Select Max(Number) from voucher";
+            v.cmd.CommandText = $"Select MAX(CAST(NUMBER AS SIGNED)) FROM voucher";
             MySqlDataReader dr = (MySqlDataReader)v.cmd.ExecuteReader();
             dr.Read();
             last = dr.GetInt32(0);

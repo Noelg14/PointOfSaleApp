@@ -91,6 +91,8 @@ namespace sendToMaster
 
                 File.AppendAllText("Log.txt", "Got lines\n");
 
+                List<Product> products = dbFunctions.GetProducts();
+
                 exportItem.sales = sale;
                 exportItem.saleline = saleline;
 
@@ -104,6 +106,7 @@ namespace sendToMaster
                 string stockObj = JsonConvert.SerializeObject(StockExp);
 
                 string jsonObj = JsonConvert.SerializeObject(exportItem);
+                string productDetails = JsonConvert.SerializeObject(products);
 
                 File.AppendAllText("Log.txt", "Conv to json\n");
 
@@ -149,9 +152,23 @@ namespace sendToMaster
                     }
                     #endregion
 
+                    #region Products
+                    content = new StringContent(productDetails, Encoding.UTF8, "application/json");
+                    File.AppendAllText("Log.txt", "Sending products \n");
+                    Thread.Sleep(150);
+                    hrm = _httpclient.PostAsync(apiURL + "/Product/allproducts", content).Result;
+                    if (hrm.IsSuccessStatusCode)
+                    {
+                        //res.EnsureSuccessStatusCode();
+
+                        File.AppendAllText("Log.txt", $"Sent {products.Count} products\n");
+                        worker.ReportProgress(95);
+                    }
+                    #endregion
+
                     else
                     {
-                        throw new Exception("An error ocurred sending data \n "+hrm.Content);
+                        throw new Exception("An error ocurred sending data\n "+hrm.ReasonPhrase);
                     }
                   
 

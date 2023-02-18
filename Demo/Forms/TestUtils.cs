@@ -45,7 +45,7 @@ namespace Demo.Forms
             string id = textBox2.Text;
             double usage = Double.Parse(textBox1.Text);
 
-            double newBal = VoucherService.UpdateVoucher(id, usage);
+            double newBal = VoucherService.UpdateVoucherRemote(id, usage,new Cart());
             if (newBal == -1 || newBal == -99)
             {
                 MessageBox.Show("Could not use voucher. Usage greater than balance or Voucher does not exist");

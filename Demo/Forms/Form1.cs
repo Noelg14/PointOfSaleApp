@@ -11,6 +11,7 @@ using Color = System.Drawing.Color;
 using System.ComponentModel;
 using Tuple = System.Tuple;
 using System.Media;
+using System.Diagnostics.Metrics;
 
 namespace Demo
 {
@@ -502,19 +503,19 @@ namespace Demo
             //Get buttons from DB
             globalButtons = Utils.getButtons();
 
-            foreach (Product p in globalButtons)
+            foreach (Product productItem in globalButtons)
             {
                 Button myNewButton = new()
                 {
                     Location = new Point(buttonX, buttonY),
                     Size = new Size(150, 50),
-                    Text = p.desc,
-                    Tag = p,
+                    Text = productItem.desc,
+                    Tag = productItem,
                     FlatStyle = FlatStyle.Flat,
                     ForeColor = Color.SlateBlue,
                     BackColor = SystemColors.Control
                 };
-                myNewButton.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+                myNewButton.FlatAppearance.BorderColor = Color.SteelBlue;
                 myNewButton.FlatAppearance.BorderSize = 2;
                 myNewButton.Click += dynButtton_Click;
                 this.Controls.Add(myNewButton);
@@ -550,24 +551,39 @@ namespace Demo
         {
             try
             {
-                string targetDir = Directory.GetCurrentDirectory() + "\\Reports\\";
+                string targetDir = Directory.GetCurrentDirectory();
+                string format = ".jpeg";
+                int counter = removeFiles(targetDir, format);
+                Utils.log($"Deleted {counter} old {format} files");
 
-                string[] files =Directory.GetFiles(targetDir);
-                int counter = 0;
-                foreach (string file in files) {
-                    if (file.EndsWith(".pdf"))
-                    {
-                        File.Delete(file);
-                        ++counter;
-                    }
 
-                }
-                Utils.log($"Deleted {counter} old pdf files");
 
-            }catch(IOException ioe)
+                targetDir += "\\Reports\\";
+                format = ".pdf";
+                counter = removeFiles(targetDir, format);
+                Utils.log($"Deleted {counter} old {format} files");
+
+            }
+            catch(IOException ioe)
             {
                 Utils.log("An Error ocurred when clearing files");
             }
+        }
+
+        private static int removeFiles(string directory, string fileFormat)
+        {
+            string[] files = Directory.GetFiles(directory);
+            int counter = 0;
+            foreach (string file in files)
+            {
+                if (file.EndsWith($"{fileFormat}"))
+                {
+                    File.Delete(file);
+                    ++counter;
+                }
+
+            }
+            return counter;
         }
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -582,7 +598,7 @@ namespace Demo
                 SoundPlayer sp = new SoundPlayer();
 
                 sp.SoundLocation = Utils.getConfig("SOUND_LOCATION");
-                if(sp.SoundLocation != "" || sp.SoundLocation.Contains(".mp3"))
+                if(sp.SoundLocation != "" || sp.SoundLocation.Contains(".mp3") || sp.SoundLocation.Contains(".wav"))
                 {
                     sp.Load();
                     sp.Play();

@@ -1,4 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HOApi.Models;
+using HOApi.Repository;
+using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,16 +16,32 @@ namespace HOApi.Controllers
     {
         // GET: api/<ProductController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            IEnumerable<Product> products = ProductRepo.getProducts();
+            if(products.Any() == false)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(products);
+            }
+
         }
 
         // GET api/<ProductController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public IActionResult Get(string id)
         {
-            return "value";
+            Product p = ProductRepo.getProductByPLU(id);
+            if( p.PLU != id)
+            {
+                return BadRequest("PLU not found");
+            }
+            return Ok(p);
         }
 
         // POST api/<ProductController>
@@ -28,6 +50,22 @@ namespace HOApi.Controllers
         //Both?
         public void Post([FromBody] string value)
         {
+        }
+
+        // POST api/<ProductController>
+        [HttpPost("allproducts")]
+        // have this as 1 call? IEnum<Product> or as indiviudual calls?
+        //Both?
+        public IActionResult allProducts([FromBody] List<Product> values)
+        {
+            foreach(Product newProduct in values )
+            {
+                if (!ProductRepo.createProduct(newProduct))
+                {
+                    return StatusCode(500, "Error creating product");
+                }
+            }
+            return Ok();
         }
 
         // PUT api/<ProductController>/5

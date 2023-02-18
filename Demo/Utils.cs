@@ -8,6 +8,9 @@ using QRCoder;
 using ClosedXML.Excel;
 using System.Data.SqlClient;
 using Demo.Services;
+using System.Text.Encodings;
+using System.Text;
+
 
 namespace Demo
 {
@@ -48,7 +51,7 @@ namespace Demo
                 }
                 if (conf[i].StartsWith("PW"))
                 {
-                    pw = conf[i].Split('=')[1].Trim();
+                    pw = conf[i].Split('=')[1];
                 }
                 if (conf[i].StartsWith("USER"))
                 {
@@ -77,12 +80,13 @@ namespace Demo
 
             if (file == null)
             {
-                throw new Exception("An error ocurred");
+                return "";
+                //throw new Exception("An error ocurred");
             }
             if (!File.Exists(file))
             {
                 log("File does not exist, please ensure file config exists");
-                return "N";
+                return "";
             }
             string[] conf = File.ReadAllLines(file);
             for (int i = 0; i < conf.Length; i++) // could be a switch, will look at
@@ -289,6 +293,15 @@ namespace Demo
                 }
             }
             cart = c;
+        }
+        private static string decodeBase64(string inputString)
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(inputString));
+        }
+        private static string encodeBase64(string inputString)
+        {
+            byte[] stringByteArray = Encoding.ASCII.GetBytes(inputString);
+            return Convert.ToBase64String(stringByteArray);
         }
         public static void recPayment(string type,double amount,Cart c)
         {

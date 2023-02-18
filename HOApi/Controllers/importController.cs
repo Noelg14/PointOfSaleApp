@@ -72,7 +72,7 @@ namespace HOApi.Controllers
             {
                 _logger.LogInformation("Got request : PostStock");
 
-                if (root.stock.Count > 0)
+                if (root.stock.Count > 0 && root != null)
                 {
                     _logger.LogInformation("Adding stock");
                     Repository.dbWork.addStock(root.stock);
