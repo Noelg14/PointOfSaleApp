@@ -16,7 +16,9 @@ namespace Demo.Forms
         public VouchEntry()
         {
             InitializeComponent();
+            this.Focus();
             textBox1.Focus();
+            textBox1.SelectAll();
         }
 
         private void button1_Click(object sender, EventArgs e)
