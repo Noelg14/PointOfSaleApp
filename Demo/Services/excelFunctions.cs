@@ -11,7 +11,7 @@ using System.Diagnostics;
 
 namespace Demo
 {
-    internal class excelFunctions
+    public class excelFunctions
     {
         public static void createExcel(MySqlDataReader dataReader)
         {
