@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace Demo.Services
 {
-    internal class VoucherService
+    public class VoucherService
     {
         public static VoucherService Instance = new VoucherService();
 
