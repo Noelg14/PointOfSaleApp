@@ -1,24 +1,20 @@
-using MySql.Data.MySqlClient;
 using System.Timers;
 using System.Windows.Forms.Integration; //Not so Given.
 using System; //Given 
 using System.Windows.Forms; //Given
 using System.Diagnostics;
-using static System.Windows.Forms.ListViewItem;
 using System.IO;
 using Demo.Forms;
-using System.CodeDom;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Color = System.Drawing.Color;
 using System.ComponentModel;
-using DocumentFormat.OpenXml.Presentation;
+using Tuple = System.Tuple;
 using System.Media;
 
 namespace Demo
 {
     public partial class Form1 : Form
     {
-        public readonly string version = "0.7.0.1";
+        public readonly string version = "0.7.2.1";
         private int buttonX = 1000;
         private int buttonY = 60;
         public bool isRefund;
@@ -83,8 +79,8 @@ namespace Demo
             button3.Left = (r.Width - (r.Width) / 4) - 200;
             button3.Top = (r.Height - (r.Height) / 4);            
 
-            button4.Left = (r.Width - (r.Width) / 4) - 200;
-            button4.Top = (r.Height - (r.Height) / 4) - 100;
+            button4.Left = r.Width - (r.Width) / 4 - 200;
+            button4.Top = r.Height - (r.Height) / 4 - 100;
 
 
             panel1.Height= (r.Height - 200);
@@ -260,10 +256,15 @@ namespace Demo
         {
 
             Form1 f = Form1.thisForm;
+            f.Enabled = true;
             //f.clear();
             f.listView1.Items.Remove(f.listView1.Items[f.listView1.Items.Count-1]);
             f.textBox1.Enabled = true;
             f.button2.Enabled = true;
+            if(value == -99 || value ==0)
+            {
+                return;
+            }
             Product gv = Utils.search("gv");
             Utils.log($"Adding voucher with Value {value} to Cart");
             gv.price = (float)Math.Round(value, 2);
@@ -290,6 +291,14 @@ namespace Demo
         private void toolStripLabel1_Click_1(object sender, EventArgs e)
         {
             new frmManage().Show();
+        }
+        private void ListView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button.Equals(MouseButtons.Right))
+            {
+                MessageBox.Show("Right Click");
+            }
+            //throw new NotImplementedException();
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -332,6 +341,7 @@ namespace Demo
                         new VouchEntry().Show();
                         c.removeProd(p);
                         Application.OpenForms["VouchEntry"].Focus();
+                        this.Enabled = false;
                     }
  
                 }
@@ -388,7 +398,11 @@ namespace Demo
             {
                 //var selectedItem = (dynamic)listView1.SelectedItems[0];
                 // selectedItem.Col3
-
+                if (Utils.search(listView1.SelectedItems[0].SubItems[0].Text).type == 'G')
+                {
+                    MessageBox.Show("Cannot currently refund a voucher");
+                    return;
+                }
                 string qty  = listView1.SelectedItems[0].SubItems[3].Text;
                 double price = double.Parse(listView1.SelectedItems[0].SubItems[2].Text);
 
@@ -494,19 +508,19 @@ namespace Demo
             //Get buttons from DB
             globalButtons = Utils.getButtons();
 
-            foreach (Product p in globalButtons)
+            foreach (Product productItem in globalButtons)
             {
                 Button myNewButton = new()
                 {
                     Location = new Point(buttonX, buttonY),
                     Size = new Size(150, 50),
-                    Text = p.desc,
-                    Tag = p,
+                    Text = productItem.desc,
+                    Tag = productItem,
                     FlatStyle = FlatStyle.Flat,
                     ForeColor = Color.SlateBlue,
                     BackColor = SystemColors.Control
                 };
-                myNewButton.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+                myNewButton.FlatAppearance.BorderColor = Color.SteelBlue;
                 myNewButton.FlatAppearance.BorderSize = 2;
                 myNewButton.Click += dynButtton_Click;
                 this.Controls.Add(myNewButton);
@@ -542,24 +556,39 @@ namespace Demo
         {
             try
             {
-                string targetDir = Directory.GetCurrentDirectory() + "\\Reports\\";
+                string targetDir = Directory.GetCurrentDirectory();
+                string format = ".jpeg";
+                int counter = removeFiles(targetDir, format);
+                Utils.log($"Deleted {counter} old {format} files");
 
-                string[] files =Directory.GetFiles(targetDir);
-                int counter = 0;
-                foreach (string file in files) {
-                    if (file.EndsWith(".pdf"))
-                    {
-                        File.Delete(file);
-                        ++counter;
-                    }
 
-                }
-                Utils.log($"Deleted {counter} old pdf files");
 
-            }catch(IOException ioe)
+                targetDir += "\\Reports\\";
+                format = ".pdf";
+                counter = removeFiles(targetDir, format);
+                Utils.log($"Deleted {counter} old {format} files");
+
+            }
+            catch(IOException ioe)
             {
                 Utils.log("An Error ocurred when clearing files");
             }
+        }
+
+        private static int removeFiles(string directory, string fileFormat)
+        {
+            string[] files = Directory.GetFiles(directory);
+            int counter = 0;
+            foreach (string file in files)
+            {
+                if (file.EndsWith($"{fileFormat}"))
+                {
+                    File.Delete(file);
+                    ++counter;
+                }
+
+            }
+            return counter;
         }
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -571,63 +600,19 @@ namespace Demo
             else
             {
                 Utils.log("Worker complete");
-                //SoundPlayer sp = new SoundPlayer();
-                //sp.SoundLocation = "E:\\Samples\\Hybrid Trap - Dubstep\\Brass\\WA Brass Shot C# 30.wav";
-                //sp.Load();
-                //sp.Play();
+                SoundPlayer sp = new SoundPlayer();
+
+                sp.SoundLocation = Utils.getConfig("SOUND_LOCATION");
+                if(sp.SoundLocation != "" || sp.SoundLocation.Contains(".mp3") || sp.SoundLocation.Contains(".wav"))
+                {
+                    sp.Load();
+                    sp.Play();
+                }
+
             }
 
         }
         #endregion
-    }
-
-    public class Product {
-        public string PLU { get; }
-        public string desc { get; }
-        public float price { get; set; }
-        public bool allowFra { get; }
-        public double qty { get; set; } = 0;
-        public char type { get; } = 'N';
-        public string sID { get; set; } = "";
-
-        public Product(string PLU, string desc, float price, bool allowFra,char type)
-        {
-            this.PLU = PLU;
-            this.desc = desc;
-            this.price = price;
-            this.allowFra = allowFra;
-            this.type = type;
-
-        }
-        public Product(string PLU, string desc, float price)
-        {
-            this.PLU = PLU;
-            this.desc = desc;
-            this.price = price;
-            this.allowFra = false; // false by default
-
-        }
-        public Product()
-        {
-
-        }
-
-        public override bool Equals(object comp)
-        {
-            if (comp == null) { return false; }
-
-            Product compare = (Product)comp;
- 
-            if(this.price == compare.price && this.PLU == compare.PLU && this.qty==compare.qty && this.desc == compare.desc)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
     }
 
 }

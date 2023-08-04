@@ -16,17 +16,21 @@ namespace Demo.Forms
         public VouchEntry()
         {
             InitializeComponent();
+            this.Focus();
             textBox1.Focus();
+            textBox1.SelectAll();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
-                double m = double.Parse(textBox1.Text.Replace("€", string.Empty));
+                double m = double.Parse(textBox1.Text);
+                
                 Form1.notifyVoucher(m);
             }catch(Exception ex) {
-                Utils.log("error");
+                Utils.log($"error {ex.Message}");
+                Form1.notifyVoucher(-99);
             }
             finally
             {
@@ -41,6 +45,16 @@ namespace Demo.Forms
             {
                 button1_Click(sender, e);
             }
+        }
+
+        private void VouchEntry_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Form1.notifyVoucher(-99);
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

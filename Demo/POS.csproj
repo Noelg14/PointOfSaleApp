@@ -14,6 +14,9 @@
     <AssemblyVersion>0.0.5</AssemblyVersion>
     <FileVersion>0.0.5</FileVersion>
   </PropertyGroup>
+	<PropertyGroup>
+		<ApplicationDefaultFont>Microsoft Sans Serif, 8.25pt</ApplicationDefaultFont>
+	</PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>embedded</DebugType>
@@ -36,6 +39,7 @@
     <PackageReference Include="LiveCharts" Version="0.9.7" />
     <PackageReference Include="LiveCharts.WinForms" Version="0.9.7.1" />
     <PackageReference Include="MySql.Data" Version="8.0.28" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="PdfSharp" Version="1.50.5147" />
     <PackageReference Include="PDFsharp-MigraDoc-GDI" Version="1.50.5147" />
     <PackageReference Include="QRCoder" Version="1.4.3" />

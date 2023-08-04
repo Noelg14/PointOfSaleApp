@@ -108,6 +108,7 @@
             this.listView1.Size = new System.Drawing.Size(716, 571);
             this.listView1.TabIndex = 6;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.MouseClick += ListView1_MouseClick;
             // 
             // listPLU
             // 
