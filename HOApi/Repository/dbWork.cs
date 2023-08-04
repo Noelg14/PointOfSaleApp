@@ -1,5 +1,6 @@
 ﻿using MySql.Data.Types;
 using MySql.Data.MySqlClient;
+using HOApi.Models;
 
 namespace HOApi.Repository
 {
@@ -110,11 +111,11 @@ namespace HOApi.Repository
 
             MySqlCommand cmd = initCmd();
             MySqlConnection cnn = cmd.Connection;
-            
+
             try
             {
                 cnn.Open();
-               // cmd.Prepare();
+                // cmd.Prepare();
                 cmd.CommandText = $"TRUNCATE TABLE {tableName}";
 
                 //cmd.Parameters.AddWithValue("@table", tableName);
@@ -122,7 +123,7 @@ namespace HOApi.Repository
                 cmd.ExecuteNonQuery();
                 return true;
             }
-            catch(MySqlException msqle)
+            catch (MySqlException msqle)
             {
                 return false;
             }
@@ -133,9 +134,41 @@ namespace HOApi.Repository
 
         }
 
+        public static IReadOnlyList<sales> GetSales()
+        {
+            MySqlCommand cmd = initCmd();
+            MySqlConnection cnn = cmd.Connection;
+            List<sales> salesList = new List<sales>();
+
+            try
+            {
+                cnn.Open();
+                cmd.CommandText = "Select * from sales";
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+                while(dataReader.Read()) 
+                {
+                    salesList.Add(new sales(
+                        dataReader.GetString(0),
+                         dataReader.GetDouble(1),
+                         dataReader.GetString(2)
+                        ));
+                }
+                return salesList;
+            }
+            catch (MySqlException mse)
+            {
+                Console.WriteLine(mse.Message);
+                throw mse;
+            }
+            finally
+            {
+                cnn.Close();
+            }
+        }
+
 
         #region SQL stuff 
-            //Making these public as it will be easier
+        //Making these public as it will be easier
         public static MySqlConnection initConn()
         {
             MySqlConnection cnn = new MySqlConnection();
