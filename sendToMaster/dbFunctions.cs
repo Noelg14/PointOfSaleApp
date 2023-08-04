@@ -13,7 +13,7 @@ namespace sendToMaster
 {
     internal class dbFunctions
     {
-        public static List<Models.sales> GetSales()
+        public static List<sales> GetSales()
         {
 
             MySqlCommand cmd = Utils.initCmd();
@@ -60,7 +60,7 @@ namespace sendToMaster
 
         }
 
-        public static List<Models.salesline> GetSaleslines()
+        public static List<salesline> GetSaleslines()
         {
 
             MySqlCommand cmd = Utils.initCmd();
@@ -107,7 +107,7 @@ namespace sendToMaster
 
         }
 
-        public static List<Models.stock> GetStock()
+        public static List<stock> GetStock()
         {
 
             MySqlCommand cmd = Utils.initCmd();

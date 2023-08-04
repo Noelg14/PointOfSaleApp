@@ -38,8 +38,6 @@ namespace sendToMaster
                 throw new Exception("Config not found");
             }
 
-
-
         }
 
 
@@ -131,10 +129,10 @@ namespace sendToMaster
                         worker.ReportProgress(80);
                         //update to show posted 
                         string rows = dbFunctions.updateSales().ToString();
-                        File.AppendAllText("Log.txt", $"Updated {rows} sale rows");
+                        File.AppendAllText("Log.txt", $"Updated {rows} sale rows\n");
 
                         rows = dbFunctions.updateSaleLine().ToString();
-                        File.AppendAllText("Log.txt", $"Updated {rows} saleline rows");
+                        File.AppendAllText("Log.txt", $"Updated {rows} saleline rows\n");
                     }
                     #endregion
 
