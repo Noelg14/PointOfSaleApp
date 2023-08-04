@@ -30,7 +30,7 @@ namespace Demo.Services
         }
         public static Models.Voucher getVoucherDetails(string id)
         {
-            VoucherService v = VoucherService.Instance;
+            VoucherService v = Instance;
             Models.Voucher vouch = null;
             v.cnn.Open();
             v.cmd.Connection = v.cnn;
@@ -231,7 +231,7 @@ namespace Demo.Services
 
         private static int getLastVoucherRef()
         {
-            VoucherService v = VoucherService.Instance;
+            VoucherService v = Instance;
             int last;
             v.cnn.Open();
             v.cmd.Connection = v.cnn;

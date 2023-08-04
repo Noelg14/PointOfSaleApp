@@ -124,11 +124,13 @@ namespace Demo
         }
         private List<string> getDates()
         {
-            return Utils.getSalesDates();
+            return ReportService.getChartDatesData().Result;
+            //return Utils.getSalesDates();
         }
         private List<double> getData()
         {
-            return Utils.getSalesDouble();
+            return ReportService.getChartSalesData().Result;
+            //return Utils.getSalesDouble();
         }
         private void clearChart()
         {

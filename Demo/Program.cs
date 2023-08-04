@@ -10,8 +10,7 @@ namespace Demo
         [STAThread]
         static void Main(string[] args)
         {
-            //Application.EnableVisualStyles();
-      
+            
             try
             {
                 // To customize application configuration such as set high DPI settings or default font,

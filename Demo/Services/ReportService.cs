@@ -15,6 +15,7 @@ using Color = MigraDoc.DocumentObjectModel.Color;
 using System.Runtime.InteropServices;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Globalization;
+using POS.Services;
 
 namespace Demo
 {
@@ -129,6 +130,43 @@ namespace Demo
             }
 
             //Process.Start("hello.pdf");
+        }
+
+        public async static Task<List<double>> getChartSalesData()
+        {
+            List<double> data = new List<double>();
+
+            string query =  Utils.getIndiviudalSetting("charts");
+            if(query != null && query != "0") { 
+                
+                databaseService dbService=  new databaseService();
+                DataSet dataSet = await dbService.runQuery(query);
+                for(int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                {
+                    double valueToAdd = double.Parse(dataSet.Tables[0].Rows[i]["Sales"].ToString());
+                    data.Add(valueToAdd);
+                }
+            
+            }
+            return data;
+        } 
+        public async static Task<List<string>> getChartDatesData()
+        {
+            List<string> data = new List<string>();
+
+            string query =  Utils.getIndiviudalSetting("charts");
+            if(query != null && query != "0") { 
+                
+                databaseService dbService=  new databaseService();
+                DataSet dataSet = await dbService.runQuery(query);
+                for(int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
+                {
+                    string valueToAdd = dataSet.Tables[0].Rows[i]["Date"].ToString();
+                    data.Add(valueToAdd);
+                }
+            
+            }
+            return data;
         }
     }
 }
